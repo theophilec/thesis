@@ -1,0 +1,194 @@
+\newcommand{\sujet}[1]{\renewcommand{\sujet}{#1}}
+\newcommand{\auteur}[1]{\renewcommand{\auteur}{#1}}
+\newcommand{\encadrant}[1]{\renewcommand{\encadrant}{#1}}
+
+\newcommand{\objectif}[1]{%
+\vspace{.1cm}
+\begin{singlespace}
+\tikzstyle{titlebox}=[rectangle,inner sep=10pt,inner ysep=10pt,draw=curcolor,draw]%
+\tikzstyle{title}=[fill=white]%
+\bigskip\noindent\begin{tikzpicture}
+\node[titlebox] (box){%
+    \begin{minipage}{0.88\textwidth}
+#1
+    \end{minipage}
+};
+\node[title] at (box.north west) {\color{curcolor}  Objectifs};
+\end{tikzpicture}\bigskip%
+\vspace{.1cm}
+\minitoc
+\end{singlespace}
+\newpage
+}
+
+\newcommand{\myparagraph}[1]{\paragraph{#1}\mbox{} \vskip .5\baselineskip \par}
+
+\newcommand{\T}[1]{T\textsubscript{#1}}
+
+
+%%% Macro pour la mise en forme de la liste des publiations
+\newcommand{\Myprod}[3]{ % sans DOI
+\begin{singlespace}{#1}. "\textit{{#2}}". {#3}.
+\end{singlespace}}
+
+\newcommand{\MyprodwithDOI}[4]{ % avec DOI
+\begin{singlespace}{#1}. "\textit{{#2}}". {#3}.\newline
+{DOI: \href{https://doi.org/#4}{#4}}
+\end{singlespace}}
+
+% Chapitre sans mise en forme particulière (remerciements, conclusion
+\newcommand{\addchapnonumber}[1]{
+\phantomsection
+\addtocounter{chapter}{1}
+\chapter*{#1}
+\addcontentsline{toc}{chapter}{#1}
+\markboth{#1}{#1}
+\setcounter{section}{0}
+}
+
+%%% Macro pour mise en forme de l'abstract et résumé avec mots clés
+\newcommand{\AddResumeAbstract}{
+\chapter{Résumé}
+
+\thefrabstract
+\vskip 2em \noindent\makebox[\linewidth]{\rule{.5\linewidth}{0.4pt}}
+\vfill
+\noindent \textbf{Mots clés :}
+\thefrkeywords
+
+\chapter{Abstract}
+
+\theenabstract
+\vskip 2em \noindent\makebox[\linewidth]{\rule{.5\linewidth}{0.4pt}}
+\vfill
+\noindent\textbf{Keywords :}
+\theenkeywords
+}
+
+\newcommand{\fix}{\marginpar{FIX}}
+\newcommand{\new}{\marginpar{NEW}}
+
+%\nipsfinalcopy % Uncomment for camera-ready version
+
+\newcommand{\Nystrom}[1]{{Nystr\"om}}
+
+\providecommand{\abs}[1]{\lvert{#1}\rvert}
+\providecommand{\set}[1]{\{#1\}}
+\providecommand{\scal}[2]{\left\langle{#1},{#2}\right\rangle}
+\providecommand{\nor}[1]{\bigl\|{#1}\bigr\|}
+\providecommand{\ran}[1]{\operatorname{ran}{#1}}
+\providecommand{\tr}{\operatorname{Tr}}
+
+% Numbers
+%\newcommand{\cal}[1]{\mathcal{#1}}
+\newcommand{\R}{\mathbb R}
+\newcommand{\CC}{\mathbb C}
+\newcommand{\N}{\mathbb N}
+\newcommand{\BH}{{{\mathcal B}(\hh)}}
+
+% Hilbert spaces
+\newcommand{\hh}{\mathcal H}
+\newcommand{\kk}{\mathcal K}
+
+% Greek letters
+\newcommand{\la}{\lambda}
+\newcommand{\eps}{\epsilon}
+\newcommand{\rank}[1]{\operatorname{rank}\left(#1\right)}
+\newcommand{\diag}[1]{\operatorname{diag}\left(#1\right)}
+\newcommand{\lspan}[1]{\operatorname{span}\{#1\}}
+\newcommand{\lspanc}[2]{\overline{\operatorname{span}\{#1~|~#2\}}}
+\newcommand{\supp}[1]{\operatorname{supp}{#1}}
+\newcommand{\argmin}[1]{\mathop{\operatorname{argmin}}_{#1}}
+
+\newcommand{\prob}[1]{{\mathbb P}[#1]}
+\newcommand{\expect}[1]{{\mathbb E}[#1]}
+
+\newcommand{\G}{{\cal G}}
+\newcommand{\Ln}{{L^2(\X,\rho_n)}}
+
+\renewcommand{\set}[2]{{\{{#1}~|~{#2}\}}}
+\newcommand{\Z}{{\cal Z}}
+\newcommand{\X}{{\cal X}}
+\newcommand{\Y}{{\cal Y}}
+\newcommand{\vz}{{\mathbf z}}
+\newcommand{\vx}{{\mathbf x}}
+\newcommand{\vm}{\tilde{\mathbf m}}
+
+\newcommand{\EE}{{\mathcal E}}
+\newcommand{\cc}{C}
+\newcommand{\rhox}{{\rho_{\X}}}
+\newcommand{\Ltwo}{{L^2(\X,\rhox)}}
+\renewcommand{\S}{{S}}
+\renewcommand{\L}{{L}}
+\newcommand{\C}{{C}}
+\renewcommand{\k}{{K}}
+\newcommand{\K}{K_n}
+\newcommand{\Cl}{\C_\la}
+\newcommand{\Cn}{{\C}_n}
+\newcommand{\Cnl}{{\C}_{n\lambda}}
+\newcommand{\Cj}{{\C}_j}
+\newcommand{\Cjl}{{\C}_{j\lambda}}
+\newcommand{\Aj}{A_j}
+\newcommand{\Bj}{B_j}
+\newcommand{\tj}{\theta_j}
+\newcommand{\Vj}{V_j}
+\newcommand{\Cm}{{\C}_m}
+\newcommand{\Sn}{S_n}
+\newcommand{\Sj}{S_j}
+\newcommand{\yj}{\bar{y}_j}
+\newcommand{\fh}{f_\hh}
+\newcommand{\Tj}{T_j}
+\newcommand{\Tjl}{T_{j\la}}
+\newcommand{\Dj}{D_j}
+\newcommand{\Djl}{D_{j\la}}
+\newcommand{\Zm}{Z_m}
+\newcommand{\Pm}{P_m}
+\newcommand{\yn}{\widehat y_n}
+
+\newcommand{\fn}{f_n}
+\newcommand{\frho}{f_\rho}
+
+\newcommand{\vy}{{\mathbf y}}
+\newcommand{\vc}{{\mathbf c}}
+
+\newcommand{\dd}{\mathrm{d}}
+
+\newcommand{\MM}{{\bf M}}
+
+\newcommand{\eqals}[1]{\begin{align*}#1\end{align*}}
+\newcommand{\eqal}[1]{\begin{align}#1\end{align}}
+\newcommand{\bpr}{\begin{proof}}
+\newcommand{\epr}{\end{proof}}
+\newcommand{\be}{\begin{equation}}
+\newcommand{\ee}{\end{equation}}
+
+\newcommand{\bi}{\begin{itemize}}
+\newcommand{\ei}{\end{itemize}}
+
+\newcommand{\bex}{\begin{example}}
+\newcommand{\eex}{\end{example}}
+\newcommand{\Lt}{L^2(\X, \rhox)}
+\newcommand{\Ltn}{L^2(\X, \hat \rho _\X)}
+\newcommand{\lc}{\left\{}
+\newcommand{\rc}{\right\}}
+\newcommand{\lp}{\left(}
+\newcommand{\rp}{\right)}
+
+
+
+\providecommand{\norh}[1]{\left\Vert{#1}\right\Vert_\hh}
+\providecommand{\norf}[1]{\left\Vert{#1}\right\Vert_\mathcal F}
+\providecommand{\norop}[1]{\lVert{#1}\rVert_{op}}
+\providecommand{\scalh}[2]{\left\langle{#1},{#2}\right\rangle_\hh}
+
+\newcommand{\mixing}{\sigma}
+\DeclareMathOperator{\partialpsd}{\textsc{PartialEval}}
+\DeclareMathOperator{\productpsd}{\textsc{Product}}
+\DeclareMathOperator{\marginalpsd}{\textsc{Marginal}}
+\DeclareMathOperator{\integralpsd}{\textsc{Integral}}
+\DeclareMathOperator{\filtersteppsd}{\textsc{FilterStep}}
+\newcommand\independent{\protect\mathpalette{\protect\independenT}{\perp}}
+\def\independenT#1#2{\mathrel{\rlap{$#1#2$}\mkern2mu{#1#2}}}
+\newcommand{\barhat}[1]{\tilde{{#1}}}
+
+\usepackage[ruled]{algorithm2e}

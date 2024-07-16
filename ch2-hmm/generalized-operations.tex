@@ -1,0 +1,158 @@
+\section{Computations on Generalized Gaussian PSD Models}\label{sec:proof-ops}
+The stability properties of Generalized Gaussian PSD Models under probabilistic operations rely at a high-level on the fact that $Tr(AB)Tr(CD)=Tr(A\otimes C B \otimes D)$ and that if $A$ and $B$ are positive semi-definite matrices then so is $A\otimes B$.
+
+\subsection{\textsc{Integral}}
+\begin{proposition}[Integration of a Generalized Gaussian PSD Model]
+   Let $f(x) = Tr(AB(x))$ with parameters $\left\lbrace A, C, (P_{ij}), (\mu_{ij})\right\rbrace$. Then, $Z =\int f(x)dx$ where
+   \begin{align}
+       Z = Tr(A \circ \exp^\circ(C) \circ C(P))
+   \end{align}
+   where $\exp^\circ$ is the element-wise exponential map and $C(P)\in\mathcal S(\mathbb R^M)$ is decribed by $C(P)_{ij}=C(P_{ij})$.
+\end{proposition}
+We denote $\circ$ the Hadamard product.
+\begin{proof}
+The proof is clear by linearity of the trace.
+\end{proof}
+\begin{remark}[Computational complexity]
+Because of the need to compute the determinant of $P_{ij}$ the computational complexity of the partial evaluation operation is $O(M^2 d!)$.
+\end{remark}
+\subsection{\textsc{PartialEval}}
+\begin{proposition}[Partial evaluation of a Generalized Gaussian PSD Model]
+   Let $f(x, y) = Tr(AB(x, y))$ with parameters $\left\lbrace A, C, (P_{ij}), (\mu_{ij})\right\rbrace$ and $y\in \mathbb R^d$. Then, $g(x):=f(x, y) = Tr(A^\prime B^\prime(x))$ with parameters $\left\lbrace A^\prime, C^\prime, (P^\prime_{ij}), (\mu^\prime_{ij})\right\rbrace$ where
+   \begin{align}
+       A^\prime &= A\\
+       P^\prime_{ij} &= P_{ijxx}\\
+       \mu^\prime_{ij} &= \mu_{ijx} + P_{ijxx}^{-1}P_{ijxy}\left(\mu_{ijy} - y\right)\\
+        C_{ij}^\prime &= C_{ij} + \nu P_{xx}^{-1}\nu - yP_{yy}y + 2\mu_{x}P_{xy}y + 2\mu_yP_{yy}y-\mu P\mu
+       \end{align}
+where \begin{equation}
+P = \left(\begin{array}{c c}
+    P_{xx} & P_{xy}  \\
+    P_{xy}^T & P_{yy}
+\end{array} \right).
+\end{equation}
+\end{proposition}
+\begin{proof}
+We can compute $B^\prime(x)$ by expanding $C - \log(B(x, y)_{ij})$ for any $i,j$. Dropping the $i,j$ dependence:
+\begin{align}
+     \left\Vert P^{1/2}\left(\begin{bmatrix}x\\ y\end{bmatrix} - \mu \right)\right\Vert^2 =&  x^TP_{xx}x + 2y P_{xy}^Tx + yP_{yy}y - 2\mu P\begin{bmatrix}x\\ y\end{bmatrix}  + \mu P \mu\\
+    =&  x^TP_{xx}x + 2y P_{xy}^Tx + yP_{yy}y - 2\mu_x P_{xx}x -2\mu_xP_{xy}y -2\mu_yP_{xy}x -2\mu_yP_{yy}y + \mu P \mu\\
+    =&  x^TP_{xx}x -2(\underbrace{\mu_xP_{xx}+\mu_y P_{xy} -yP_{xy}^T}_\nu)x + yP_{yy}y -2\mu_xP_{xy}y -2\mu_yP_{yy}y + \mu P \mu\\
+    =&  \left\Vert P_{xx}^{1/2}\left(x - P_{xx}^{-1}\nu\right)\right\Vert^2 - \nu P_{xx}^{-1}\nu + yP_{yy}y -2\mu_xP_{xy}y -2\mu_yP_{yy}y + \mu P \mu.
+\end{align}
+\end{proof}
+\begin{remark}[Computational complexity]
+Because of the need to compute the inverse of $P_{xx}$, the computational complexity of the partial evaluation operation is $O(M^2d_x^3)$.
+\end{remark}
+
+\subsection{\textsc{Marginalization}}
+\begin{proposition}[Marginalization of a Generalized Gaussian PSD Model]
+   Let $f(x, y) = Tr(AB(x, y))$ with parameters $\left\lbrace A, C, (P_{ij}), (\mu_{ij})\right\rbrace$. Then, $h(x):=\int f(x, y)dy = Tr(A^\prime B^\prime(x))$ with parameters $\left\lbrace A^\prime, C^\prime, (P^\prime_{ij}), (\mu^\prime_{ij})\right\rbrace$ where
+   \begin{align}
+       A^\prime &= A\\
+        P_{ij}^\prime &= \left(\left[P^{-1}_{ij}\right]_{xx}\right)^{-1}\\
+       \mu^\prime_{ij} &= \left[\mu_{ij}\right]_{x}\\
+          C^\prime_{ij} &= C_{ij} + \log(C(P_{ij})) - \log(C(P^ \prime_{ij}))
+       \end{align}
+\end{proposition}
+\begin{proof}
+We compute the integral component-wise, denoting $\Sigma = (2P)^{-1}$:
+
+\begin{align}
+    \int B(x, y)_{ij}dy &= e^{C_{ij}}\int \exp\left(- \frac{\left\Vert \sqrt{2}P_{ij}^{1/2}\left[\begin{pmatrix}x\\ y\end{pmatrix} - \mu_{ij}\right] \right\Vert^2}{2}\right)dy\\
+    &= e^{C_{ij}}\int \exp\left(- \frac{\left\Vert \Sigma^{-1/2}\left[\begin{pmatrix}x\\ y\end{pmatrix} - \mu_{ij}\right] \right\Vert^2}{2}\right)dy\\
+    &= e^{C_{ij}}\sqrt{(2\pi)^{d_x + d_y}\vert \Sigma \vert}\int \frac{1}{\sqrt{(2\pi)^{d_x + d_y}\vert \Sigma \vert}}\exp\left(- \frac{\left\Vert \Sigma^{-1/2}\left[\begin{pmatrix}x\\ y\end{pmatrix} - \mu_{ij}\right] \right\Vert^2}{2}\right)dy\\
+    &= e^{C_{ij}}\sqrt{(2\pi)^{d_x + d_y}\vert \Sigma\vert}\frac{1}{\sqrt{(2\pi)^{d_x}\vert \left[\Sigma\right]_{xx}\vert}}\exp\left(- \frac{\left\Vert [\Sigma]_{xx}^{-1/2}\left( x - \left[\mu_{ij}\right]_x\right)\right\Vert^2}{2}\right)\\
+    &= e^{C_{ij}}\frac{C_{P_{ij}}}{C_{P_{ij}^\prime}}\exp\left(-\left\Vert {P_{ij}^\prime}^{1/2}\left( x - \left[\mu_{ij}\right]_x\right)\right\Vert^2\right)\\
+    &= e^{C^\prime_{ij}}\exp\left(-\left\Vert {P_{ij}^\prime}^{1/2}\left( x - \mu_{ij}^\prime\right)\right\Vert^2\right)
+\end{align}
+
+where $C^\prime_{ij} = C_{ij} + \log(C_{P_{ij}}) - \log(C_{P^\prime_{ij}})$, $P^\prime_{ij} = \left(\left[P_{ij}^{-1}\right]_{xx}\right)^{-1}$ and $\mu_{ij}^\prime = \left[\mu_{ij}\right]_x$.
+\end{proof}
+
+\begin{remark}[Computational complexity]
+Because of the need to compute the determinant of $P$ as well as invert it, the computational complexity of the partial evaluation operation is $O(M^2\max(d!, d^3))$.
+\end{remark}
+\subsection{\textsc{Product}}
+\begin{proposition}[Product of two Generalized Gaussian PSD Models]
+   Let $f(x, y) = Tr(AB(x, y))$ a generalized PSD model of order $M$ with parameters $\left\lbrace A, C, (P_{ij}), (\mu_{ij})\right\rbrace$.
+   Let $g(x, y) = Tr(\tilde A \tilde B(x, y))$ a generalized PSD model of order $m$ with parameters $\left\lbrace \tilde A, \tilde C, (\tilde P_{kl}), (\tilde\mu_{kl})\right\rbrace$.
+
+   Then, $h(x):=f(x)g(x)= Tr(A^\prime B^\prime(x))$ is a generalized PSD model of order $Mm$ with parameters $\left\lbrace A^\prime, C^\prime, (P^\prime_{ij}), (\mu^\prime_{ij})\right\rbrace$ where
+    \begin{align}
+    A^\prime &= A \otimes \tilde A\\
+    P_{ijkl}^\prime &= \left[\begin{array}{ccc}
+    P_{ijxx} & P_{ijxy}^T & 0 \\
+    P_{ijxy} &P_{ijyy} + \tilde P_{klyy}  & \tilde P_{klyz} \\
+    0 & \tilde P_{klyz} & \tilde P_{klzz}
+    \end{array}\right]\\
+    \mu^\prime_{ijkl} &= {P^\prime_{ijkl}}^{-1}\hat\mu_{ijkl}\\
+    C_{ijkl} &= C^f_{ij} + C^g_{kl} +\hat\mu_{ijkl}P_{ijkl}\hat\mu_{ijkl} - \mu_{ij}P_{ij}\mu_{ij} - \tilde\mu_{kl}\tilde P_{kl}\tilde\mu_{kl}
+\end{align}
+
+where \begin{equation}
+    \hat\mu_{ijkl} =\begin{pmatrix}
+    {P_{ij}}\mu_{ij}\\
+    0\end{pmatrix} +
+    \begin{pmatrix}
+     0 \\
+    {\tilde P_{kl}}\tilde\mu_{kl}
+    \end{pmatrix} =
+    \begin{pmatrix}
+    [{P_{ij}}\mu_{ij}]_x\\
+    [{P_{ij}}\mu_{ij}]_{y} + [{\tilde P_{kl}}\tilde\mu_{kl}]_{y}\\
+    [{\tilde P_{kl}}\tilde\mu_{kl}]_{z}
+     \end{pmatrix}
+     \end{equation}
+\end{proposition}
+
+\begin{proof}
+Notice that:
+    \begin{align}
+        \log\left(B_f(x, y) \otimes B_g(y, z)_{ijkl}\right)& = C^f_{ij} + C^g_{kl} - \left\Vert {P_{ij}}^{1/2}\left[\begin{pmatrix}x\\ y\end{pmatrix}- \mu_{ij}\right]\right\Vert^2 - \left\Vert {\tilde P_{kl}}^{1/2}\left[\begin{pmatrix}x \\ y \end{pmatrix}- \tilde\mu_{kl}\right]\right\Vert^2
+    \end{align}
+Let us compute the following term by computing the square:
+    \begin{align}
+     &\left\Vert {P_{ij}}^{1/2}\left[\begin{pmatrix}x\\y\end{pmatrix}- \mu_{ij}\right]\right\Vert^2 + \left\Vert {\tilde P_{kl}}^{1/2}\left[\begin{pmatrix}y\\ z\end{pmatrix}- \tilde\mu_{kl}\right]\right\Vert^2 \\
+     &= \begin{pmatrix}x\\ y\\ z\end{pmatrix}^TP_{ijkl}\begin{pmatrix}x\\ y\\ z\end{pmatrix}- 2\hat\mu_{ijkl}^T\begin{pmatrix}x\\ y\\ z\end{pmatrix} +\mu_{ij}P_{ij}\mu_{ij} + \tilde\mu_{kl}\tilde P_{kl}\tilde\mu_{kl}\\
+     &= \left\Vert P_{ijkl}^{1/2}\left(\begin{pmatrix}x\\ y\\ z\end{pmatrix} - P_{ijkl}^{-1}\hat\mu_{ijkl}\right) \right\Vert^2 - \hat\mu_{ijkl}P_{ijkl}^{-1}\hat\mu_{ijkl}+\mu_{ij}P_{ij}\mu_{ij} + \tilde\mu_{kl}\tilde P_{kl}\tilde\mu_{kl}\\
+    \end{align}
+
+    where
+    \begin{equation}
+    P_{ijkl} = \left[\begin{array}{ ccc }
+    {P_{ij}}_{xx} & {P_{ij}}_{xy}^T & 0 \\
+    {P_{ij}}_{xy} &P_{ijyy} + \tilde P_{klyy}  & \tilde P_{klyz} \\
+    0 & \tilde P_{klyz} & \tilde P_{klzz}
+    \end{array}\right],
+\end{equation}
+    \begin{equation}
+    \hat\mu_{ijkl} = \begin{pmatrix}
+    {P_{ij}}\mu_{ij}\\
+    0\end{pmatrix} +
+    \begin{pmatrix}
+     0 \\
+    {\tilde P_{kl}}\tilde\mu_{kl}
+    \end{pmatrix} =
+    \begin{pmatrix}
+    [{P_{ij}}\mu_{ij}]_x\\
+    [{P_{ij}}\mu_{ij}]_{y} + [{\tilde P_{kl}}\tilde\mu_{kl}]_{y}\\
+    [{\tilde P_{kl}}\tilde\mu_{kl}]_{z}
+     \end{pmatrix}
+\end{equation}
+
+So
+\begin{equation}
+    (B_f(x, y) \otimes B_g(y, z))_{ijkl} =  \exp\left(C_{ijkl}-\left\Vert P_{ijkl}^{1/2}\left((x, y, z) - \mu_{ijkl}\right)\right\Vert^2\right)
+\end{equation}
+where
+\begin{equation}
+    \mu_{ijkl} = P_{ijkl}^{-1}\hat\mu_{ijkl}
+\end{equation}
+\begin{equation}
+    C_{ijkl} = C^f_{ij} + C^g_{kl} +\hat\mu_{ijkl}P_{ijkl}^{-1}\hat\mu_{ijkl} -  \mu_{ij}P_{ij}\mu_{ij} - \tilde\mu_{kl}\tilde P_{kl}\tilde\mu_{kl}
+\end{equation}
+\end{proof}
+\begin{remark}[Computational complexity]
+Because of the need to compute the inverse of $P^\prime$ the computational complexity of the product operation between models of order $M$ and $m$ is $O(M^2m^2d^3)$.
+\end{remark}

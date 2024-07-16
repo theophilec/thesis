@@ -1,0 +1,253 @@
+\section{Markov kernels \& Hidden Markov Models}
+
+
+\subsection{Tools and notation}
+Let $(E, \mathcal E)$ be a measurable space. We denote $\mathcal M(E)$ the set of finite signed measures on $(E, \mathcal E)$, $\mathcal M_+(E)$ the set of finite positive measures, $\mathcal M_0(E)$ the set of finite signed measures which sum to $0$ and $\mathcal P(E)$ the set of probability distributions on $(E, \mathcal E)$. Let $(F, \mathcal F)$ be a second measurable space.
+
+\subsection{Total variation}
+
+\begin{definition}[Total variation norm]
+Let $\xi$ be a finite signed measure on $(E, \mathcal E)$. The total variation of $\xi$ is $\Vert \xi \Vert_{TV}= \xi^+(E) + \xi^-(X)$ where $\xi^+, \xi^-$ is the Jordan-Hahn decomposition of $\xi$. If $\xi$ admits a density with respect to the Lebesgue measure, then $\Vert \xi \Vert_{TV} = \int \vert \xi(x)\vert dx$.
+\end{definition}
+\begin{proposition} Let $\mu$ and $\nu$ be two finite measures on $(E, \mathcal E)$. Then,
+\begin{align}
+    \Vert \bar \mu - \bar \nu \Vert = \frac{\Vert \mu - \nu \Vert}{\mu(E)} + \frac{\vert \mu(E) - \nu(E)\vert}{\mu(E)}
+\end{align}
+In particular,
+\begin{align}
+    \Vert \bar \mu - \bar \nu \Vert \leq \frac{2\Vert \mu - \nu \Vert}{\mu(E)}
+\end{align}
+\end{proposition}
+\subsection{Transition kernels}
+We report the essential results relative to transition kernels taken \cite{cappehmm}.
+\begin{definition}[Transition kernel]\label{def:transition-kernel}
+A function $Q:E \times \mathcal F \to \mathbb R^+$ is an unnormalized transition kernel if:
+\begin{itemize}
+    \item for all $x\in E$, $Q(x, \cdot)$ is a positive measure on $(F, \mathcal F)$;
+    \item for all $A\in \mathcal F$, $x\mapsto Q(x, A)$ is measurable.
+\end{itemize}
+$Q$ is normalized if for any $x\in E$, $Q(x, F)=1$. When $E=F$ and $Q$ is normalized, $Q$ is said to be a Markov transition kernel.
+
+By abuse of notation, when $Q$ admits a density with respect to the Lebesgue measure, we denote it $Q$ as well, i.e. $Q(x, dy)=Q(x, y)dy$.
+\end{definition}
+
+Note that $R_n(u, x)= Q(u, x)G(x, z_n)$ is indeed an unnormalized transition kernel.
+
+\begin{definition}[Effects of kernels]
+    Let $K$ be an unnformalized kernel on $(E, \mathcal E)\times (F, \mathcal F)$, $\mu\in\mathcal M_+(E)$ and $f$ a bounded function $f:E\to\mathbb R$.
+
+    Then, $K\mu\in\mathcal M_+(F)$ with for any $A\in\mathcal F$,
+    \begin{align}
+        K\mu(A) = \int K(u, A)\mu(du),
+    \end{align}
+
+    and $Kf: E \to \mathbb R$ is a bounded function with for any $u\in E$,
+    \begin{align}
+        Kf(u) = \int K(u, A)\mu(du).
+    \end{align}
+\end{definition}
+\subsection{Hidden Markov Models}
+\begin{definition}[Hidden Markov Model]
+Let $(E, \mathcal E)$ and $(F, \mathcal F)$ be two measurable spaces. Let $Q$ and $G$ denote a Markov transition kernel on $(E, \mathcal E)$ and $G$ denote a transition kernel from $(E, \mathcal E)$ to $(F, \mathcal F)$. Let $T$ be the Markov transition kernel defined on the product space $(E \times F, \mathcal E \otimes \mathcal F)$ by
+\begin{equation}
+    \forall (x, y) \in E\times F, \forall C\in\mathcal E \otimes\mathcal F, ~T\left[(x, y), C\right] = \int \int 1_C((x^\prime, y^\prime)) Q(x, dx^\prime) G(x^\prime, dy^\prime)
+\end{equation}
+
+The Markov Chain $\lbrace X_k, Y_k \rbrace_{k\geq 0}$ with Markov transition kernel $T$ and initial distribution $\nu \otimes G$, where $\nu$ is a probability distribution on $(E, \mathcal E)$ is called a \textbf{Hidden Markov Model}.
+
+We denote $\mathbb P_\nu$ and $\mathbb E_\nu$ the probability measure and corresponding expectation associated with the process $\lbrace (X_k, Y_k)\rbrace$ over $\left((E\times F)^{\mathbb N}, (\mathcal E \otimes \mathcal F)^{\otimes \mathbb N}\right)$.
+\end{definition}
+
+Throughout this work, we assume that for any $x\in E$, $Q(x, \cdot) \ll \lambda(\cdot)$ and $G(x, \cdot) \ll \lambda(\cdot)$ where $\lambda$ is the Lebesgue measure over $(E, \mathcal E)$, and we denote $Q(x, dx^\prime) = Q(x, x^\prime)dx^\prime$ and $G(x, dy)= G(x, y)dy$.
+
+
+\begin{definition}[Filtering distribution]
+Let $\nu$ be a probability distribution over $(E, \mathcal E)$ and $n \geq 0$. We denote $\pi_n^\nu$ the conditional distribution of $X_n$ given $Y_{1:n}$, i.e.
+\begin{itemize}
+    \item $\pi_n^\nu$ is a transition kernel from $F^n$ to $E$
+    \item $\pi_n^\nu$ satisfies for any bounded function $f: E \to \mathbb R$,
+    \begin{equation}
+        \mathbb E_\nu \left[ f(X_n) \vert Y_{1:n}\right] = \int f(x)\pi^\nu_n(Y_{1:n}, dx)
+    \end{equation}
+\end{itemize}
+\end{definition}
+
+\subsection{Mixing kernels}
+\begin{definition}[Mixing kernel]
+    We say a kernel $K(x, dy)$ is mixing if there exists a positive constant $\mixing > 0$ and a non-negative measure $\xi$ such that for any $x\in E$ and $A\in\mathcal F$,
+    \begin{equation}
+        \mixing\xi(A) \leq K(x, A) \leq \frac{1}{\mixing}\xi(A).
+    \end{equation}
+\end{definition}
+If $K$ is mixing for a measure $\xi$ and a constant $\mixing$ we write that $K$ is $\mixing$-$\xi$-mixing.
+
+\begin{remark}
+    Note that we can add the constraint that $\xi$ be normalized. Indeed, if $K$ is $\mixing$-$\xi$-mixing with $\xi(E)\neq 1$, then $K$ if $\bar \mixing$-$\bar\xi$-mixing with $\bar\mixing = \mixing \times \min\left(\xi(E), \frac{1}{\xi(E)}\right)\leq \mixing$.
+\end{remark}
+
+\begin{proposition}[Sufficient condition for mixing when $K$ admits a density]
+    If $K(x, dy) = \kappa(x, y)dy$ and there exists $\mixing >0$ and a measure density $\xi$ such that for any $x\in E$ and $y\in F$,
+    \begin{equation}
+        \mixing\xi(y) \leq \kappa(x, y) \leq \frac{1}{\mixing}\xi(y).
+    \end{equation}
+
+    then $K$ is mixing with constant $\mixing$ and $\xi(A)=\int 1_A(y)\xi(y)dy$.
+\end{proposition}
+
+\begin{proposition}
+    If $K$ is mixing with $\mixing$ and $\xi$, then for any $\mu$,
+    \begin{equation}
+        \mixing\xi(A)\leq K\mu(A)\leq \frac{1}{\mixing}\xi(A).
+    \end{equation}
+\end{proposition}
+\begin{proof}
+    \begin{equation}
+    \mixing\xi(A)\leq K\mu(A)=\int 1_A(x)\int K(u, dx)\mu(du) \leq \int 1_A(x)\int \frac{1}{\mixing}\xi(dx)\mu(du)=\frac{1}{\mixing}\xi(A)
+    \end{equation}
+\end{proof}
+
+
+\subsection{Optimal kernel $R_n$}\label{sec:optimal_kernel_appendix}
+
+\begin{definition}
+Let $y_n \in F$.
+Let $R_n : E \times \mathcal E \to \mathbb R^+$ a kernel defined by:
+    for any bounded function $f\in\mathcal F_b(E)$, and $u\in E$,
+    \begin{align}
+        R_n(u, f) = \int f(x)Q(u, x)G(x, y_n)dx
+    \end{align}
+We call $R_n$ the optimal kernel.
+\end{definition}
+For alternative definitions see for example \citealp[page 220]{cappehmm}.
+
+
+\subsection{Hilbert metric}
+
+\begin{definition}[Comparable measures] Let $\mu$ and $\nu$ be two measures on $(E, \mathcal E)$. $\mu$ and $\nu$ are said to be comparable if there exists $\infty > a, b >0$ such that for any $A\in \mathcal E$,
+\begin{equation}
+    a\nu(A) \leq \mu(A) \leq b\nu(A)
+\end{equation}
+\end{definition}
+
+\begin{proposition}
+Let $\mu$ and $\nu$ be two comparable measures on $(E, \mathcal E)$ and let $K$ be an unnormalized transition kernel on $(E, \mathcal E)$. Then, for any $n\geq 0$, $K^n\mu$ and $K^n\nu$ are comparable.
+\end{proposition}
+
+\begin{proof} By recursion,
+    \begin{equation}
+        bK\nu(A) \leq K\mu(A) = \int 1_A(x) \int K(u, dx)\mu(du) \leq aK\nu(A)
+    \end{equation}
+\end{proof}
+
+\begin{definition}[Hilbert metric]
+   Let $\mu$ and $\nu$ be two comparable probability distributions on $(E, \mathcal E)$. The Hilbert metric between $\mu$ and $\nu$ is defined as
+\begin{align}
+    h(\mu, \nu) = \log\left[\frac{\sup_{A\in\mathcal E, \nu(A)>0} \frac{\mu(A)}{\nu(A)}}{\inf_{A\in \mathcal E, \nu(A) > 0}\frac{\mu(A)}{\nu(A)}}\right]
+\end{align}
+\end{definition}
+
+\begin{proposition} If $\mu$ and $\nu$ are two comparable probability distributions on $(E, \mathcal E)$ and furthermore they both admit densities then,
+\begin{equation}
+h(\mu, \nu)=\log\left[\frac{\textrm{ess}\sup_x \frac{\mu(x)}{\nu(x)}}{\textrm{ess}\inf_x\frac{\mu(x)}{\nu(x)}}\right] = \log \left[\left\Vert\frac{\mu(x)}{\nu(x)}\right\Vert_\infty\left\Vert\frac{\nu(x)}{\mu(x)}\right\Vert_\infty\right]
+\end{equation}
+\end{proposition}
+
+\begin{definition}[Birkhoff contraction coefficient]
+Let $K$ be an unnormalized transition kernel. Define $\tau(K)$ such that
+\begin{equation}
+    \tau(K) = \sup_{0 < h(\mu, \nu) < \infty} \frac{h(K\mu, K\nu)}{h(\mu, \nu)}
+\end{equation}
+where the supremum is taken over comparable, positive measures $\mu$ and $\nu$.
+\end{definition}
+
+\begin{proposition}[Properties of the Birkhoff coefficient]\label{prop:hilbert}
+Let $K$ be an unnormalized transition kernel.
+\begin{itemize}
+    \item $\tau$ is sub-multiplicative, i.e. $\tau(KL)\leq \tau(K)\tau(L)$
+    \item $\tau \leq 1$
+    \item if in addition $K$ is $\mixing$-$\xi$-mixing, then $\tau(K) \leq \frac{1- \mixing^2}{1 + \mixing^2}$
+\end{itemize}
+\end{proposition}
+
+These properties are proven in \cite{cohen}, which studies the Hilbert metric is detail.
+
+\begin{proof} We have $\tau(K) = \tanh\left[\frac{1}{4}\Delta(K)\right]$ where $\Delta(K) = \sup_{\mu, \mu^\prime}h(K\mu, K\mu^\prime)$ ($\Delta$ for diameter). Since $K$ is $\mixing$-$\xi$-mixing, if $\mu$ and $\nu$ are two finite measures on $(E, \mathcal E)$,
+\begin{equation}
+    \mixing^2K\mu(A)\leq\mixing\xi(A)\leq K\mu(A)\leq \frac{1}{\mixing}\xi(A) \leq \frac{1}{\mixing^2}K\mu^\prime(A)
+\end{equation}
+   So, $h(K) \leq \log\left(\frac{1}{\mixing^4}\right)\leq \frac{1 - \mixing^2}{1 + \mixing^2}$.
+\end{proof}
+
+
+\begin{proposition}[Total variation - Hilbert comparaisons]\label{prop:comparaison}
+Without any hypotheses on $\mu, \nu$ finite measures, if $\bar \mu = \mu / \mu(E)$ and $\bar \nu = \nu / \nu(E)$ are normalized counterparts to $\mu$ and $\nu$, then
+    \begin{equation}\label{eq:tv-to-hilbert}
+        \Vert \bar\mu - \bar\nu \Vert \leq \frac{2}{\log(3)}h(\mu, \nu)
+    \end{equation}
+If in addition, $K$ is an $\mixing$-mixing kernel,
+\begin{equation}\label{eq:hilbert-to-tv}
+    h(K\mu, K\nu) \leq \frac{1}{\mixing^2} \Vert \mu - \nu \Vert
+\end{equation}
+These inequalities are proven in \cite{cohen}.
+\end{proposition}
+\section{Proof of \cref{theorem:learning}}\label{sec:proof-learning}
+%TODO THC 16/07
+\input{ch2-hmm/proof-approximation}
+
+\input{ch2-hmm/proof-diagonal}
+
+
+% TODO THC 16/07
+\input{ch2-hmm/generalized-operations}
+
+\subsection{Proof of \cref{theorem:kalman}}\label{sec:proof_kalman}
+\begin{proof}
+Let $P = L^T\Sigma^{-1}L$ where $L = (F ~-I)$ and $P_\lambda = P + \lambda I$.
+
+We have
+
+\begin{align}
+    -\log p(y|x) &= -C_\Sigma + \Vert \Sigma^{-1/2}(Fx + b -y)\Vert^2 = -C_\Sigma + \Vert \Sigma^{-1/2}(Lu + b)\Vert^2\\
+                 &= -C_\Sigma + uL^T\Sigma^{-1}Lu - 2b^T\Sigma^{-1}Lu + b^T\Sigma^{-1}b
+\end{align}
+
+If we define $\mu = P_{\lambda}^{-1}\beta$ where $\beta = L^T\Sigma^{-1}b$ then,
+\begin{align}
+    -\log p(y|x) & = -C + \Vert P_\lambda^{1/2}\left(u - \mu\right)\Vert^2\\
+                 & = -C + u^T P_\lambda u - 2 \mu^T P_\lambda u + \mu^T P_\lambda \mu\\
+                 & = -C + u^TPu + \lambda \Vert u \Vert^2 -2 \beta^Tu + \beta^TP_\lambda^{-1}P_\lambda P_\lambda^{-1}\beta\\
+                 & = -C + u^TPu + \lambda \Vert u \Vert^2 -2 \beta^Tu + \beta^TP_\lambda^{-1}\beta\\
+\end{align}
+
+And so,
+\begin{align}
+    - \log(p(y|x)/\hat p(y/x)) &= -C_\Sigma + uPu - 2\beta^Tu + b^T\Sigma^{-1}b + C - u^TPu - \lambda \Vert u \Vert^2 +2 \beta^Tu - \beta^TP_\lambda^{-1}\beta\\
+   &= C -C_\Sigma+ b^T\Sigma^{-1}b - \lambda \Vert u \Vert^2 - \beta^TP_\lambda^{-1}\beta
+\end{align}
+
+Using Woodbury,
+\begin{align}
+    b^T \Sigma^{-1}b - \beta^TP_\lambda^{-1}\beta &= b^T\left(\Sigma^{-1} - \Sigma^{-1}L\left[ L^T\Sigma^{-1}L + \lambda I\right]^{-1}L^T-\Sigma^{-1}\right)b\\
+    &=\lambda b^T\left( \lambda \Sigma + LL^T\right)^{-1}b
+\end{align}
+
+and
+
+\begin{align}
+    - \log(p(y|x)/\hat p(y/x)) &= C -C_\Sigma + \lambda b^T\left( \lambda \Sigma + LL^T\right)^{-1}b- \lambda \Vert u \Vert^2
+\end{align}
+
+With $C = C_\Sigma - \lambda b^T\left( \lambda \Sigma + LL^T\right)^{-1}b$, $\frac{p(y|x)}{\hat p(x, y)} = e^{\lambda \Vert u \Vert^2}$ and the result follows.
+\end{proof}
+
+\subsection{Learning Generalized Gaussian PSD Models}\label{sec:learning-general}
+From an approximation perspective, a Generalized Gaussian PSD Model is a Gaussian PSD Model in which one can optimize the anchor points $\tilde x$ and precision matrices $P$ of each kernel function. In the case of approximating transition kernels, this can yield significant improvements in model order. Indeed, a transition kernel $Q(u, x)$ is a conditional probability distribution which depends in which the probability of the value $x$ depends on the value $u$. This dependence is encoded in the combination of kernel evaluations but not in the kernel evaluations themselves.
+
+To approximate a function $f$ with a Generalized Gaussian PSD Model, we implicitly approximate the square-root of $f$ using a Gaussian Linear Model:
+\begin{align}\label{eq:non-convex}
+    \min_{\hat g \in \mathcal G_M} \frac{1}{n}\sum_{i=1}^n \left\vert f(x_i)- \hat g(x_i)^2\right\vert^2,
+\end{align}
+
+where $x_i$ are sampled or chosen on a grid, and $\mathcal G_M = \lbrace \sum_{j=1}^M\alpha_i k_{P_i}(x, \mu_i) ~\vert~ \mu_i \in \mathbb R^d, P = R_i^\top R_i, R_i \in\mathbb R^{d\times d}, \alpha_i \in \mathbb R \text{ for } 1\leq j\leq M \rbrace$. \cref{eq:non-convex} is a smooth, non-convex problem which can be solved approximately using off-the-shelf solver like L-BFGS \citep{lbfgs}.
+
+In practice, we initialize the model by placing $\mu_i$ is regions where $f(\mu_i)$ is large. In the case where $f(u, x)$ is a transition kernel $Q(u, x)$, one strategy is to chose $[\mu_i]_u$ on a grid (or sampled uniformly) and then choose $[\mu_i]_v$ such that $f(\mu_i) = \sup_x f([\mu_i]_u, v)$. This is particularly interesting when $Q$ is a non-linear Gaussian model $Q(u, x) \propto e^{-\Vert\Sigma^{-1/2}(x - h(u))\Vert^2}$ for some non-linear transition model $h$.

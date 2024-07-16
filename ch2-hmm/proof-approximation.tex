@@ -1,0 +1,98 @@
+\subparagraph{Notation and background results} In this section, $\Vert \cdot \Vert$ without any subscript denotes $\Vert \cdot\Vert_{W_2^\beta(\Omega)}$. Let $f$ a target function defined on $\Omega = (-1, 1)^d$ that verifies \cref{assumption:target_function}, and let $g = \sqrt{f}$. Let $\nu = \min(1, d/2\beta)$. Let $\epsilon > 0$ and $\delta > 0$. In this proof all constants $C$ and exponents $\alpha, \gamma, \rho, \ldots$ are independent of $f, g, \hat g, \hat f$ unless otherwise stated. Only $\beta, \nu$, $\tilde nu$ and $\theta$ have importance. We recall also the Gagliardo-Nirenberg inequality, that will be used later.
+\begin{lemma}[Gagliardo-Nirenberg inequality\cite{wendland2004scattered}]\label{lemma:gargliano}
+Let $u\in L^\infty(\mathbb R^d)\cap W^{m, 2}(\mathbb R^d)$ then
+    \begin{align}
+        \Vert u \Vert_{L^\infty(\Omega)} \leq C \Vert u\Vert_{W^{m, 2}(\Omega)}^\theta \Vert u\Vert_{L^2(\Omega)}^{1-\theta}
+    \end{align}
+    where $\theta = \frac{d}{m}$ and $C$ is independent of $u$.
+\end{lemma}
+
+
+\subparagraph{Setting the function space $\mathcal H_\eta$ and $g_{\tau, \epsilon}$}
+Set $\tau = \epsilon^{-2/\beta}$ and $\lambda = \epsilon^{\frac{2\beta + d}{\beta}}$ and $\mathcal H_\eta$ the reproducing kernel Hilbert space associated to $k_\eta$ where $\eta = \tau 1_d$.
+
+\subparagraph{Existence and properties of $g_{\tau, \epsilon}$}
+As a consequence of the Stein extension theorem (see Corollary A.3 of \cite{ciliberto2021}), there exists a function $\tilde g \in W^\beta_2(\Omega)$ such that $\tilde g_{\vert \Omega}=g$ and $\Vert \tilde g\Vert_{W_2^\beta(\Omega)} \leq\Vert g\Vert_{W_2^\beta(\Omega)}$ and $\Vert \tilde g\Vert_{L^\infty(\Omega)}\leq C\Vert g\Vert_{L^\infty(\Omega)}$.
+%
+According to \cite{ciliberto2021} and \cite{sampling-ulysse} (Proposition 7) there exists $g_{\tau, \epsilon}\in\mathcal H_\eta$ and some constants $C_1, C_2$ depending only on $\beta, d$ and independent of $g$ such that:
+\begin{align}
+&\Vert g - g_\tau \Vert_{L^\infty(\Omega)} \leq C_1 \epsilon^{1- \nu}\Vert g\Vert_{W^\beta_2(\Omega)}\label{eq:g-g-tau},\\
+&\Vert g_\tau \Vert_{\mathcal H_\eta}\leq C_2 \Vert g\Vert_{W^\beta_2(\Omega)}\epsilon^{-d/2\beta}\label{eq:g-tau}.
+\end{align}
+
+\subparagraph{Learning $\hat g$ and $\hat f$} Let $M, n \in \N$, draw $X\in\mathbb R^{n \times d}$ the training set and $\tilde X \in \mathbb R^{M \times d}$ the set of anchor points. Define $y \in \mathbb R^n$ such that $y_i = g(x_i)$ for any $1 \leq i \leq n$ and $x_i$ is the $i$-th row of $X$.
+%
+We formalize \cref{eq:learning-problem} explicitly as a kernel ridge regression problem below:
+%
+\begin{align}\label{eq:learning-problem-appendix}
+    \min_{a\in\mathbb R^d} \frac{1}{n} \vert a^T\Phi_{\eta}(X_i) - y_i\vert^2 + \lambda a^TK a
+\end{align}
+%
+where $\Phi_\eta(x) = (k_\eta(x, \tilde x_1) \dots k_\eta(x, \tilde x_M))^T\in\mathbb R^M$ and $K\in\mathbb R^{M\times M}$ is given by $K_{ij}=k_\eta(\tilde x_i, \tilde x_j)$.
+%
+Problem \cref{eq:learning-problem-appendix} is strongly convex and has a unique solution $\hat a$.
+%
+We denote $\hat g$ the Gaussian Linear Model defined by $\hat a, \eta,$ and $\tilde X$, i.e. such that for any $x \in\mathbb R^d$, $\hat g(x) = \hat a^T\Phi_\eta(x)$. Define $\hat f$ the Gaussian PSD Model $\hat f= \hat g^2$ where $\hat f(x) = \Phi_\eta(x)^T\hat a\hat a^T\Phi_\eta(x)$.
+%
+The analysis of \cite{sampling-ulysse} shows that when $M \geq C^\prime \log^d(\frac{1}{\epsilon})\log(\frac{1}{\delta\epsilon})\epsilon^{-d/\beta}$, and $n \geq C^\prime \epsilon^{-d/\beta}\log \frac{1}{\delta}$, then there exist two constants $C_3$ and $C_4$ independent of $g$ and $\hat g$ such that $\hat g$ verifies the following inequalities each with probability at least $1-\delta$,
+\begin{align}
+   &\Vert \hat g\Vert_\mathcal H\leq C_3\Vert g\Vert_{W^\beta_2(\Omega)}\epsilon^{-d/2\beta}\label{eq:hat-g}\\
+    &\Vert g - \hat g\Vert_{L^2(\Omega)} \leq C_4 \Vert g\Vert_{W^\beta_2(\Omega)}\epsilon.\label{eq:g-hat-g}
+\end{align}
+
+\subparagraph{Deriving the bound for $g - \hat{g}$ in $L^\infty(\Omega)$}
+In particular, using the triangle inequality and combining \cref{eq:g-g-tau} and \cref{eq:g-hat-g}, there exists a constant $C_5$ such that with probability at least $1-\delta$,
+\begin{align}
+    &\Vert g_{\tau, \epsilon} - \hat g\Vert_{L^2(\Omega)} \leq C_5\Vert g\Vert_{W^\beta_2(\Omega)}\epsilon.\label{eq:g-tau-hat-g}
+\end{align}
+%
+We now have all the ingredients to bound $\Vert g - \hat g\Vert_{L^\infty(\Omega)}$ in high probability. First, notice that :
+%
+\begin{align}
+   \Vert g - \hat g\Vert_{L^\infty(\Omega)} \leq \Vert g - g_{\tau, \epsilon}\Vert_{L^\infty(\Omega)}+ \Vert g_{\tau, \epsilon} - \hat g\Vert_{L^\infty(\Omega)}.
+\end{align}
+%
+We apply the Gagliardo-Nirenberg inequality (\cref{lemma:gargliano}) to $\Vert g_{\tau, \epsilon} - \hat g\Vert_{L^\infty(\Omega)}$:
+\begin{align}
+\Vert \hat g - g_{\tau, \epsilon}\Vert_{L^\infty(\Omega)}\leq C \Vert \hat g - g_{\tau, \epsilon}\Vert_{W^{m}_2(\Omega)}^\theta \Vert \hat g - g_{\tau, \epsilon}\Vert_{L^2(\Omega)}^{1-\theta}.
+\end{align}
+with $\theta = \frac{d}{2m}$ and $m \geq d/2$ (we fix $m$ when we optimize the exponents below) and $C$ is a constant independent of $\hat g$ and $g_{\tau, \epsilon}$.
+
+The Sobolev norm $\Vert h \Vert_{W^m_2}(\mathbb R^d)$ is upper bounded by the rkhs norm $\Vert h \Vert_{\mathcal H_\eta}$ for $h\in \mathcal H_\eta \subset W^m_2(\mathbb R^d)$. Thus, applying the triangle inequality and bounds \cref{eq:g-tau,eq:hat-g,eq:g-tau-hat-g} there exists a constant $C_6$  such that with probability at least $1 - 2\delta$,
+\begin{equation}\label{eq:g-hat-g-tau-infty}
+\Vert \hat g - g_{\tau, \epsilon}\Vert_{L^\infty(\mathbb R^d)}\leq C_6\Vert g\Vert\epsilon^{1 - \theta - \theta d/2\beta}.
+\end{equation}
+
+Combining \cref{eq:g-g-tau,eq:g-hat-g-tau-infty}, there exist two constants $C, C^\prime > 0$ such that with probability at least $1 - 2\delta$,
+\begin{align}
+   \Vert g- \hat g\Vert_{L^\infty(\Omega)} \leq C\Vert g\Vert_{W^\beta_2(\Omega)} \epsilon^{1-\nu} + C^\prime\Vert g\Vert_{W^\beta_2(\Omega)}\epsilon^{1- \theta - \theta d/2\beta}
+\end{align}
+
+Choosing $m = \beta + \frac{d}{2}$, there exists a constant $C_7>0$  such that for $\epsilon$ small enough with probability at least $1 - 2\delta$,
+\begin{align}
+    \Vert g - \hat g\Vert_{L^{\infty}(\Omega)}\leq C\Vert g\Vert_{W^\beta_2(\Omega)}\epsilon^{1- d/2\beta}.
+\end{align}
+
+\subparagraph{Bounding $\Vert g+ \hat g\Vert_{L^\infty(\Omega)}$}
+Using the triangle inequality and \cref{eq:hat-g}, there exists a constant $C_8>0$ and $\rho > 0$ such that with probability at least $1- \delta$,
+\begin{align}
+    \Vert g +\hat g\Vert_{L^\infty(\Omega)} \leq 2\Vert g\Vert_{L^\infty(\Omega)} + \Vert g-\hat g\Vert_{L^\infty(\Omega)} \leq 2\Vert g\Vert_{L^\infty(\Omega)} + C\Vert g\Vert_{W^\beta_2(\Omega)}\epsilon^{1- d/2\beta}.
+\end{align}
+
+\subparagraph{Bounding $\Vert f - \hat f\Vert_\infty$}
+Notice that since $a^2 - b^2 = (a-b)(a+b)$,
+\begin{align}
+    \Vert \hat f - f \Vert_{L^\infty(\Omega)} \leq \Vert g - \hat g\Vert_{L^\infty(\Omega)} \Vert g +\hat g\Vert_{L^\infty(\Omega)}.
+\end{align}
+
+Combining the above bounds:
+
+\begin{align}
+    \Vert \hat f - f \Vert_{L^\infty(\Omega)} \leq C\Vert g\Vert^2_{W^\beta_2(\Omega)}\epsilon^{2- d/\beta} + C^\prime \Vert g\Vert^2_{W^\beta_2(\Omega)}\epsilon^{1 - d/2\beta}
+\end{align}
+
+Since $\beta > d/2$, under the conditions on $M, n$, there exists a constant $C^{\prime\prime}= C + C^\prime$ depending only on $\Omega, d, \beta$ and independent of $f, g,\hat g, \hat f$ such that with probability at least $1-3\delta$,
+
+\begin{align}
+    \Vert \hat f - f \Vert_{L^\infty(\Omega)} \leq C^{\prime\prime}\Vert g\Vert^2_{W^\beta_2(\Omega)} \epsilon^{1 - d/2\beta}
+\end{align}

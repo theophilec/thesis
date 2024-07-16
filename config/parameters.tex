@@ -1,0 +1,216 @@
+% Encodage des caractères et langue du document
+\usepackage{setspace}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+%\usepackage[english,french]{babel}
+\usepackage[english]{babel}
+\usepackage{textgreek}
+
+\setcounter{tocdepth}{3} % Pour que les subsubsections n'apparaissent pas dans la TOC
+\setcounter{secnumdepth}{3} % Pour que les subsubsections ne soient pas numérotées
+%\usepackage{fixltx2e}
+
+%%%%%%%%%% Gestions des marges %%%%%%%%%%
+\usepackage{geometry} % Si on a besoin d'une configuration plus précise des marges
+\geometry{a4paper,                % format de papier
+% Définition des marges :
+  left= 3cm,right = 2cm,  % marge intérieure extérieure à la page
+  top = 3cm,bottom = 3cm,
+% En-tête et pied de page :
+  headheight=6mm,         % espace réservé à l'en-tête dans la marge top
+  %headsep=3mm,            % espace entre le corps et l'en-tête
+  %footskip=9mm            % espace entre le corps et le pied de page
+  marginparwidth = 16mm
+}
+
+\raggedbottom
+\reversemarginpar
+% \usepackage{showframe} % pour afficher les traits des marges
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%% Gestion maths %%%%%%%%%%
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{mathtools} % version modifiée de amsmath, ajoute des symboles, etc.
+\usepackage{mathrsfs}% pour rajouter un format de lettres façon calligraphie en math mode.
+\DeclareMathOperator{\sinc}{sinc}
+\DeclareMathOperator{\e}{e}
+
+%\usepackage[locale = FR]{siunitx} % Pour gérer les unités
+%\sisetup{inter-unit-product=\ensuremath{{}\cdot{}}} % pour mettre des points médians entre les unités quand il y en a plusieurs
+%\sisetup{separate-uncertainty=true,multi-part-units=single} % pour faire des incertitudes en écrivant \SI{valeur(incertitude)}{unité}
+%\DeclareSIUnit\vitesse{\meter\per\second}
+%\usepackage{eurosym}
+%\DeclareSIUnit{\octet}{o}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%  Graphics / Table / List %%%%%%%%%%%
+\usepackage{graphicx,array,tikz,multirow}
+\usepackage{caption,subcaption} % permet de faire des subfigures (remplace le package subfig)
+\usepackage{svg,float}
+\usepackage{booktabs,paralist}
+\newcolumntype{x}[1]{>{\centering\arraybackslash\hspace{0pt}}p{#1}}
+\usepackage[section]{placeins}
+\usepackage{hanging}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%% Header / Foot %%%%%%%%%%%
+\usepackage{fancyhdr,emptypage} % garantit que les pages blanches avant les débuts de chapitres soient vraiment blanches (pas d'en-tête ni de pied de page)
+\let\cleardoublepage\clearpage
+
+\fancypagestyle{plain}{ %% Page chapitre, toc ...
+    \fancyhead{}\fancyfoot[C]{\thepage}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0pt}
+}
+
+%%%%%%%%%%% Page normale
+\pagestyle{fancy}
+    % \renewcommand{\chaptermark}[1]{\markboth{\chaptername \ \thechapter.\ #1}{}} % sert à personnaliser l'affichage de \leftmark (ici : le mot "Chapitre", le numéro, un point, et le titre du chapitre, sans écrire en majuscules)
+    % \renewcommand{\chaptermark}[1]{\markleft{\chaptername \ \thechapter.\ #1}{}}
+    % \renewcommand{\sectionmark}[1]{\markright{\thesection.\ #1}} % sert à personnaliser l'affichage de \rightmark (ici : le numéro et le titre de la section en cours, sans écrire en majuscules)
+    \fancyhf{} % assure que les entête et pieds de page sont vides au départ
+    \fancyhead[LE]{\selectfont\nouppercase{\leftmark}}
+    \fancyhead[RO]{\selectfont\nouppercase{\rightmark}}
+    \fancyfoot[C]{\thepage}
+% Explications :
+% L = left, R = right, C = center, E = even pages, O = odd pages
+%\leftmark : adds name and number of the current top-level structure (for example, Chapter for reports and books classes; Section for articles ) in uppercase letters.
+%\rightmark : adds name and number of the current next to top-level structure (Section for reports and books; Subsection for articles) in uppercase letters.
+
+%%%%%%%%%%% Personnaliser les premières pages des chapitres
+\usepackage[Lenny]{fncychap}
+\ChNameVar{\fontsize{25}{25}\usefont{OT1}{phv}{m}{n}\selectfont}
+\ChRuleWidth{0pt}
+\ChNumVar{\fontsize{60}{62}\selectfont\textcolor{curcolor}}
+
+\makeatletter
+\ChTitleVar{\Huge\rm}
+\renewcommand{\DOCH}{%
+\setlength{\fboxrule}{\RW} % Let fbox lines be controlled by
+\fbox{\CNV\FmN{\@chapapp}\space \CNoV\thechapter}\par\nobreak
+\vskip 20\p@}
+\renewcommand{\DOTIS}[1]{%
+\CTV\bfseries\FmTi{#1}\par\nobreak
+\vskip 20\p@}
+\makeatother
+
+\renewcommand{\thesection}{\arabic{section}}
+
+% Pour la table des matières
+\usepackage[francais,nohints,tight]{minitoc}		% Mini table des matières, en français
+\setcounter{minitocdepth}{2} % Mini-toc détaillées (sections/sous-sections)
+\setlength{\mtcindent}{-1em} % décalage des minitoc à gauche
+\dominitoc
+
+\usepackage[nottoc]{tocbibind} % pour que la bibliographie apparaisse dans la table des matières (avec l'option pour que la table des matières elle-même n'apparaisse pas dans la table des matières).
+% \usepackage{tocloft}% pour pouvoir modifier les tailles d'espacement dans la table des matières
+\usepackage[titles]{tocloft}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%% Divers %%%%%%%%%%%
+\usepackage{textcomp} % rajoute des symboles
+\usepackage{xcolor} % pour ajouter de la couleur (si besoin)
+\usepackage{epigraph} % pour rajouter des citations en début de chapitre  \epigraph{Citation}}{Auteur}
+\usepackage{titling}
+\usepackage{lipsum}
+\usepackage{csquotes} % added 07/09/21
+
+\usepackage{xspace}
+\usepackage{afterpage}
+\renewcommand{\baselinestretch}{1.2} % interligne
+
+%\usepackage[textsize=footnotesize]{todonotes}
+
+
+
+%%% THEOREM
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}[theorem]{Assumption}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}[theorem]{Example}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%% Links ref  %%%%%%%%%%%
+%
+% Configuration de hyperref (before clever ref)
+\definecolor{color_ref}{rgb}{0.18, 0.31, 0.31} % couleur cite
+\definecolor{color_link}{RGB}{36, 56, 141}
+\definecolor{curcolor}{RGB}{113,127,184} % couleur des liens (bleu clair)
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks=true, % colore les liens au lieu de les encadrer
+	pdfstartview=FitV, % ouvre le PDF de façon à ce qu'il prenne la taille verticale de l'écran
+	urlcolor=color_link, % choix de la couleur des liens URL
+	linkcolor= color_link, % choix de la couleur des liens internes (table des matières, etc.)
+	citecolor=color_ref % choix de la couleur des liens de citations
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%% Bibliography ref  %%%%%%%%%%%
+\usepackage[hyperref=true,natbib=true,
+			backref=true,date=year,
+			backend=biber,
+			url=false,doi=false,isbn=false,%
+			minbibnames=6, % nb min authors in biblio
+			maxbibnames=6, % nb max authors in biblio
+			maxcitenames=1,mincitenames=1, % nb min authors as textual
+			maxalphanames=1, %nb author ref
+			style=alphabetic,%authoryear, numeric ,  alphabetic
+			sorting=nyt]{biblatex}
+\renewcommand*{\bibfont}{\footnotesize}
+\setlength\bibitemsep{\itemsep}
+\renewbibmacro{in:}{} % remove In
+%
+\usepackage{bookmark}
+\usepackage{acronym}
+\usepackage[nameinlink]{cleveref} % noabbrev
+\crefname{chapter}{Chapter}{Chapters}
+\crefname{section}{Sec.}{Secs.}
+\Crefname{figure}{Figure}{Figures} % traduction des références aux figures/tables/équations
+\crefname{figure}{figure}{figures}
+\Crefname{equation}{Eq.}{Eqs.}
+\crefname{equation}{eq.}{eqs.}
+\Crefname{table}{Table}{Tables}
+\crefname{table}{table}{tables}
+
+\crefname{assumption}{Assumption}{Assumptions}
+\crefname{table}{Table}{Tables}
+\crefname{theorem}{Theorem}{Theorems}
+\crefname{lemma}{Lemma}{Lemmas}
+\crefname{corollary}{Corollary}{Corollaries}
+\crefname{example}{Example}{Examples}
+\crefname{appendix}{Appendix}{Appendixes}
+\crefname{remark}{Remark}{Remark}
+
+
+\renewcommand*{\labelalphaothers}{}
+\DeclareLabelalphaTemplate{
+  \labelelement{
+    \field[final]{shorthand}
+    \field{labelname}
+    \field{label}
+  }
+  \labelelement{\literal{,\addhighpenspace}}
+  \labelelement{\field{year}}
+}
+
+\AtEveryBibitem{%
+    \clearfield{note} % Remove note
+    \clearlist{language} % Remove doi
+}
+
+\usepackage{enumitem}
+\usepackage{textcomp}
+\newlist{enumthm}{enumerate}{1} % set up a dedicated enumeration env.
+\setlist[enumthm]{label=\upshape(\alph*),ref=\upshape\thetheorem(\alph*)}
+\crefalias{enumthmi}{theorem} % alias 'enumthmi' counter to 'thm'

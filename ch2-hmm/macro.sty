@@ -1,0 +1,206 @@
+\DeclareMathOperator{\partialpsd}{\textsc{PartialEval}}
+\DeclareMathOperator{\productpsd}{\textsc{Product}}
+\DeclareMathOperator{\marginalpsd}{\textsc{Marginal}}
+\DeclareMathOperator{\integralpsd}{\textsc{Integral}}
+\DeclareMathOperator{\filtersteppsd}{\textsc{FilterStep}}
+\newcommand{\todop}[1]{\textcolor{red}{\textrm{TODO:} #1}}
+\newcommand{\barhat}[1]{\tilde{{#1}}}
+\newcommand\independent{\protect\mathpalette{\protect\independenT}{\perp}}
+\def\independenT#1#2{\mathrel{\rlap{$#1#2$}\mkern2mu{#1#2}}}
+
+
+
+
+\newcommand{\fix}{\marginpar{FIX}}
+\newcommand{\new}{\marginpar{NEW}}
+
+
+\newcommand{\Nystrom}[1]{{Nystr\"om}}
+
+\providecommand{\abs}[1]{\lvert{#1}\rvert}
+\providecommand{\set}[1]{\{#1\}}
+% \providecommand{\scal}[2]{\left\langle{#1},{#2}\right\rangle}
+\providecommand{\nor}[1]{\bigl\|{#1}\bigr\|}
+\providecommand{\tv}[1]{\bigl\|{#1}\bigr\|_\text{TV}}
+\providecommand{\ran}[1]{\operatorname{ran}{#1}}
+\providecommand{\tr}{\operatorname{Tr}}
+
+% Numbers
+\newcommand{\R}{\mathbb R}
+\newcommand{\CC}{\mathbb C}
+\newcommand{\N}{\mathbb N}
+\newcommand{\BH}{{{\mathcal B}(\hh)}}
+
+% Hilbert spaces
+\newcommand{\hh}{\mathcal H}
+\newcommand{\kk}{\mathcal K}
+
+% Greek letters
+\newcommand{\la}{\lambda}
+\newcommand{\eps}{\epsilon}
+\newcommand{\lspan}[1]{\operatorname{span}\{#1\}}
+\newcommand{\lspanc}[2]{\overline{\operatorname{span}\{#1~|~#2\}}}
+\newcommand{\supp}[1]{\operatorname{supp}{#1}}
+\newcommand{\argmin}[1]{\mathop{\operatorname{argmin}}_{#1}}
+
+\newcommand{\prob}[1]{{\mathbb P}[#1]}
+\newcommand{\expect}[1]{{\mathbb E}[#1]}
+
+\newcommand{\G}{{\cal G}}
+\newcommand{\Ln}{{L^2(\X,\rho_n)}}
+
+\renewcommand{\set}[2]{{\{{#1}~|~{#2}\}}}
+\newcommand{\Z}{{\cal Z}}
+\newcommand{\X}{{\cal X}}
+\newcommand{\Y}{{\cal Y}}
+\newcommand{\vz}{{\mathbf z}}
+\newcommand{\vx}{{\mathbf x}}
+\newcommand{\vm}{\tilde{\mathbf m}}
+
+\newcommand{\EE}{{\mathcal E}}
+\newcommand{\cc}{C}
+\newcommand{\rhox}{{\rho_{\X}}}
+\newcommand{\Ltwo}{{L^2(\X,\rhox)}}
+\renewcommand{\S}{{S}}
+\renewcommand{\L}{{L}}
+\newcommand{\C}{{C}}
+\renewcommand{\k}{{K}}
+\newcommand{\K}{K_n}
+\newcommand{\Cl}{\C_\la}
+\newcommand{\Cn}{{\C}_n}
+\newcommand{\Cnl}{{\C}_{n\lambda}}
+\newcommand{\Cj}{{\C}_j}
+\newcommand{\Cjl}{{\C}_{j\lambda}}
+\newcommand{\Aj}{A_j}
+\newcommand{\Bj}{B_j}
+\newcommand{\tj}{\theta_j}
+\newcommand{\Vj}{V_j}
+\newcommand{\Cm}{{\C}_m}
+\newcommand{\Sn}{S_n}
+\newcommand{\Sj}{S_j}
+\newcommand{\yj}{\bar{y}_j}
+\newcommand{\fh}{f_\hh}
+\newcommand{\Tj}{T_j}
+\newcommand{\Tjl}{T_{j\la}}
+\newcommand{\Dj}{D_j}
+\newcommand{\Djl}{D_{j\la}}
+\newcommand{\Zm}{Z_m}
+\newcommand{\Pm}{P_m}
+\newcommand{\yn}{\widehat y_n}
+
+\newcommand{\fn}{f_n}
+\newcommand{\frho}{f_\rho}
+
+
+\newcommand{\vy}{{\mathbf y}}
+\newcommand{\vc}{{\mathbf c}}
+
+
+\newcommand{\MM}{{\bf M}}
+
+\newcommand{\eqals}[1]{\begin{align*}#1\end{align*}}
+
+
+
+
+
+\declaretheorem[name=Theorem,refname=Theorem]{theorem}
+\declaretheorem[name=Lemma,sibling=theorem]{lemma}
+\declaretheorem[name=Proposition,refname=Proposition,sibling=theorem]{proposition}
+\declaretheorem[name=Remark]{remark}
+\declaretheorem[name=Corollary,refname=Corrollary,sibling=theorem]{corollary}
+\declaretheorem[name=Definition,refname=Definition]{definition}
+\declaretheorem[name=Conjecture,sibling=theorem]{conjecture}
+\declaretheorem[name=Axiom]{axiom}
+\declaretheorem[name=Assumption,refname=Assumption]{assumption}
+% \declaretheorem[name=Algorithm,refname=Algorithm]{algorithm}
+
+\declaretheorem[name=Example]{example}
+
+
+
+
+\newcommand{\eqal}[1]{\begin{align}#1\end{align}}
+\newcommand{\bpr}{\begin{proof}}
+\newcommand{\epr}{\end{proof}}
+\newcommand{\be}{\begin{equation}}
+\newcommand{\ee}{\end{equation}}
+
+% \newtheorem{definition}{Definition}
+\newcommand{\bd}{\begin{definition}}
+\newcommand{\ed}{\end{definition}}
+
+\newcommand{\bi}{\begin{itemize}}
+\newcommand{\ei}{\end{itemize}}
+
+
+% \newtheorem{ass}{Assumption}
+\newcommand{\ba}{\begin{ass}}
+\newcommand{\ea}{\end{ass}}
+
+
+% \newtheorem{remark}{Remark}
+\newcommand{\br}{\begin{remark}}
+\newcommand{\er}{\end{remark}}
+
+% \newtheorem{proposition}{Proposition}
+\newcommand{\bp}{\begin{proposition}}
+\newcommand{\ep}{\end{proposition}}
+
+% \newtheorem{lemma}{Lemma}
+\newcommand{\blm}{\begin{lemma}}
+\newcommand{\elm}{\end{lemma}}
+
+% \newtheorem{theorem}{Theorem}
+\newcommand{\bt}{\begin{theorem}}
+\newcommand{\et}{\end{theorem}}
+
+% \newtheorem{corollary}{Corollary}
+\newcommand{\bcor}{\begin{corollary}}
+\newcommand{\ecor}{\end{corollary}}
+
+% \newtheorem{example}{Example}
+\newcommand{\bex}{\begin{example}}
+\newcommand{\eex}{\end{example}}
+
+
+
+
+
+\def\sectionautorefname{Sec.}
+\def\subsectionautorefname{Sec.}
+
+
+
+
+\crefname{assumption}{Assumption}{Assumptions}
+\crefname{equation}{}{}
+\Crefname{equation}{Equation}{Equations}
+\crefname{figure}{Fig}{Figs.}
+\crefname{table}{Table}{Tabs.}
+\crefname{section}{Section}{Sec.}
+\crefname{theorem}{Theorem}{Theorems}
+\crefname{lemma}{Lemma}{Lemmas}
+\crefname{corollary}{Corollary}{Cor.}
+\crefname{example}{Example}{Examples}
+\crefname{remark}{Remark}{Remarks}
+\crefname{algocf}{Algorithm}{Algorithms}
+
+\crefname{appendix}{Appendix}{Appendices}
+\crefname{subappendix}{Appendix}{Appendices}
+\crefname{subsubappendix}{Appendix}{Appendices}
+
+
+\newcommand{\Lt}{L^2(\X, \rhox)}
+\newcommand{\Ltn}{L^2(\X, \hat \rho _\X)}
+\newcommand{\lc}{\left\{}
+\newcommand{\rc}{\right\}}
+\newcommand{\lp}{\left(}
+\newcommand{\rp}{\right)}
+
+
+
+\providecommand{\norh}[1]{\left\Vert{#1}\right\Vert_\hh}
+\providecommand{\scalh}[2]{\left\langle{#1},{#2}\right\rangle_\hh}
+
+\newcommand{\Sr}{S_\rho}

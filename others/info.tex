@@ -1,0 +1,43 @@
+\usepackage[nomaketitle]{config/psl-cover/psl-cover}
+
+\sujet{Le titre du manuscrit de thèse pour obtenir le titre de docteur}
+\author{Théophile Cantelobre}
+\encadrant{Benjamin GUEDJ \\ Alessandro RUDI \\ Carlo CILIBERTO}
+
+\institute{Inria Paris - École Normale Supérieure - PSL}
+\doctoralschool{Titre de l'école doctorale}{xxx}
+\specialty{Informatique}
+\laboratory{Département d'informatique de l'École Normale Supérieure (DI-ENS)}
+\date{16 octobre 2024}
+
+\pslassetspath{config/psl-cover}
+
+\jurymember{1}{Prénom \textsc{Nom 1}}{Affiliation & \emph{Examinateur}}{} % le président doit être en premier
+\jurymember{2}{Prenom \textsc{Nom 2}}{Affiliation}{Rapporteur}
+\jurymember{3}{Prenom \textsc{Nom 3}}{Affiliation}{Rapporteur}
+\jurymember{4}{Prenom \textsc{Nom 4}}{Affiliation}{Rapporteur}
+\jurymember{5}{Prenom \textsc{Nom 5}}{Affiliation}{Rapporteur}
+\jurymember{6}{Prenom \textsc{Nom 6}}{DR Affiliation}{Directeur de thèse}
+% \jurymember{7}{Prénom NOM}{Titre, établissement}{Directeur de thèse}
+
+% entre 1700 et 4000 signes ?
+\frabstract{
+\lipsum[10-11]
+}
+
+\enabstract{
+\lipsum[13-14]
+}
+
+\frkeywords{mot clé 1, mot clé 2, mot clé 3, mot clé 4}
+\enkeywords{keyword 1, keyword 2, keyword 3, keyword 4}
+
+
+%%%%%%% Paramètres PDF
+\title{\sujet}
+\hypersetup{
+pdftitle={Thèse PHD CANTELOBRE},
+pdfsubject={\sujet},
+pdfauthor={\theauthor},
+pdfkeywords={\thefrkeywords},
+}

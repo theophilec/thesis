@@ -1,0 +1,54 @@
+\documentclass[a4paper,11pt,twoside]{book}
+% Template Latex pour les thèses à Paris Sciences et Lettres (PSL university)
+
+% Issu de template de Pierre Guillou https://pierre.guillou.net/psl-cover/2018/ (Version 1.2 (20 juillet 2019))
+% couvertures accessibles sur le site du college doctoral de PSL : https://collegedoctoral.psl.eu/doctorat-psl/espace-ressources/
+
+% Proposé par Arthur Chavignon, février 2022
+
+\input{config/parameters} % mise en forme globale du document
+\input{config/macro.tex} % macro Latex
+\input{others/glossaire.tex} % import du glossaire
+\input{others/info.tex} % info de la thèse (titre, auteur, jury, résumé...)
+\addbibresource{mabiblio.bib} % ajout de la bibliographie
+\addbibresource{ch1-diffy/diffy_biblio.bib}
+\addbibresource{ch2-hmm/biblio.bib}
+
+%%%%%%%%%%%%%%%% DEBUT DU DOCUMENT %%%%%%%%%%%%%%%%%%
+\begin{document}
+
+
+\pslcover{} % création des couvertures, avec résumé/abstract
+
+\frontmatter
+\include{others/remerciements}
+\AddResumeAbstract % macro pour résumé et abstract
+
+\begin{singlespace} % réduction de l'interligne pour condenser
+% Utiliser \adjustmtc si un décalage apparaît dans les petites tables des matières
+\phantomsection \addcontentsline{toc}{chapter}{Table des matières}\adjustmtc
+\tableofcontents\newpage
+\renewcommand{\listfigurename}{Liste des figures}
+\phantomsection\listoffigures\adjustmtc % Liste des figures
+\phantomsection\listoftables\adjustmtc % Liste des tableaux
+{\printglossary[type=\acronymtype,title=Acronymes et anglicismes]}\adjustmtc
+\end{singlespace}
+
+%%%%%%%%%%%%%%%% CHAPITRES %%%%%%%%%%%%%%%%%%
+\mainmatter
+\setcounter{page}{1}
+\include{intro/intro-main}
+\include{ch1-diffy/ch1-diffy-main}
+\include{ch2-hmm/ch2-hmm-main}
+
+%%%%%%%%%%%%%%%% AUTRES PAGES %%%%%%%%%%%%%%%%%%
+\backmatter
+\include{others/conclusion}
+\include{others/liste_publi}
+
+\begin{singlespace}
+\setlength\labelalphawidth{0em}
+\small\printbibliography[heading=bibintoc,title=Bibliographie]
+\end{singlespace}
+
+\end{document}

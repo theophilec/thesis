@@ -1,0 +1,11 @@
+\usepackage[acronym,toc,nogroupskip,section=chapter,nonumberlist,nopostdot]{glossaries}
+\makeglossaries
+
+% Pour les anglicisme
+% \newacronymen{ref}{accro}{longname}{traduction}
+\newcommand{\newacronymen}[4]{\newacronym{#1}{#2}{\textit{#3} (#4)}}
+
+%% Info
+\newacronymen{gpu}{GPU}{Graphical Processing Unit}{processeur graphique}
+\newacronym{ram}{RAM}{\textit{Random Access Memory}}
+\newacronym{ssd}{SSD}{\textit{Solid-State Drive}}
