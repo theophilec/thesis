@@ -8,7 +8,7 @@
 
 \input{config/parameters} % mise en forme globale du document
 \input{config/macro.tex} % macro Latex
-\input{others/glossaire.tex} % import du glossaire
+%\input{others/glossaire.tex} % import du glossaire
 \input{others/info.tex} % info de la thèse (titre, auteur, jury, résumé...)
 \addbibresource{mabiblio.bib} % ajout de la bibliographie
 \addbibresource{ch1-diffy/diffy_biblio.bib}
@@ -31,12 +31,13 @@
 \renewcommand{\listfigurename}{Liste des figures}
 \phantomsection\listoffigures\adjustmtc % Liste des figures
 \phantomsection\listoftables\adjustmtc % Liste des tableaux
-{\printglossary[type=\acronymtype,title=Acronymes et anglicismes]}\adjustmtc
+%{\printglossary[type=\acronymtype,title=Acronymes et anglicismes]}\adjustmtc
 \end{singlespace}
 
 %%%%%%%%%%%%%%%% CHAPITRES %%%%%%%%%%%%%%%%%%
 \mainmatter
-\setcounter{page}{1}
+%\setcounter{page}{1}
+%\adjustmtc
 \include{intro/intro-main}
 \include{ch1-diffy/ch1-diffy-main}
 \include{ch2-hmm/ch2-hmm-main}
