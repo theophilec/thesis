@@ -72,15 +72,13 @@ Since $R_{k+1}$ is mixing, we apply \cref{eq:hilbert-to-tv} from \cref{prop:comp
 where we use that the Hilbert contraction coefficient is sub-multiplicative and can be bounded away from $1$ as a function of $\mixing$ (we denote it $\tau_\mixing$ this upper-bound given in \cref{prop:hilbert}). By denoting $\delta_n = \Vert \bar\mu_n - \bar{R}_n(\bar\mu_{n-1})\Vert_{TV}$ we obtain the result.
 \end{proof}
 
-We now prove \cref{lemma:bound}.
-
-\begin{proof}
-We apply the triangle inequality to $\Vert \pi^\nu_n - \hat\pi_0\Vert_{TV}$:
-\begin{align}
-    \Vert \pi^\nu_n - \hat\pi_0\Vert_{TV} \leq  \Vert \pi^\nu_n - \pi_n^{\hat \pi_0}\Vert_{TV} + \Vert \pi^{\hat\pi_0}_n - \hat\pi_n\Vert_{TV}
-\end{align} and the result follows from \cref{prop:optimal-forgetting} and \cref{prop:lemma_bound}.
-\end{proof}
-
+We now state and prove \cref{lemma:bound}:
+\begin{lemma}\label{lemma:bound} Let $T > 1$.
+    \begin{align}
+        \left\Vert \pi_n^\nu - \hat\pi_n\right\Vert_{TV} \leq \underbrace{C_\mixing\tau_\mixing^n\Vert \hat\pi_0 - \nu\Vert_{TV}}_{A_n}+ \underbrace{\delta_n + C_\mixing\sum_{k=1}^n \tau_\mixing^{n-k-1}\delta_k}_{B_n}
+    \end{align}
+where $\delta_k = \Vert \barhat{R}_k(\hat \pi_{k-1}) - \bar R_n(\hat \pi_{k-1})\Vert_{TV}$.
+\end{lemma}
 \subsection{Bound with smooth, bounded approximations}
 
 Let $\hat Q : E \times E\to\mathbb R^+$ and $\hat G: E \times F \to \mathbb R^+$ two bounded approximations of $Q$ and $G$. Given a sequence $(z_k)\in F^\mathbb N$, define the approximate non-negative kernel $\hat R_n(u, x) = \hat Q(u, x)\hat G(x, z_n)$ defined on $E\times E$. We introduce $(\hat\pi_n)$ the sequence of probability distributions computed using the recursion $\hat \pi_{n} = \hat R_n\hat\pi_{n-1}/R_n\hat\pi_{n-1}(E)=\barhat{R}_n(\hat\pi_{n-1})$.
