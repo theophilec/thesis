@@ -113,19 +113,19 @@ Again, if $g = f\circ Q$, the above is solved by $q \,=\, h\circ Q \, |\nabla Q|
 Note that the smoothness of $h$ and $q$ is crucial. On the one hand, the smoothness of $h$ ensures that the considered regions are of interest with respect to the underlying metric on $\R^d$, i.e. they cannot be too close to diracs on pathological sets. On the other, the smoothness of $q$ ensures that the transformations are not matched by ``cherry-picking'' dispersed points on the domain such that the integrals match.
 
 
- \begin{figure*}[ht]
-     \centering
-     \begin{subfigure}[b]{0.40\textwidth}
-         \includegraphics[width=\textwidth]{ch1-diffy/figures/sketch_reg.png}
-         \caption{When there is a diffeomorphism: regularization ensures that the smoothest solution is found.}
-     \end{subfigure}\quad
-     \begin{subfigure}[b]{0.40\textwidth}
-         \includegraphics[width=\textwidth]{ch1-diffy/figures/sketch_reg_2.png}
-         \caption{When there is not a diffeomorphism: regularization is essential to ensure that the distance does not try to find one at all costs!}
-     \end{subfigure}
-     \caption{Effect of regularization}
-     \label{fig:reg}
- \end{figure*}
+ %\begin{figure*}[ht]
+ %    \centering
+ %    \begin{subfigure}[b]{0.40\textwidth}
+ %        \includegraphics[width=\textwidth]{ch1-diffy/figures/sketch_reg.png}
+ %        \caption{When there is a diffeomorphism: regularization ensures that the smoothest solution is found.}
+ %    \end{subfigure}\quad
+ %    \begin{subfigure}[b]{0.40\textwidth}
+ %        \includegraphics[width=\textwidth]{ch1-diffy/figures/sketch_reg_2.png}
+ %        \caption{When there is not a diffeomorphism: regularization is essential to ensure that the distance does not try to find one at all costs!}
+ %    \end{subfigure}
+ %    \caption{Effect of regularization}
+ %    \label{fig:reg}
+ %\end{figure*}
 
 \subsection{Definition of the dissimilarity}
 Now that we have given the motivation as well as the intuition behind our method, we can formally introduce it.
@@ -260,7 +260,7 @@ The proof of \cref{theorem:closed-form} comes from identifying the inner optimiz
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=0.45\textwidth]{ch1-diffy/figures/fig_rotation/rotation}
+    \includegraphics[width=0.8\textwidth]{ch1-diffy/figures/fig_rotation/rotation}
     \caption{\emph{Invariance to rotation.} We consider a patch $f$ (size $100\times 100$) of a larger scene (\texttt{peppers.jpeg}) and compare it to its rotated versions $\text{rotate}(f, \alpha)$, where $\alpha$ is an angle. $D(f, \text{rotate}(f, \alpha))$ is represented with $+$ symbols and $\textrm{RMSE}(f, \text{rotate}(f, \alpha))$ with $\times$ symbols. Random regimes are represented by shaded areas (see text). Both $\widehat D_\la$ and the RMSE seem constant as a function of $\alpha$ (although with $\alpha=0$ or $\alpha=180$ a smaller value is achieved). However, the RMSE of the rotated patches falls in (or close to) the confidence interval, making them indistinguishable from random patches from the same image. $\widehat D_\la$ takes values that are over $10 \times$ smaller for rotated patches that for random patches. Hence, \Diffy is invariant to rotation, whereas RMSE is constant (for $\alpha > 0$). Here $\la = 10^{-6}$. See \cref{sec:invariance-rotation} for more details.}
     \label{fig:rotation}
 \end{figure}
@@ -356,7 +356,7 @@ Finally, the method introduced is empirically quite robust to the choice of para
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=0.5\textwidth]{ch1-diffy/figures/fig_regularization/regularization.pdf}
+    \includegraphics[width=0.8\textwidth]{ch1-diffy/figures/fig_regularization/regularization.pdf}
     \caption{\emph{Effect of regularization.} We consider the same image and setting as in \cref{fig:warping} and vary $T$ and $\lambda$ (shaded areas are std deviation over $50$ warps). Observe: (1) $\widehat D_\la$ increases as a function of $T$ (as the norm of the diffeomorphism increases); (2) $\widehat D_\la$ is  proportional to $\lambda$. Both of these phenomena are predicted by \cref{theorem:main-theorem}. See \cref{sec:regularization} for more details.}
     \label{fig:regularization}
 \end{figure}
