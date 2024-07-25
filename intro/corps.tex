@@ -14,14 +14,14 @@ In this section of the introduction, we present each contribution and point to r
 
 We are interested in is \emph{designing, studying and implementing a divergence $D$ which is invariant to smooth diffeomorphisms on general data types.}
 
-\subsubsection{Motivation: handling invariances in machine learning}
+\paragraph{Motivation: handling invariances in machine learning}
 
-\paragraph{Handling invariances in machine learning}
+\subparagraph{Handling invariances in machine learning}
 The underlying goal is for machine learning algorithms to handle invariances efficiently. This generally means a combination of (a) actually being invariant (an image and its rotated counterpart yield the same output) and (b) incorporating this invariance has made the problem easier (i.e. less data, less compute, ...).
 
-There are generally two ways of handling such invariances: group averaging and data augmentation. The former uses features that are agregated over several "test" transformations (for example, rotations over 90, 180 and 270 degrees). The main issue with this approach is handling invariance sets that are inifinite (such as rotations, or warps). The latter relies on \emph{teaching} the invariance at training time by showing transformed versions of training points. In essence, this augments the training set to account for invariances. This makes training computationally more expensive, is limited in the expression of tranformations (they need to be generated) and does not guarantee invariance.
+There are generally two ways of handling such invariances: group averaging and data augmentation. The former uses features that are agregated over several ``test'' transformations (for example, rotations over 90, 180 and 270 degrees). The main issue with this approach is handling invariance sets that are inifinite (such as rotations, or warps). The latter relies on \emph{teaching} the invariance at training time by showing transformed versions of training points. In essence, this augments the training set to account for invariances. This makes training computationally more expensive, is limited in the expression of tranformations (they need to be generated) and does not guarantee invariance.
 
-\paragraph{Distance based methods}
+\subparagraph{Distance based methods}
 Distance based methods have been widely studied and are very actively used in practice. The most well known methods are: k-nearest-neighbors, k-means, ...
 
 We motivate this contribution with respect to a more complex distance based method. \cite{thiry} introduce a model based on the Euclidean distance that achieves good performance on iamge classification tasks. It replaces the learnable filter in Convolution Neural Networks (CNN) with a fixed dictionary of patches taken from the dataset. The embedded features (before the linear classification layer) are computed by computing the the euclidean distance between each patch of the image being embedded and the patches of the dictionary. These features are then discretized and pooled before a linear classification layer is applied.
@@ -30,12 +30,12 @@ The gist of this method is that an image is embedded by the distances of its pat
 
 This led us to our contribution described below, aiming to answer the following question: can we replace the Euclidean distance with a distance presenting useful invariances and make this approach more efficient? We do not answer the entire question but propose a candidate divergence to replace the Euclidean distance with, called Diffy, which is invariant to a wide class of diffeomorphisms.
 
-\subsubsection{Intuition}
+\paragraph{Intuition}
 A key insight of the above problem is to consider data points as functions. For instance, images can be thought as maps from $\mathbb R^2 \to \mathbb R^3$ and transformations of the image diffeomorphisms on $\mathbb R^2$. The problem we solve is thus to find a divergence $D$ such that if $Q$ is a diffeomorphism, $D(f\circ Q, f)$ is zero (or very small).
 
 Our contribution (described below) relies on the change of variable theorem. Indeed, notice that a known diffeomorphism $Q$ can be eliminated from a integral operation thanks to the change of variable theorem, indeed: $\int f(Q(x))dx - \int f(u)du = 0$.
 
-\subsubsection{Main contributions}
+\paragraph{Main contributions}
 Diffy is a divergence over general spaces and encompasses data types such as images, videos or point clouds. Consider maps $f:\mathbb R^d \to \mathbb R^p$. Given an embedding over the feature space $\phi: \mathbb R^p \to\mathcal F$ and an embedding over the coordinate space $\psi: \mathbb R^d \to \mathcal H$, Diffy is defined as:
 
 \begin{equation}\label{eq:intro_diffy}
@@ -43,14 +43,14 @@ D_\lambda(f, g) = \sup_q \inf_h \left \Vert \int \phi(f(x))q(x)\mu(x)dx - \int\p
 \end{equation}
 
 
-\paragraph{Computing Diffy in practice}
+\subparagraph{Computing Diffy in practice}
 One one hand, we show (Proposition A) that the optimization problem defined in \cref{eq:intro_diffy} can be computed in closed-form as operations on linear operators. In practice, data points are not functions but composed of discrete ``samples'': pixels for images, samples for time series, ... We leverage Nystr\"om approximations to control the computational complexity for the approximation and bound the error committed by the approximation. Basically, we prove that $\hat D_\lambda(f, g)$ can be computed in $O(ZYU)$ time (note that this is less than the square of the number of pixels) and that the error is bounded by
 \begin{equation}\label{eq:intro_approx_diffy}
 \left\vert D_\lambda(f, g) - \hat D_\lambda(f, g)\right\vert \leq \frac{...}{\sqrt{N}}
 \end{equation}
 
 
-\paragraph{Invariance results}
+\subparagraph{Invariance results}
 Diffy is invariant to smooth diffeomorphisms. Indeed, if $Q$ is smooth diffeomorphism, then Theorem X states
 \begin{equation}
 D_\lambda(f\circ Q, f) \leq C_QC_\mu\lambda
@@ -61,7 +61,7 @@ This result can be combined with \cref{eq:intro_approx_diffy} to show (Theorem Y
 \hat D_\lambda(f\circ Q, f) \leq \frac{C}{\sqrt{N}}.
 \end{equation}
 
-\paragraph{Experimental support \& library}
+\subparagraph{Experimental support \& library}
 
 We conduct extensive experiments to study the behavior of Diffy in practice. All code is released in the \texttt{diffy} library at \url{github.com/theophilec/diffy}.
 
@@ -69,15 +69,15 @@ We conduct extensive experiments to study the behavior of Diffy in practice. All
 \subsection{Differentiable Dynamic Time Warping}
 DiffyTW, is a differentiable divergence tailored for time-series.
 
-\subsubsection{Motivation}
+\paragraph{Motivation}
 
 Dynamic time warping problem: differences in sampling
 Differentiability
 Problem: which transformations can we be provably invariant to?
 
-\subsubsection{Intuition}
+\paragraph{Intuition}
 
-\subsubsection{Contributions}
+\paragraph{Contributions}
 \begin{itemize}
 \item Show DiffyTW solves certain of DTW's drawbacks (does not depend on the sample points)
 \item Design approximation strategy and show we maintain key properties
@@ -87,7 +87,7 @@ Problem: which transformations can we be provably invariant to?
 \newpage
 \subsection{PSD models for non-linear filtering}
 
-\subsubsection{Motivation}
+\paragraph{Motivation}
 We consider the filtering problem for discrete-time, dynamical models. The goal of filtering is to compute (or approximate) the filtering distribution $\pi_t(dx) = \mathbb P(X_t\vert Y_1, \ldots, Y_{t})$. The filtering distribution is the distributions of a state variable at time $t$, conditionnally on past observations $Y_1, \ldots, Y_t$. $Y_s$ can be any random variable, but one can think of it as a noisy, perhaps indirect, observation of the state $X_s$. The filtering distribution is also known as the optimal filter.
 
 In general, computing $\pi_t$ is intractable as it requires full knowledge of the joint law of $X_t$  and $Y_1, \ldots, Y_t$. Markov assumptions on the model -- which is then called a Hidden Markov Model -- reduce computing the optimal filter to iterating the following equation:
@@ -96,24 +96,24 @@ In general, computing $\pi_t$ is intractable as it requires full knowledge of th
 \pi_k(dx) = \frac{\int \pi_{k-1}(du)Q(u, dx)G(x, y_k)}{\int \int \pi_{k-1}(du)Q(u, dx)G(x, y_k)}
 \end{equation}
 
-Three main questions arise from the optimal filtering iteration \cref{eq:intro-hmm-iteration}. The first relates to the initialization of the sequence $\pi_k$. Assume two filters are initialized at $\mu$ and $\nu$ respectively. \emph{Stability} quantifies the behavior of $\Vert \pi_t^\mu - \pi_t^\nu \Vert_{TV}$ as $t$ grows. A stable filter sees this distance go to zero as $t$ grows, i.e. the filter forgets its initial condition.The second is \emph{robustness} to model error, which quantifies the behavior of $\Vert \hat\pi_t - \pi_t\Vert_{TV}$ where $\hat \pi$ is obtained by applying \cref{eq:intro-hmm-iteration} with $\hat Q$ and $\hat G$, approximate models, \emph{in lieu} of $Q$ and $G$. A robust filter will have bounded error, for a fixed time horizon. Finally, a filter must be computable in practice. \cref{eq:intro-hmm-iteration} requires complete knowledge of the transition and measurement kernels, which characterize the laws of $X_{t+1}$ conditionally on $X_t$ and $Y_t$ conditionnaly on $X_t$. Furthermore, it implies being able to compute arbitrary marginalizations in practice. Outside of well-known settings (linear-gaussian and finite state space), this is intractable. Two approaches exist: make additional assumptions about the state space (for example the EFK and UKF assume it is Gaussian) ; or, use Monte Carlo sampling to approximate the optimal filter iterations (Sequential Monte Carlo methods such as the particle filter).
+Three main questions arise from the optimal filtering iteration \cref{eq:intro-hmm-iteration}. The first relates to the initialization of the sequence $\pi_k$. Assume two filters are initialized at $\mu$ and $\nu$ respectively. \emph{Stability} quantifies the behavior of $\Vert \pi_t^\mu - \pi_t^\nu \Vert_{TV}$ as $t$ grows. A stable filter sees this distance go to zero as $t$ grows, i.e. the filter forgets its initial condition.The second is \emph{robustness} to model error, which quantifies the behavior of $\Vert \hat\pi_t - \pi_t\Vert_{TV}$ where $\hat \pi$ is obtained by applying \cref{eq:intro-hmm-iteration} with $\hat Q$ and $\hat G$, approximate models, \emph{in lieu} of $Q$ and $G$. A robust filter will have bounded error, for a fixed time horizon. Finally, a filter must be computable in practice. \cref{eq:intro-hmm-iteration} requires complete knowledge of the transition and measurement kernels, which characterize the laws of $X_{t+1}$ conditionally on $X_t$ and $Y_t$ conditionnaly on $X_t$. Furthermore, it implies being able to compute arbitrary marginalizations in practice. Outside of well-known settings (Gaussian Linear Conditional Distributions and finite state space), this is intractable. Two approaches exist: make additional assumptions about the state space (for example the EFK and UKF assume it is Gaussian) ; or, use Monte Carlo sampling to approximate the optimal filter iterations (Sequential Monte Carlo methods such as the particle filter).
 
 Our approach is to approximate $\hat Q$ and $\hat G$ using PSD models introduced in ref and compute the iterations in \cref{eq:intro-hmm-iteration} in closed-form.
 
-\subsubsection{Intuition}
+\paragraph{Intuition}
 Positive Semi-Definite Models (PSD models) are a class of non-negative functions based on the kernel sum-of-squares framework which optimally approximate smooth, non-negative functions such as (conditional) densities. When the RBF kernel is used, this family is useful for approximating probability densities. Indeed, products and marginals of PSD models are PSD models, which can be computed in polynomial time.
 
 Taken together, this means we can approximate $G$ and $Q$ by PSD models $\hat G$ and $\hat Q$, then compute the filter $\hat \pi_k$ sequence by applying \cref{eq:intro-hmm-iteration}. Indeed, the approach we propose works in two steps. First, using function evaluations of $Q$ and $G$ (we assume the kernels have densities), we learn $\hat Q$, $\hat G$ as Gaussian PSD models. This step is done ``offline''. Second, when we receive a sequence $y_1, \ldots, y_N$, we compute the sequence of approximate filtering distributions $\hat\pi_k$ by applying \cref{eq:intro-hmm-iteration} with $\hat Q$, $\hat G$ and $\hat \pi_k$ \emph{in lieu} of $Q$, $G$ and $\pi_k$.
 
 The intuition to...
 
-\subsubsection{Key contributions}
+\paragraph{Key contributions}
 \textsc{PSDFilter} is a non-linear filtering algorithm that approximates the filtering distribution using positive semi-definite models. \textsc{PSDFilter} recovers previously proposed estimators such as the Kalman filter and can be applied to any filtering problem where the transition kernels admit a smooth density. In Theorem XYZ we show that \textsc{PSDFilter} is stable and robust, and that its performance is adaptive to the regularity properties of the Hidden Markov Model. Indeed, as soon as the \emph{optimal kernel} is $\sigma$-mixing and is bounded and we use enough points to learn $\hat G$ and $\hat Q$ from function evaluations, for any observation sequence $y_1, \ldots, y_N$, with high probability:
 
 \begin{align}
     \Vert \pi_k - \hat\pi_k\Vert_{TV} ~~\leq~~ \frac{C}{\mixing^2}\left(\frac{1-\mixing^2}{1 + \mixing^2}\right)^{k-1}\|\pi_0 - \hat{\pi}_0\|_{TV} ~~+~~ \frac{\varepsilon}{\sigma},
 \end{align}
 
-The first term shows that the initial distribution is forgotten exponentially. It is typical of the mixing hypothesis. The second term shows that the error is bounded, uniformly on the observation sequence (which does not have to sampled from the HMM). In particular, we can make this bound as small as we want by reducing $\varepsilon$. As expected, this requires a richer model and more data. This dependence is described precisely in Theorem X.
+The first term shows that the initial distribution is forgotten exponentially. It is typical of the mixing hypothesis. The second term shows that the error is bounded, uniformly on the observation sequence (which does not have to sampled from the HMM). In particular, we can make this bound as small as we want by reducing $\varepsilon$. As expected, this requires a richer model and more data. This dependence is described precisely in Theorem X. Learning $\hat G$ and $\hat Q$ is a convex problem, which is solved attaining optimal learning rates.
 
-We show \textsc{PSDFilter} can beat the particle filter in computational complexity for a given error level for smooth densities. Indeed, the particle filter relies solely on Monte Carlo sampling and is not adaptive to the smoothness of the densities.
+We show \textsc{PSDFilter} beats the particle filter in computational complexity for a given error level for smooth densities. Indeed, the particle filter relies solely on Monte Carlo sampling and is not adaptive to the smoothness of the densities.
