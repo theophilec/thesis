@@ -102,7 +102,7 @@ The final result is obtained considering that $x A + d (B + y A) R \leq (1+ d + 
 
 \paragraph{Step 3. The norm of $\rho$}.  Let $A_{t}$ be the set $A_{t} = \{x ~|~ \min_{y \in Q^{-1}(\Omega)} \|x-y\| \leq t\}$. Let $\eta = d_H(Q^{-1}(\Omega), \overline{U})$, i.e., the Haussdorff distance between the sets $Q^{-1}(\Omega)$ and $\overline{U}$, corresponding to the largest $\eta$ for which $A_\eta \subseteq U$. Note that $\eta > 0$ since $Q^{-1}(\Omega)$ is compact, while $U$ is open and $Q^{-1}(\Omega) \subset U$. The fact that $\eta > 0$ implies that for any $\eta^\prime < \eta$ it holds that $A_{\eta^\prime} \subset U$.
 
-The function $\rho$ can be obtained by the convolution of the indicator function $1_{A_{\eta/2}}$ with the bump function $\psi_{\eta/2}(x) =  (\eta/2)^{-d} \psi(x/(\eta/2))/S$ where $S = \int_{\R^d} \psi(x) dx$ and $\psi$ is an infinitely smooth non-zero non-negative function that is $0$ on $\|x\| \geq 1$ as for example $\psi(x) = \exp(-1/(1-\|x\|^2)_+)$ for any $x \in \R^d$, where $(z)_+ = \max(0,z)$. In particular, since (a) $\|f(y-\cdot)\|_{H^m(\R^d)} = \|f\|_{H^m(\R^d)}$ for any $y \in \R^d$, by construction of the norm $H^m(\R^d)$, and (b) $\|t^{-d} f(\cdot/t)\|_{H^m(\R^d)} \leq c_6 t^{-d/2} \max(1,t^{-m}) \|f\|_{H^m(\R^d)}$ (see, e.g., Proposition 3 of \citealp{runst2011sobolev}) we have
+The function $\rho$ is obtained by the convolution of the indicator function $1_{A_{\eta/2}}$ with the bump function $\psi_{\eta/2}(x) =  (\eta/2)^{-d} \psi(x/(\eta/2))/S$ where $S = \int_{\R^d} \psi(x) dx$ and $\psi$ is an infinitely smooth non-zero non-negative function that is $0$ on $\|x\| \geq 1$ as for example $\psi(x) = \exp(-1/(1-\|x\|^2)_+)$ for any $x \in \R^d$, where $(z)_+ = \max(0,z)$. In particular, since (a) $\|f(y-\cdot)\|_{H^m(\R^d)} = \|f\|_{H^m(\R^d)}$ for any $y \in \R^d$, by construction of the norm $H^m(\R^d)$, and (b) $\|t^{-d} f(\cdot/t)\|_{H^m(\R^d)} \leq c_6 t^{-d/2} \max(1,t^{-m}) \|f\|_{H^m(\R^d)}$ (see, e.g., Proposition 3 of \citealp{runst2011sobolev}) we have
 \eqals{
 \|\rho\|_{H^m(\R^d)} &\leq \int_{A_{\eta/2}} \|\psi_\eta(y-\cdot)\|_{H^m(\R^d)} dy  \leq \textrm{vol}(A_{\eta/2}) \|\psi_\eta\|_{H^m(\R^d)} \\
 & \leq c_6 \|\psi\|_{H^m(\R^d)} ~ \textrm{vol}(A_{\eta/2}) ~ (\eta/2)^{-d/2} \max(1,(\eta/2)^{-m}).
@@ -552,7 +552,7 @@ We propose a collection of experiments with \Diffy on the \texttt{peppers} (see 
 
 \Diffy has parameters: $M_X = 100$, $M_Y = 16^3$, $k_X$ Gaussian with $\sigma = 1/6$ and $k_Y$ Abel with $a=5$. We ran several experiments and chose $\lambda = 10^{-2}$ as the ``best'' value. Indeed, as shown in \cref{fig:appendix-peppers-matching}, the regions found by $h$ and $q$ for this value are coherent.
 
-We consider a random square area $f$ of size $150 \times 150$. We rotate, translate and scale it and denote it $g = \textrm{transform}(f)$. We then show $f$, $h$ (over $f$), $g$ and $q$ (over $g$) as well as the value of $\widehat D_\lambda(f, g)$. Experiments in \cref{fig:appendix-peppers-matching} can be reproduced with \texttt{appendix\char`_peppers\char`_match.py}.
+We consider a random square area $f$ of size $150 \times 150$. We rotate, translate and scale it and denote it $g = \textrm{transform}(f)$. We then show $f$, $h$ (over $f$), $g$ and $q$ (over $g$) as well as the value of $\widehat D_\lambda(f, g)$. \cref{fig:appendix-peppers-matching} is obtained with \texttt{appendix\char`_peppers\char`_match.py}.
 
 \begin{figure}[!h]
     \centering

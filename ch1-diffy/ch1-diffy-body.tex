@@ -313,7 +313,7 @@ With the notation above,
 Note that, in practice, $\widetilde X$ and $\widetilde Y$ can be chosen either deterministically, e.g. on a grid, or randomly. Now, we provide a bound on the approximation error associated to $\widehat{D}_\la(f,g)$. We assume that the $N$ points in $x_1,\dots, x_N$ are sampled independently and uniformly at random in $X$ and, moreover, that the $M_X$ points in $\widetilde{X}$ and the $M_Y$ points in $\widetilde{Y}$ are sampled independently and uniformly at random in, respectively, $X, Y$ (similar result can be derived for a grid).
 \begin{theorem}\label{thm:appr-error-widehatD}
 Let $\delta \in (0,1)$. Let $X \subset \R^d, Y \subset \R^p$ be bounded sets and $k_X, k_Y$ be Sobolev kernels with smoothness, respectively, $s + d/2$ and $z+p/2$, for some $s,z > 0$. There exists two constants $c_1, c_2$ s. t., when $M_X \geq c_1$ and $M_Y \geq c_2$, then the following holds with probability $1-\delta$,
-$$|\widehat{D}_\la(f,g) - D_\la(f,g)| \leq c\big(\tfrac{\log\frac{1}{\delta}}{\la\sqrt{N}} + \tfrac{(\log \frac{M_X}{\delta})^{\alpha}}{\la M_X^{s/d}} + \tfrac{(\log\frac{M_Y}{\delta})^{\beta}}{\la M_Y^{z/p}}\big),$$
+$$|\widehat{D}_\la(f,g) - D_\la(f,g)| \leq c\left(\tfrac{\log\frac{1}{\delta}}{\la\sqrt{N}} + \tfrac{\left(\log \frac{M_X}{\delta}\right)^{\alpha}}{\la M_X^{s/d}} + \tfrac{\left(\log\frac{M_Y}{\delta}\right)^{\beta}}{\la M_Y^{z/p}}\right),$$
 for any measurable $f,g : X \to Y$, where $\widehat{D}_\la(f,g)$ is defined as in \cref{eq:widehatD-finite-dimensional}. Here $c_1, c_2, c$ depend only on $X, Y, \mu, s, z, d, p$, while $\alpha = s/d+1/2$, $\beta = z/p+1/2$.
 \end{theorem}
 
