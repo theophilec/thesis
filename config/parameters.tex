@@ -124,19 +124,6 @@
 
 
 
-%%% THEOREM
-\theoremstyle{plain}
-\newtheorem{theorem}{Theorem}[section]
-\newtheorem{proposition}[theorem]{Proposition}
-\newtheorem{lemma}[theorem]{Lemma}
-\newtheorem{corollary}[theorem]{Corollary}
-\theoremstyle{definition}
-\newtheorem{definition}[theorem]{Definition}
-\newtheorem{assumption}[theorem]{Assumption}
-\theoremstyle{remark}
-\newtheorem{remark}[theorem]{Remark}
-\newtheorem{example}[theorem]{Example}
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%% Links ref  %%%%%%%%%%%
@@ -183,14 +170,27 @@
 \Crefname{table}{Table}{Tables}
 \crefname{table}{table}{tables}
 
-\crefname{assumption}{Assumption}{Assumptions}
-\crefname{table}{Table}{Tables}
+
+%%% THEOREM (this should be defined after cleverref)
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{assumption}[theorem]{Assumption}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}[theorem]{Example}
+
 \crefname{theorem}{Theorem}{Theorems}
 \crefname{lemma}{Lemma}{Lemmas}
 \crefname{corollary}{Corollary}{Corollaries}
 \crefname{example}{Example}{Examples}
 \crefname{appendix}{Appendix}{Appendixes}
 \crefname{remark}{Remark}{Remark}
+\crefname{assumption}{Assumption}{Assumptions}
 
 \crefname{algocf}{Algorithm}{Algorithms}
 
