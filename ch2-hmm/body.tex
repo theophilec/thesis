@@ -1,21 +1,24 @@
 \section{Introduction}
 
-Sequential Bayesian Filtering is the task of inferring the distribution of unobserved variable $X_T$ from observations $Y_1, \ldots, Y_T$ where $(X_t, Y_t)_{n \geq 0}$ is a Hidden Markov Model. The distribution of $X_T$ given $Y_1, \ldots, Y_T$ is known as the filtering distribution (or optimal filter), denoted $\pi_T^\nu$ where $\nu\in\mathcal P(E)$ is the distribution of $X_0$ (or prior knowledge on $X_0$ more generally). In a Hidden Markov Model, the conditional distributions of $X_n$ given $X_{n-1}$ and $Y_n$ given $X_n$ are described by transition kernels $Q$ and $G$ respectively. In particular, $Q(u,x)$ identifies the conditional probability of transitioning to the state $X_{n}=x$ at time $n$ given the fact that the system was in the state $X_{n-1}=u$ at time $n-1$, while $G(x,y)$ is the probability of observing $Y_{n} = y$ given the fact that the system is in the state $X_{n} = x$. If one has perfect knowledge of the initial distribution $\pi_0$, the transition and observation kernels $Q, G$, then the filtering distribution can be computed recursively by applying Bayes rule:
+Sequential Bayesian Filtering is the task of inferring the distribution of unobserved variable $X_T$ from observations $Y_1, \ldots, Y_T$ where $(X_t, Y_t)_{n \geq 0}$ is a Hidden Markov Model. The distribution of $X_T$ given $Y_1, \ldots, Y_T$ is known as the filtering distribution (or optimal filter), denoted $\pi_T^\nu$ where $\nu\in\mathcal P(E)$ is the distribution of $X_0$ (or prior knowledge on $X_0$ more generally). In a Hidden Markov Model, the conditional distributions of $X_n$ given $X_{n-1}$ and $Y_n$ given $X_n$ are described by transition kernels $Q$ and $G$ respectively. Kernels act linearly on the space of measures, and we formally define and decribe their properties in \todo{ref}. Intuitively, $Q(u,x)$ identifies the conditional probability of transitioning to the state $X_{n}=x$ at time $n$ given the fact that the system was in the state $X_{n-1}=u$ at time $n-1$, while $G(x,y)$ is the probability of observing $Y_{n} = y$ given the fact that the system is in the state $X_{n} = x$. If one has perfect knowledge of the initial distribution $\pi_0$, the transition and observation kernels $Q, G$, then the filtering distribution can be computed recursively by applying Bayes rule:
 \begin{align}\label{eq:bayes-0}
 \pi_n(dx) = \frac{\int Q(u, dx)G(x, y_n)\pi_{n-1}(du)}{\int\int Q(u, dx)G(x, y_n)\pi_{n-1}(du)}
 \end{align}
-The recursive expression of the filtering distribution can be seen as a combination of two steps: the prediction of $X_{n+1}$ given belief on $X_n$ given past observations, then the correction of this prediction based on the observation $Y_{n+1}$ received. For complete introduction to Hidden Markov Models and inference, we refer the reader to \cite{cappehmm}.
+The recursive expression of the filtering distribution can be seen as a combination of two steps: the prediction of $X_{n+1}$ given belief on $X_n$ given past observations, then the correction of this prediction based on the observation $Y_{n+1}$ received. Readers familiar with applications of the Kalman filter car recognize the different steps.
+
+This chapter aims to be self-contained. For a complete introduction to Hidden Markov Models and inference, we refer the reader to \cite{cappehmm}.
 
 Two quintessential problems in filtering are studying the stability and robustness of the optimal filter, and computing an approximation of it in practice.
 
-The stability of the optimal filter is related the robustness of the sequence $\pi_n^\nu$ with respect to the initial distribution $\nu$, which is generally unknown and estimates or priors are used in practice. The optimal filter is stable when its dependence on the initial distribution decreases as more observations are provided (also known as ``forgetting''). More formally, a filter is stable when the distance between $\pi_n^\nu$ and $\pi_n^\mu$ goes to zero as $n\to\infty$ for any two initial distributions $\nu$ and $\mu$. This problem has attracted considerable interest since the first contributions of \cite{ocone} and \cite{kunita}. Some references relevant to this work include \cite{oudjane,mcdonald2020,legland99,decastro2017,mitrophanov-hmm-stability-2005}. A modern review of the literature and different approaches can be found in \cite{kim2022duality}.
+The stability of the optimal filter is related the robustness of the sequence $\pi_n^\nu$ with respect to the initial distribution $\nu$, which is generally unknown and estimates or priors are used in practice. The optimal filter is stable when its dependence on the initial distribution decreases as more observations are provided (also known as ``forgetting''). More formally, a filter is stable when the distance between $\pi_n^\nu$ and $\pi_n^\mu$ goes to zero as $n\to\infty$ for any two initial distributions $\nu$ and $\mu$. Filter stability has attracted considerable interest since the first contributions of \cite{ocone} and \cite{kunita}. Some references relevant to this work include \cite{oudjane,mcdonald2020,legland99,decastro2017,mitrophanov-hmm-stability-2005}.\todo{expand}
+A modern review of the literature and different approaches can be found in \cite{kim2022duality}.
 
-In general, the iteration in \cref{eq:bayes-0} is intractable. Two exceptions are when the state-space in finite or when the state-space is continuous but the transition kernels are Gaussian Linear Conditional Distributions. In the former case, the algorithm is known as the \textit{forward algorithm}. In the latter, the algorithm is the well-known Kalman filter \cite{kalman-bucy}. The Kalman filter is known to compute the recursion \cref{eq:bayes-0} exactly where the Hidden Markov Model has linear dynamics and observations and independent Gaussian noise.
+In general, the iteration in \cref{eq:bayes-0} is intractable. Two exceptions are when the state-space in finite or when the state-space is continuous but the transition kernels are Gaussian Linear Conditional Distributions. In the former case, the algorithm is known as the \textit{forward algorithm}. In the latter, the algorithm is the well-known Kalman filter \cite{kalman-bucy}. The Kalman filter is known to compute the recursion \cref{eq:bayes-0} exactly where the Hidden Markov Model has linear dynamics and observations and independent Gaussian noise. More precisely, the Kalman filter algorithm tracks the mean and covariance of the state distribution (the law of $X_n$ given $Y_1, \ldots, Y_n$).
 If the state-space is finite, the Baum-Welch algorithm can compute filtering and smoothing distributions in closed-form using the forward-backward approach.
 
-But many real-world systems do not have linear dynamics nor Gaussian uncertainty. On one hand, many algorithms have been devised to handle variations on the Kalman filter's assumptions, including the Extended Kalman Filter or the Unscented Filter \citep{ukf} (see also \cite{sarkka}). These models approximate the state variable as a Gaussian, which excludes many systems where, for instance, multi-modality is present. On the other, Sequential Monte Carlo algorithms such as the Particle filter and variants were developed. These algorithms approximate the marginalization step above using sampling, and can handle multi-modality. This family of methods has strong theoretical guarantees (though under arguably stringent conditions), but do not give a closed-form expression of the approximate distribution and are known to be difficult to turn and prohibitively costly for online applications.
+Many real-world systems do not have linear dynamics nor Gaussian uncertainty. On one hand, many algorithms have been devised to handle variations on the Kalman filter's assumptions, including the Extended Kalman Filter or the Unscented Filter \citep{ukf} (see also \cite{sarkka}). These models approximate the state variable as a Gaussian, which excludes many systems where, for instance, multi-modality is present. On the other, Sequential Monte Carlo algorithms such as the Particle filter and variants were developed. These algorithms approximate the marginalization step above using sampling, and can handle multi-modality. This family of methods has strong theoretical guarantees (though under arguably stringent conditions), but do not give a closed-form expression of the approximate distribution and are known to be difficult to turn and prohibitively costly for online applications.
 
-Gaussian PSD Models were introduced in \cite{ciliberto2021} as models for probability distributions. Gaussian PSD Models are a special case of the family of models proposed in \cite{ulysse-non-negative}. They generalize Gaussian Mixture Models by allowing for negative coefficients in the mixture. As originally highlighted in \cite{ciliberto2021}, Gaussian PSD Models enjoy appealing properties for applications involving Bayesian inference, with filtering as a special case: 1) They have optimal approximation guarantees with respect to a large family of probability densities 2) products and marginals of Gaussian PSD models can be efficiently computed in closed-form.
+Gaussian PSD Models were introduced in \cite{ciliberto2021} as models for probability distributions. Gaussian PSD Models are a special case of the family of models proposed in \cite{ulysse-non-negative}. They generalize Gaussian Mixture Models by allowing for negative coefficients in the mixture, forming a richer family of functions. As originally highlighted in \cite{ciliberto2021}, Gaussian PSD Models have appealing properties for applications involving Bayesian inference, filtering in particular. First, they have optimal approximation guarantees with respect to a large family of probability densities. Second, products and marginals of Gaussian PSD models can be efficiently computed in closed-form. This makes them ideal for plugging into \cref{eq:bayes-0}.
 
 
 \subsection*{Approach \& Contributions}
@@ -29,15 +32,15 @@ Our main contributions are:
  \end{enumerate}
 
 
-Our paper is organized as follows: in \cref{sec:gaussian-psd-models}, we describe Gaussian PSD Models and their properties, in particular their stability with respect to probabilistic operations. In \cref{sec:learning-gaussian-psd}, we devise an algorithm for learning Gaussian PSD Models from function evaluations and prove that optimal estimation rates are attained for smooth targets. In \cref{sec:psd-filter-root}, we introduce \textsc{PSDFilter}, an approximate filtering algorithm which plugs $\hat Q$ and $\hat G$ in the iteration above. We prove this algorithm is robust to the choice of initial distribution and to the approximation error in $Q$ and $G$. Sketches of the proofs of our main theorems \cref{theorem:learning} and \cref{theorem:bound-diagonal} are presented in \cref{sec:sketches}. Finally, in \cref{sec:generalized-psd-models}, we generalize Gaussian PSD Models to allow for a richer class of approximators, while retaining most of the desirable properties of Gaussian PSD Models.
+This chapter is organized as follows: in \cref{sec:gaussian-psd-models}, we describe Gaussian PSD Models and their properties, in particular their stability with respect to probabilistic operations. In \cref{sec:learning-gaussian-psd}, we devise an algorithm for learning Gaussian PSD Models from function evaluations and prove that optimal estimation rates are attained for smooth targets. In \cref{sec:psd-filter-root}, we introduce \textsc{PSDFilter}, an approximate filtering algorithm which plugs $\hat Q$ and $\hat G$ in the iteration above. We prove this algorithm is robust to the choice of initial distribution and to the approximation error in $Q$ and $G$. Sketches of the proofs of our main theorems \cref{theorem:learning} and \cref{theorem:bound-diagonal} are presented in \cref{sec:sketches-learning} and \cref{sec:sketches-filter} respectively. Finally, in \cref{sec:generalized-psd-models}, we generalize Gaussian PSD Models to allow for a richer class of approximators, while retaining most of the desirable properties of Gaussian PSD Models.
 
 \paragraph{Notation} We denote $E=(-1, 1)^d$ and $F = (-1, 1)^{d^\prime}$ the state and observation space. $\mathcal P(E)$ is the set of probability measures on $E$ and $\mathcal M_+(E)$ the set of finite, positive measures on $E$. We assume that all measures admit a density with respect to the Lebesgue measure and use the abuse of notation $\mu(dx)=\mu(x)dx$. $\beta>0$ is a smoothness parameter, $\mixing$ is a mixing parameter for kernels and $\epsilon$ is the accuracy when doing function approximation. Denote $\mathbb R^d_+$ the set of vectors in $\mathbb R^d$ with all positive components and $\mathcal S^+(\mathbb R^M)$ the set of positive definite matrices of size $M$. Given $\eta\in \mathbb R^d_+$, we denote $k_\eta(x, y) = \exp\left(- (x-y)^T\textrm{diag}(\eta)(x-y)\right)$ the Gaussian kernel over $\mathbb R^d$ with precision vector $\eta$.
 
 \section{Gaussian PSD Models}\label{sec:gaussian-psd-models}
 
-Gaussian PSD Models, introduced in \cite{ciliberto2021}, is a family of models for non-negative functions and, in particular, probability densities specializing the PSD Models from \cite{ulysse-non-negative}. They are non-negative everywhere, admit a linear parametrization and can be learned from samples and function evaluations. They are characterized by a linear combination of kernels, with weights chosen such that the function is non-negative. In this section, we recall the definition of Gaussian PSD Models of \cite{ciliberto2021}, show that they extend most well-established probability models and present how to perform operations such as multiplication or marginalization.
+Gaussian PSD Models, introduced in \cite{ciliberto2021}, is a family of models for non-negative functions and, in particular, probability densities specializing the PSD Models from \cite{ulysse-non-negative}.
 
-\begin{definition}\label{def:psd-model}
+\begin{definition}[Gaussian PSD Model of \cite{ciliberto2021}]\label{def:psd-model}
    A Gaussian PSD Model of order $M$ is a function $f: \mathbb R^d \to \mathbb R$ which can be written:
    \begin{align}\label{eq:psd-model-def}
       f(x) = \sum_{i=1}^M\sum_{j=1}^M A_{ij}k_\eta(x, x_i)k_\eta(x, x_j)
@@ -45,7 +48,11 @@ Gaussian PSD Models, introduced in \cite{ciliberto2021}, is a family of models f
    where $\eta \in \mathbb R^d_+$ is the \emph{precision vector},  $X = (x_i)_{1\leq i \leq M}\in \mathbb R^{M\times d}$ are the \emph{anchor points} and $A\in\mathcal S^+(\mathbb R^M)$ is the \text{weight matrix}. Such a function is denoted $f(x; A, X, \eta)$ (or $f(x;\theta)$ for shorthand).
 \end{definition}
 
-Adopting the point of view in \cite{ulysse-non-negative}, Gaussian PSD Models can equivalently be defined as functions of the form $f(x) = \Phi_\eta(x)^\top A\Phi(x)$ where $\Phi_\eta$ is defined as $\Phi_\eta(x)= (k_\eta(x, x_1) \ldots k_\eta(x, x_M))^\top \in\mathbb R^M$.
+
+\paragraph{Relation to general PSD models} In \cite{ulysse-non-negative}, PSD Models are introduced as functions of the form $x \mapsto \langle\phi(x), A\phi(x)\rangle$ where $\phi: \mathbb R^d \to \mathcal H$ and $A$ is a positive semi-definite operator on $\mathcal H$, where $\mathcal H$ is a Hibert space. Notice that we can define Gaussian PSD Models as functions of the form $f(x) = \Phi_\eta(x)^\top A\Phi(x)$ where $\Phi_\eta$ is defined as $\Phi_\eta(x)= (k_\eta(x, x_1) \ldots k_\eta(x, x_M))^\top \in\mathbb R^M$, which matches the more general definition.
+
+\paragraph{Main properties} From the above comment, it is clear a Gaussian PSD Model is non-negative everywhere and admits a linear parametrization in $A$.  Indeed, a Gaussian PSD model is a linear combination of kernels, whose weights are chosen such that the function is non-negative. Gaussian PSD Models can be learned from samples and function evaluations. In the context of fitting HMM transition kernels, we are interested in learning from function evaluations. We decribe our algorithm for learning Gaussian PSD Models from function evaluations in \cref{learning-gaussian-psd} and prove learning rates for the algorithm.\todo{add to intro}
+
 
 When defined on the product of Euclidean spaces $\mathbb R^d \times \mathbb R ^{d^\prime}$ with anchor points $[X, Y]$ (the row-wise concatenation of $X$ and $Y$) and precision vector $\eta = (\eta, \eta^\prime)$ (column-wise concatenation of $\eta_1$ and $\eta_2$), we denote denote the model $f(x, y ; A, [X, Y], (\eta_1, \eta_2))$. This split notation is justified by the fact that $k_\eta((x, y), (u, v)) = k_{\eta_1}(x, u)k_{\eta_2}(y, v)$.
 
@@ -56,19 +63,24 @@ When defined on the product of Euclidean spaces $\mathbb R^d \times \mathbb R ^{
 Let $g(x) = w^\top \Phi_\eta(x)$ where $w\in\mathbb R^d$ and $\Phi_\eta(x)= (k_\eta(x, x_1), \ldots, k_\eta(x, x_M)^\top $. Then, $f=g^2$ can be written as a Gaussian PSD Model of order $M$ with $A=ww^\top $ and $X = (x_1, \ldots, x_M)^\top $. Indeed, $f(x) = (w^\top \Phi_\eta(x))^2 = \Phi_\eta(x)^\top ww^\top \Phi_\eta(x)$.
 \end{example}
 
-\noindent As pointed out in the introduction of this section, because $k_\eta(x, u)k_\eta(x, v)\propto k_{2\eta}(x, \frac{u+v}{2})$, a Gaussian PSD Model can be seen as a linear combination of Gaussians. It is important to note that the coefficients of the components can be non-negative, which makes them much more expressive then Mixture models. Consider for instance $f(x) = (e^{-(x-2)^2} - e^{-(x-3)^2})^2$ which is clearly non-negative and can be written as a Gaussian PSD Model but not as a Mixture model.
+
+ PSD Model can be seen as a linear combination of Gaussians. Indeed, $k_\eta(x, u)k_\eta(x, v)\propto k_{2\eta}(x, \frac{u+v}{2})$, where the proportionality constant is independent of $x$. It is important to note that the coefficients of the components can be non-negative, which makes them much more expressive then Mixture models. Consider for instance $f(x) = (e^{-(x-2)^2} - e^{-(x-3)^2})^2$ which is clearly non-negative and can be written as a Gaussian PSD Model but not as a Mixture model.
+
+ \missingfigure{illustration for the example above}
 
 \subsection{Operations on Gaussian PSD Models}
-Gaussian PSD Models are compatible with operations on probabilistic models such as integration, partial evaluation, product and marginalization. The operations are summarized in \cref{prop:ops-diagonal} and the algorithms, based on kernel evaluations and matrix-vector products are detailed in \cite{ciliberto2021}.
+Gaussian PSD Models are compatible with operations on probabilistic models such as integration, partial evaluation, product and marginalization. The operations are summarized in \cref{prop:ops-diagonal} and the algorithms, based on kernel evaluations and matrix-vector products are detailed in \cite{ciliberto2021}. These operations are implemented in the \texttt{psd-models} library we release in open-source.\todo{ref}
+
+In \cref{sec:generalized-psd-models}, we generalize these operations to a larger family of models, where each basis function has an independent precision matrix and this precision matrix is not necessarily diagonal.
 
 \begin{proposition}[Closed form operations for Gaussian PSD Models]\label{prop:ops-diagonal}
-    Let $f(x, y; \theta_1)$ and $g(y, z; \theta_2)$ be two Gaussian PSD Models of order $M_1$ and $M_2$ respectively, as in \cref{def:psd-model}. Then there exist some algorithms $\integralpsd$, $\partialpsd$, $\productpsd$, $\marginalpsd$ such that
-    \begin{itemize}
-        \item \textbf{ Integral over $\mathbb R^d$ or over a hypercube} $\int f(x, y; \theta_1)dxdy$ can be computed exactly and in closed form by the algorithm $\integralpsd(\theta_1)$ with a computational cost of $O(M_1^2 d)$.
-        \item \textbf{ Partial evaluation}$f(x, y_0; \theta_1) = h(x; \theta^\prime)$ is a Gaussian PSD Model of order at most $M_1$ and $\theta^\prime$ can be computed exactly and in closed form by the algorithm $\partialpsd(y_0, \theta_1)$ with a computational cost of $O(M_1^2 d)$
-        \item \textbf{ Product} $f(x, y; \theta_1)g(y, z; \theta_2)=h(x, y, z; \theta^\prime)$ is a Gaussian PSD Model of order at most $M_1\times M_2$ and $\theta^\prime$  can be computed exactly and in closed form by the algorithm $\productpsd(\theta_1, \theta_2)$ with a computational cost of $O(M_1^2 M_2^2 d)$.
-        \item \textbf{ Marginalization} $\int f(x, y; \theta_1)dy=h(x; \theta^\prime)$ is a Gaussian PSD Model of order at most $M_1$ and $\theta^\prime$ can be computed exactly and in closed form by the algorithm $\marginalpsd(y, \theta_1)$ with a computational cost of $O(M_1^2 d)$.
-    \end{itemize}
+    Let $f(x, y; \theta_1)$ and $g(y, z; \theta_2)$ be two Gaussian PSD Models of order $M_1$ and $M_2$ respectively, as in \cref{def:psd-model}. Then there exist algorithms $\integralpsd$, $\partialpsd$, $\productpsd$, $\marginalpsd$ for the following operations.
+    \begin{enumthm}
+        \item \textbf{Integral over $\mathbb R^d$ or over a hypercube } $\int f(x, y; \theta_1)dxdy$ can be computed exactly and in closed form by the algorithm $\integralpsd(\theta_1)$ with a computational cost of $O(M_1^2 d)$.
+        \item \textbf{Partial evaluation }$f(x, y_0; \theta_1) = h(x; \theta^\prime)$ is a Gaussian PSD Model of order at most $M_1$ and $\theta^\prime$ can be computed exactly and in closed form by the algorithm $\partialpsd(y_0, \theta_1)$ with a computational cost of $O(M_1^2 d)$
+        \item \textbf{Product } $f(x, y; \theta_1)g(y, z; \theta_2)=h(x, y, z; \theta^\prime)$ is a Gaussian PSD Model of order at most $M_1\times M_2$ and $\theta^\prime$  can be computed exactly and in closed form by the algorithm $\productpsd(\theta_1, \theta_2)$ with a computational cost of $O(M_1^2 M_2^2 d)$.
+        \item \textbf{Marginalization } $\int f(x, y; \theta_1)dy=h(x; \theta^\prime)$ is a Gaussian PSD Model of order at most $M_1$ and $\theta^\prime$ can be computed exactly and in closed form by the algorithm $\marginalpsd(y, \theta_1)$ with a computational cost of $O(M_1^2 d)$.
+    \end{enumthm}
 \end{proposition}
 The proof of the proposition above can be found in \citep[Appendix F]{ciliberto2021}.
 
@@ -86,34 +98,37 @@ In this section, we show that General Gaussian Models can be used to efficiently
     There exist $q \in\mathbb N$ and $\beta \geq 0$ and $f_i \in W^\beta_2(\Omega) \cap L^\infty(\Omega)$ such that $f(x) = \sum_{i=1}^q f_i(x)^2$.
 \end{assumption}
 
-\cref{assumption:target_function} is verified for most continuous dynamical models of interest. For instance, any transition kernel $Q(x, y) \propto e^{-\Vert \Sigma^{-1/2}(y - h(x)\Vert^2}$ verifies the assumption. \cite{ciliberto2021} provides a list of sufficient conditions, we recall in \cref{prop:sufficient-conditions-target}.
+\cref{assumption:target_function} is verified for most continuous dynamical models of interest. For instance, any transition kernel $Q(x, y) \propto e^{-\Vert \Sigma^{-1/2}(y - h(x)\Vert^2}$ verifies the assumption.
+
+We recall four sufficient conditions in \cref{prop:sufficient-conditions-target}:
 
 \begin{proposition}[Generality of \cref{assumption:target_function}, Prop. 5 in \cite{ciliberto2021}]\label{prop:sufficient-conditions-target}
 A function $f$ satisfies \cref{assumption:target_function} on $\Omega = (-1, 1)^d$ as soon as at least one of the following sufficient conditions is satisfied:
-\begin{itemize}
-    \item[(a)] $f$ is a probability density and $f\in W_2^\beta(\Omega)\cap L^\infty(\Omega)$, and strictly positive on $[-1, 1]^d$ ;
-    \item[(b)] $f$ is an exponential model $f(x) = e^{-v(x)}$ with $v\in W_2^\beta(\Omega) \cap L^\infty(\Omega)$ ;
-    \item[(c)] $f$ is a mixture of models from (b) ;
-    \item[(d)] $f$ is $\beta+2$-times differentiable on $[-1, 1]^d$, with a finite set of zeroes all in $(-1, 1)^d$, and a positive definite Hessian in each zero.
-\end{itemize}
+\begin{enumthm}
+    \item $f$ is a probability density and $f\in W_2^\beta(\Omega)\cap L^\infty(\Omega)$, and strictly positive on $[-1, 1]^d$ ;
+    \item $f$ is an exponential model $f(x) = e^{-v(x)}$ with $v\in W_2^\beta(\Omega) \cap L^\infty(\Omega)$ ;
+    \item $f$ is a mixture of models from (b) ;
+    \item $f$ is $\beta+2$-times differentiable on $[-1, 1]^d$, with a finite set of zeroes all in $(-1, 1)^d$, and a positive definite Hessian in each zero.
+\end{enumthm}
 \end{proposition}
-%
+
 In \cref{sec:optimization}, we introduce the optimization problem we solve to learn $f$ and present the learning algorithm. In \cref{sec:learning}, we prove that the obtained estimator $\hat f$ is an optimal approximator of $f$.
 
 \subsection{Learning algorithm}\label{sec:optimization}
- %In this section, we consider learning $Q$ and $G$ from their function evaluations on training points sampled uniformly in $\Omega$. Indeed, \cite{ciliberto2021} focuses on learning a target function that is a probability distribution, using samples from this target. Because $Q$ and $G$ are not probability distributions (but conditional probability distributions) sampling from $Q$ or $G$ is not necessarily possible or easy. However, we assume that evaluating $G$ or $Q$ is feasible. In this section, we consider a generic, non-negative target function $f$ which can be taken to be $Q$ or $G$.
+The intuition behind our algorithm is to approximate $g=\sqrt{f}$ using $\hat g$ a Gaussian Linear Model. Then, $\hat f = \hat g^2$ should approximate $f=g^2$ well. Indeed, we showed in \cref{ex:sq:linear-model} that the square of any Gaussian Linear Model is a Gaussian PSD Model and its weight matrix is of rank $1$ and given by $A =aa^\top $ where $a$ is the weight vector of the Gaussian Linear Model.
 
-In \cref{sec:gaussian-psd-models}, we showed that the square of any Gaussian Linear Model is a Gaussian PSD Model and its weight matrix is of rank $1$ and given by $A =aa^\top $ where $a$ is the weight vector of the Gaussian Linear Model. We use this insight to efficiently approximate a smooth sum-of-squares function $f$ with a Gaussian PSD Model $\hat f$. This insight was first published by \cite{sampling-ulysse} for probability densities. A full-rank estimator $\hat f$ can be also learned, by solving a Semi-Definite Programming problem using e.g. Newton's method.
+\paragraph{What about $A$?} In \cref{def:psd-model}, we defined as Gaussian PSD Model as parametrized by a positive semi-definite matrix $A$, not necessarily of rank $1$. $A$ A full-rank estimator $\hat f$ can be also learned, by solving a Semi-Definite Programming problem using e.g. Newton's method. This does not improve the learning rate, indeed it is minimax optimal, however can improve the constants \todo{ref}. Algorithmically, solving as SDP problem is harder and costs $O(M^4)$.
 
-% which can be solved in $O(M^4)$ using Newton's method.
+We use this insight to efficiently approximate a smooth sum-of-squares function $f$ with a Gaussian PSD Model $\hat f$. This approach was first published by \cite{sampling-ulysse} for desity estimation from samples. In \cref{theorem:learning}, we show that this approach attains minimax optimal learning rates for learning smooth non-negative functions from samples.
 
-In this work we propose to approximate $f$ using $\hat f= \hat g^2$ where $\hat g$ is a Gaussian Linear Model learned on $g$. Denoting the Linear Gaussian Model $\hat g(x ; a, \eta, \tilde X) = \sum_{i=1}^M a_ik_\eta(x, \tilde x_i)$ where $a\in\mathbb R^M$, $\eta \in \mathbb R_+^d$, $\tilde X \in \mathbb R^{M\times d}$ and $\lambda > 0$, we introduce the optimization problem used to learn $\hat a$ from data points $X\in\mathbb R^{n\times d}$:
+We approximate $f$ using $\hat f= \hat g^2$ where $\hat g$ is a Gaussian Linear Model learned on $g$. Denoting the Linear Gaussian Model $\hat g(x ; a, \eta, \tilde X) = \sum_{i=1}^M a_ik_\eta(x, \tilde x_i)$ where $a\in\mathbb R^M$, $\eta \in \mathbb R_+^d$, $\tilde X \in \mathbb R^{M\times d}$ and $\lambda > 0$, we introduce the optimization problem used to learn $\hat a$ from data points $X\in\mathbb R^{n\times d}$:
 \begin{align}\label{eq:learning-problem}
 \min_{a \in\mathbb R^M} \frac{1}{n}\sum_{k=1}^n \vert \sqrt{f(x_k)} - \hat g(x_k ; a, \eta, \tilde X)\vert^2+ \lambda \, a^\top Ka
 \end{align}
 where $K$ is described by $K_{ij}=k_\eta(\tilde x_i, \tilde x_j)$.
 
 In \cref{sec:proof-learning}, we cast \cref{eq:learning-problem} as a kernel ridge regression problem, which can be efficiently solved for large values of $n$ and $M$ in $O(n\sqrt{n})$ time using approximate kernel methods such as in \cite{falkon}.
+\todo{expand falkon ?}
 
 \begin{algorithm}[ht!]
 % \jmlralgorule
@@ -130,7 +145,7 @@ $\hat f(x) \gets \textsc{GaussianPSDModel}(aa^\top , X, \eta)$\;\BlankLine
 \end{algorithm}
 
 \subsection{Learning rates}\label{sec:learning}
-The Gaussian PSD Model $\hat f$ obtained from \cref{alg:learn} using function evaluations at uniformly sampled training points $X$ approximates $f$ in $L^\infty(\Omega)$ with optimal learning rates for $L^\infty$ norm \citep{wendland2004scattered}, if $f$ is a $\beta$-smooth and bounded density, as formalized by \cref{assumption:target_function}.
+The Gaussian PSD Model $\hat f$ obtained from \cref{alg:learn} using function evaluations at uniformly sampled training points $X$ on the domaine approximates $f$ in $L^\infty(\Omega)$ with optimal learning rates for $L^\infty$ norm \citep{wendland2004scattered}, if $f$ is a $\beta$-smooth and bounded density (see \cref{assumption:target_function}). This uniform result to key to controlling stability and robustness of \textsc{PSDFilter}.
 
 We build on the results in \cite{ciliberto2021} and \cite{sampling-ulysse}. The former studies the $L^2$ convergence of $\hat f$ to $f$ when the training set is sampled from the target density, using the full-rank counterpart to \cref{alg:learn}. The latter studies convergence in Hellinger distance using \cref{alg:learn}. Both works use the insights of \cite{less-is-more}.
 
@@ -144,25 +159,45 @@ Let $\beta > d/2$ and $\theta^{-1} < 1 + 2\beta/d$.  Let $f:\Omega \to \mathbb R
 where $C, C^\prime$ are constants depending only on $\beta, d$ and independent of $f$ and $\epsilon$.
 \end{theorem}
 %%
-The proof of \cref{theorem:learning} can be found in \cref{sec:proof-learning}, and uses arguments from \cite{sampling-ulysse}. A sketch is given in \cref{sec:sketches}.
+We prove \cref{theorem:learning} in \cref{sec:proof-learning}. A sketch is given in \cref{sec:sketches-learning}.
 
+\subsection{Sketch of the proof of \cref{theorem:learning}}\label{sec:sketches-learning}
+
+We denote $f$ the target function and $g = \sqrt{g}$, and $\hat g$ the solution to \cref{eq:learning-problem} and $\hat f = \hat g^2$.
+
+Since $\Vert f - \hat f\Vert_{L^\infty(\Omega)}\leq \left(2\Vert g\Vert_{L^\infty(\Omega)}+ \Vert g - \hat g\Vert_{L^\infty(\Omega)} \right)\Vert g- \hat g\Vert_{L^\infty(\Omega)}$, we focus on controlling $\Vert g - \hat g \Vert_{L^\infty(\Omega)}$.
+
+The first key argument is to separate $g - \hat g$ as the sum of an approximation error $g - g_{\tau, \epsilon}$ and an estimation error $g_{\tau, \epsilon} - \hat g$ where $g_{\tau, \epsilon} \in \mathcal H_\eta$ and $\Vert g - g_{\tau, \epsilon}\Vert_{L^\infty(\Omega)}\leq C \Vert g \Vert \epsilon^{1-\tilde \nu}$. Using the triangle inequality, controlling $\Vert g - \hat g\Vert_{L^\infty(\Omega)}$ reduces to controlling $\Vert g_{\tau, \epsilon} - \hat g\Vert_{L^\infty(\Omega)}$. We apply the Gargliano-Niremberg inequality with well-chosen parameters to obtain a bound with the product of the Sobolev norm of the estimation error (which is controlled by the $\mathcal H_\eta$ norm) and of the $L^2(\Omega)$ norm.
+
+By opening the proof of Proposition 11 in \cite{sampling-ulysse}, we can obtain bounds on $\Vert g - \hat g \Vert_{L^2(\Omega)}$ and (essentially) $\Vert \hat g - g\Vert_{W^m_2(\Omega)}$ as a function of $\Vert g\Vert_{W^\beta_2(\Omega)\cap L^\infty(\Omega)}$ and $\epsilon$ with optimal dependence on $\epsilon$. We combine these results to bound $\Vert f - \hat f\Vert_{L^\infty(\Omega)}$ with optimal rates in $\epsilon$.
+
+Combining all the terms yields the result in \cref{theorem:learning}. See \cref{sec:learning-proof} for a complete proof.
 
 \section{Gaussian PSD Models for filtering}\label{sec:psd-filter-root}
-Now that we know how to efficiently carry out closed-form filtering operations using Gaussian PSD Models and learn good approximations of non-negative functions using this family of models, we can compute an approximation of the filtering distribution.
+In \cref{sec:operations}, we presented how to efficiently carry out closed-form filtering operations using Gaussian PSD Models. In \cref{sec:learning}, we designed an algorithm for learning optimal approximations of non-negative functions using this family of models. Combining both contributions, in this section, we introduce \textsc{PSDFilter} and study its stability and robustness properties.
 
-\subsection{Setting}
-Consider two discrete Markov Chains $(X_n)\in E^\mathbb N$ - the hidden state chain -  and $(Y_n)\in F^\mathbb N$ - the observations. We assume that $(X_t, Y_t)$ has a Hidden Markov Model structure described by $(\nu, Q, G)$ where $\nu\in\mathcal P(E)$ is an initial distribution, $Q:E\times E \to \mathbb R$ is a Markov kernel, and $G: E\times F \to \mathbb R$ is a transition kernel. Formally, this can be summarized as:
-(1) the law of $X_n$ is fully-determined by the knowledge of $X_{n-1}$, i.e. $\mathbb P(X_n\in dx | X_{n-1}=x)=Q(x, dx)$ ;
-(2) the law of $Y_n$ is fully-determined by the knowledge of $X_n$; i.e. $\mathbb P(Y_n\in dy |X_n=x) = G(x, dy)$ ;
-(3) the law of $X_0$ is given by $\nu$. In particular, we have the usual Markovian structure: $X_n \independent X_l | X_{k}$ and $Y_n \independent Y_l | X_{k}$ for any $n > k > l$.
+\subsection{Setting \& notation}
+\emph{In this section, we more formally present HMM filtering and our notations. The notations are generally those of \cite{cappehmm}. For convenience, we recall all necessary definitions and results in \cref{sec:markov}.}
 
-The goal of filtering is to compute the distribution of $X_n$ conditionally on past observation $Y_1, \ldots, Y_n$. We denote this distribution $\pi_n^\nu(z_{1:n}, dx)$ where $\nu$ is initial distribution and $z_{1:n}$ are the observations (not necessarily taken from the chain $(Y_n)$). This distribution is known as the filtering distribution or optimal filter. When clear from context, we drop the dependence of $z_{1:n}$ and $\nu$.
 
-Importantly, $\pi_n(dx)$ can be computed recursively using $Q$ and $G$ and beginning from $\nu$:
+Consider two discrete Markov Chains $(X_n)\in E^\mathbb N$ - the hidden state chain -  and $(Y_n)\in F^\mathbb N$ - the observations. We assume that $(X_t, Y_t)$ has a Hidden Markov Model structure described by $(\nu, Q, G)$ where $\nu\in\mathcal P(E)$ is an initial distribution, $Q:E\times E \to \mathbb R$ is a Markov kernel, and $G: E\times F \to \mathbb R$ is a transition kernel. Regardless of more technical considerations, a Hidden Markov Model is characterized by:
+\begin{enumerate}
+\item[(1)] the law of $X_n$ is fully-determined by the knowledge of $X_{n-1}$, i.e. $\mathbb P(X_n\in dx | X_{n-1}=x)=Q(x, dx)$ ;
+\item[(2)] the law of $Y_n$ is fully-determined by the knowledge of $X_n$; i.e. $\mathbb P(Y_n\in dy |X_n=x) = G(x, dy)$ ;
+\item[(3)] the law of $X_0$ is given by $\nu$.
+\end{enumerate}
+In particular, we have the usual Markovian structure: $X_n \independent X_l | X_{k}$ and $Y_n \independent Y_l | X_{k}$ for any $n > k > l$.
+
+
+The goal of filtering is to compute the distribution of $X_n$ conditionally on past observation $Y_1, \ldots, Y_n$. We denote this distribution $\pi_n^\nu(z_{1:n}, dx)$ where $\nu$ is initial distribution and $z_{1:n}\in F^n$ are the observations. Importantly, these are not necessarily realizations of the chain $(Y_n)$). This distribution is known as the \emph{filtering distribution} or \emph{optimal filter}. When clear from context, we drop the dependence of $z_{1:n}$ and $\nu$.
+
+Importantly, $\pi_n(dx)$ is computed recursively using $Q$ and $G$ and beginning from $\nu$:
 \begin{align}\label{eq:iteration}
 \pi_n = \bar{R}_n(\pi_{n-1}), ~~\textrm{where}~~ \bar{R}_n(\mu)(\cdot) := \frac{R_n \mu \, (\cdot)}{R_n\mu\,(E)} ~~\textrm{and}~~  R_n \mu \, (\cdot) := \int Q(u, \cdot)G(x, y_n) d\mu(u)
 \end{align}
-which recovers \cref{eq:bayes-0}. Computing $\bar R_n(\pi_{n-1})$ is difficult in most circumstances since one must be able to compute products and marginals on probability distributions. Two notable exceptions include the Conditional Linear Gaussian Model (which corresponds to the Kalman filter) and when $E$ is finite (which corresponds to the Baum-Welch algorithm).
+which recovers \cref{eq:bayes-0}.
+
+Computing $\bar R_n(\pi_{n-1})$ is difficult in most circumstances since one must be able to compute products and marginals on probability distributions. Two notable exceptions include the Conditional Linear Gaussian Model (which corresponds to the Kalman filter) and when $E$ is finite (which corresponds to the Baum-Welch algorithm).
 
 
 \subsection{PSD filter}\label{sec:psdfilter}
@@ -173,9 +208,7 @@ To overcome these difficulties, we approximate $Q$ and $G$ from evaluations usin
 %
 % Note that at each step, $\hat \pi_k$ is a valid, normalized density. However, $\hat Q$ and $\hat G$ are not properly normalized,
 
-Define the PSD Filter $(\hat \pi_k)_{k\geq 0}$ by applying recursion \cref{eq:approx-iteration} with data $(z_{k})_{k\in\mathbb N}$ and an initial distribution $\hat \pi_0$, in place of applying \cref{eq:iteration}, which is intractable.
-
-\cref{theorem:algorithm} below shows that so long as $\hat \pi_0$ is a Gaussian PSD Model and $\hat G$ and $\hat Q$ are Gaussian PSD Models, $\hat \pi_k$ is a Gaussian PSD Model for all $k\geq 0$, with constant order. In particular, it is a valid density even though $\hat G$ and $\hat Q$ are not properly normalized, i.e. $\hat G(u, F)=1$ is not guaranteed for all $u\in E$.
+Define the PSD Filter $(\hat \pi_k)_{k\geq 0}$ by applying recursion \cref{eq:approx-iteration} with data $(z_{k})_{k\in\mathbb N}$ and an initial distribution $\hat \pi_0$, in place of applying \cref{eq:iteration}, which is intractable. \cref{theorem:algorithm} below shows that so long as $\hat \pi_0$ is a Gaussian PSD Model and $\hat G$ and $\hat Q$ are Gaussian PSD Models, $\hat \pi_k$ is a Gaussian PSD Model for all $k\geq 0$, with constant order. In particular, it is a valid density even though $\hat G$ and $\hat Q$ are not properly normalized, i.e. $\hat G(u, F)=1$ is not guaranteed for all $u\in E$.
 
 \begin{corollary}[$\hat{\pi}_n$ has constant order for any $n$] \label{theorem:algorithm}
     Let $\hat \pi_0(x)$ a Gaussian PSD Model on $E$ of order $M_0$, $\hat Q(u, x)$ a Gaussian PSD Model on $E\times E$ of order $M_Q$ and $\hat G(x, y)$ a Gaussian PSD Model on $E\times E$ of order $M_G$. Let $(z_n)\in F^\mathbb N$. Let $(\hat \pi_n)_{n\in\mathbb N}$ the sequence of functions defined by the recursion \cref{eq:approx-iteration}, initialized at $\hat \pi_0$. Then, for any $n\geq 0$, $\hat \pi_n$ is a Gaussian PSD Model of order at most $M_Q \times M_G$ and it is computed by \cref{alg:fullfilter}.
@@ -199,7 +232,7 @@ Define the PSD Filter $(\hat \pi_k)_{k\geq 0}$ by applying recursion \cref{eq:ap
 \end{algorithm}
 
 \subsection{Gaussian PSD Filter Stability and Robustness}\label{sec:theory}
-In this section, we show that the algorithm introduced in \cref{sec:psdfilter} estimates a distribution which is close to the true filtering distribution in total variation distance. \cref{theorem:bound-diagonal} combines stability properties of the optimal filter with robustness of the iteration \cref{eq:approx-iteration} to the use of $\hat Q$ and $\hat G$ in place of $Q$ and $G$. We introduce the following assumption.
+In this section, we show that \cref{alg:fullfilter} estimates a distribution which is close to the true filtering distribution in total variation distance. \cref{theorem:bound-diagonal} combines stability properties of the optimal filter with robustness of the iteration \cref{eq:approx-iteration} to the use of $\hat Q$ and $\hat G$ in place of $Q$ and $G$. We introduce the following assumption.
 
 \begin{assumption}[$R_n$ is mixing]\label{assumption:mixing}
     There exists $1 >\mixing > 0$ and a probability density $\xi\in\mathcal P(E)$ such that for any $n \in\N$, $R_n$ is $\mixing$-$\xi$-mixing, i.e. for any $u, x \in E \times E$,
@@ -208,7 +241,9 @@ In this section, we show that the algorithm introduced in \cref{sec:psdfilter} e
     \end{align}
 \end{assumption}
 %%
-\cref{assumption:mixing} is a classical assumption for the study of filtering \citep{cappehmm}. We are ready to state the main theorem of this work. In \cref{theorem:bound-diagonal}, we denote $D = d + d^\prime$ where $d$ and $d^\prime$ are the dimensions of $E$ and $F$ respectively. For simplicity in the constants we assume that $d = d^\prime$.
+\cref{assumption:mixing} is a classical assumption for the study of filtering \citep{cappehmm}\todo{expand}.
+
+We are ready to state the main theorem of this work. In \cref{theorem:bound-diagonal}, we denote $D = d + d^\prime$ where $d$ and $d^\prime$ are the dimensions of $E$ and $F$ respectively. For simplicity in the constants we assume that $d = d^\prime$.
 
 \begin{theorem}[PSD filter robustness and stability]\label{theorem:bound-diagonal}
 Assume that $Q$ and $G$ verify \cref{assumption:target_function,assumption:mixing}. Let $\varepsilon > 0$.
@@ -220,13 +255,17 @@ then with probability at least $1-6\delta$, the following holds: for any $k \in 
 \begin{align}
     \Vert \pi_k - \hat\pi_k\Vert_{TV} ~~\leq~~ \frac{C}{\mixing^2}\left(\frac{1-\mixing^2}{1 + \mixing^2}\right)^{k-1}\|\pi_0 - \hat{\pi}_0\|_{TV} ~~+~~ \frac{\varepsilon}{\sigma},
 \end{align}
-where $\hat{\pi}_1,\dots, \hat{\pi}_k$ are computed using \cref{alg:fullfilter}, moreover $C=\frac{2}{\log 3}$ and $C^\prime$ depends only on $\|\sqrt{Q}\|_{W^\beta_2}, \|\sqrt{G}\|_{W^\beta_2}, \beta, d$.
+where $\hat{\pi}_1,\dots, \hat{\pi}_k$ are computed using \cref{alg:fullfilter}. Moreover $C=\frac{2}{\log 3}$ and $C^\prime$ depends only on $\|\sqrt{Q}\|_{W^\beta_2}, \|\sqrt{G}\|_{W^\beta_2}, \beta, d$.
 \end{theorem}
-\cref{theorem:bound-diagonal} is proven in \cref{sec:proof-bound} and we include a sketch of the proof in \cref{sec:sketches}.
+\cref{theorem:bound-diagonal} is proven in \cref{sec:proof-bound} and we include a sketch of the proof in \cref{sec:sketches-filter}.
 
-The theorem above shows that the distance between the probability $\hat \pi_k$ resulting from our algorithm and the optimal one $\pi_k$ corresponding to $k$ steps of sequential Bayesian filtering with the true $Q, G$ is bounded by two terms: (1)
-the first term accounts for stability and goes to zero exponentially fast in the number of steps $k$ and depends on how close we choose $\hat{\pi}_0$ with respect to $\pi_0$; (2) the second terms accounts for robustness, it does not increase in $k$ and we can make it arbitrarily small by learning more precise $\hat{Q}, \hat{G}$, i.e. by increasing $M, n$. Assuming that $\hat{\pi}_0 = \pi_0$ the proposed algorithm \cref{alg:fullfilter} for any $k \in\N$ achieves a
-an error $\|\pi_k - \hat{\pi}_k\|_{TV} \leq \varepsilon/\sigma$ producing a Gaussian PSD model $\hat{\pi}_k$ that satisfies
+The theorem above shows that the distance between the probability $\hat \pi_k$ resulting from our algorithm and the optimal one $\pi_k$ corresponding to $k$ steps of sequential Bayesian filtering with the true $Q, G$ is bounded by two terms:
+\begin{enumerate}
+\item[(1)] the first term accounts for stability and goes to zero exponentially fast in the number of steps $k$ and depends on how close we choose $\hat{\pi}_0$ with respect to $\pi_0$;
+\item[(2)] the second terms accounts for robustness, it does not increase in $k$ and we can make it arbitrarily small by learning more precise $\hat{Q}, \hat{G}$, i.e. by increasing $M, n$.
+\end{enumerate}
+
+Assuming that $\hat{\pi}_0 = \pi_0$ the proposed algorithm \cref{alg:fullfilter} for any $k \in\N$ achieves an error $\|\pi_k - \hat{\pi}_k\|_{TV} \leq \varepsilon/\sigma$ producing a Gaussian PSD model $\hat{\pi}_k$ that satisfies
 $$ \hat{\pi}_k ~~\textrm{of order}~~  O(\varepsilon^{-\frac{2D}{\beta - D/2}}), ~~\textrm{and computational cost} ~~ O(\varepsilon^{-\frac{6D}{\beta - D/2}}),$$
 for \cref{alg:fullfilter}. The cost of learning $\hat{Q}, \hat{G}$ via \cref{alg:learn} is paid only once at the beginning and is of $O(\varepsilon^{-\frac{1.5D}{\beta - D/2}})$, if we use fast algorithms as the ones recalled in \cref{sec:learning}. Note that the proposed approach is adaptive to the regularity of the kernels $Q$ and $G$. In particular, if they are differentiable many times, i.e. $\beta \geq 4.5 D$, then the order of $\hat{\pi}_k$ becomes only  $O(\varepsilon^{-1/2})$, i.e.
 $$
@@ -235,32 +274,22 @@ $$
 %
 This is remarkable since, for example, particle filter methods are bound to a computational complexity that cannot be smaller than $\varepsilon^{-2}$ since they have to approximate an integral via sampling \citep{oudjane}.
 
-\section{Sketch of the proof of \cref{theorem:learning} and \cref{theorem:bound-diagonal}}\label{sec:sketches}
-%
-\paragraph{Sketch of the proof of \cref{theorem:learning}} We denote $f$ the target function and $g = \sqrt{g}$, and $\hat g$ the solution to \cref{eq:learning-problem} and $\hat f = \hat g^2$.
-
-As shown in \cref{sec:proof-learning}, by opening the proof of Proposition 11 in \cite{sampling-ulysse}, we can obtain bounds on $\Vert g - \hat g \Vert_{L^2(\Omega)}$ is $L^2(\Omega)$ and (essentially) $\Vert \hat g - g\Vert_{W^m_2(\Omega)}$ as a function of $\Vert g\Vert_{W^\beta_2(\Omega)\cap L^\infty(\Omega)}$ and $\epsilon$ with optimal dependence on $\epsilon$. We combine these results to bound $\Vert f - \hat f\Vert_{L^\infty(\Omega)}$ with optimal rates in $\epsilon$, which is needed to control the error terms in \cref{theorem:bound-diagonal}.
-Since $\Vert f - \hat f\Vert_{L^\infty(\Omega)}\leq \left(2\Vert g\Vert_{L^\infty(\Omega)}+ \Vert g - \hat g\Vert_{L^\infty(\Omega)} \right)\Vert g- \hat g\Vert_{L^\infty(\Omega)}$, we focus on controlling $\Vert g - \hat g \Vert_{L^\infty(\Omega)}$.
-
-The first key argument is to separate $g - \hat g$ as the sum of an approximation error $g - g_{\tau, \epsilon}$ and an estimation error $g_{\tau, \epsilon} - \hat g$ where $g_{\tau, \epsilon} \in \mathcal H_\eta$ and $\Vert g - g_{\tau, \epsilon}\Vert_{L^\infty(\Omega)}\leq C \Vert g \Vert \epsilon^{1-\tilde \nu}$. Using the triangle inequality, controlling $\Vert g - \hat g\Vert_{L^\infty(\Omega)}$ reduces to controlling $\Vert g_{\tau, \epsilon} - \hat g\Vert_{L^\infty(\Omega)}$. We apply the Gargliano-Niremberg inequality with well-chosen parameters to obtain a bound with the product of the Sobolev norm of the estimation error (which is controlled by the $\mathcal H_\eta$ norm) and of the $L^2(\Omega)$ norm, both of which are bounded by the learning approach. Combining all the terms yields the result in \cref{theorem:learning}.
-
-\paragraph{Sketch of the proof of \cref{theorem:bound-diagonal}}
-The proof of Theorem 6 has three main steps. First, we decompose the error at time $n$ between the intialization error and the modeling error using the triangle inequality:
-%
+\subsection{Sketch of the proof of \cref{theorem:bound-diagonal}}\label{sec:sketches-filter}
+The proof of Theorem 6 relies on decomposing the error at time $n$ between the intialization error and the modeling error using the triangle inequality:
 \begin{equation*}
 \Vert \pi^\nu_n - \hat\pi_n\Vert_{TV} \leq \Vert\pi^\nu_n - \pi^{\hat \pi_0}_n\Vert_{TV} + \Vert\pi^{\hat\pi_0} - \hat \pi_n\Vert_{TV}
 \end{equation*}
-%
-The first source of discrepancy is the intialization error. Indeed, $\hat\pi_k$ is initialized at $\hat \pi_0$ while $\pi_k^\nu$ is initialized at $\nu$ and we isolated this question above by considering the discrepancy between two optimal filters initialized at $\nu$ and $\hat \pi_0$. The decay of this term is known as the stability or forgetting property, and is a property of the optimal filter, i.e. of the dynamical system considered, and not of the algorithms considered. In our setting, since $R_n$ is mixing for any $n\geq 0$, this term decays exponentially with the number of iterations.
 
-The second source of discrepancy is the accumulation of errors committed at each step by applying the approximate iteration \cref{eq:approx-iteration} in place of \cref{eq:iteration}. A telescopic argument (see the proof of \cref{lemma:bound}) shows that the accumulation is limited because the forgetting property of the optimal kernel tends to make past errors disappear exponentially, generalizing the argument in \cite{oudjane} beyond particle filters. The use of closed-form operations with Gaussian PSD Models is underlined in \cref{prop:bound-delta-n} in \cref{sec:proof-bound}. We conclude by bounding the second term below a constant $\varepsilon$, which can be chosen as small as required.
+The first source of discrepancy is the consequence of the intialization error. Indeed, $\hat\pi_k$ is initialized at $\hat \pi_0$ while $\pi_k^\nu$ is initialized at $\nu$ and we isolated this question above by considering the discrepancy between two optimal filters initialized at $\nu$ and $\hat \pi_0$. The decay of this term is known as the stability or forgetting property, and is a property of the optimal filter, i.e. of the dynamical system considered, and not of the algorithms considered. In our setting, since $R_n$ is mixing for any $n\geq 0$, this term decays exponentially with the number of iterations.
+
+The second source of discrepancy is the accumulation of errors committed at each step by applying the approximate iteration \cref{eq:approx-iteration} in place of \cref{eq:iteration}. A telescopic argument (see the proof of \cref{lemma:bound}) shows that the accumulation is limited because the forgetting property of the optimal kernel tends to make past errors disappear exponentially, generalizing the argument in \cite{oudjane} beyond particle filters. The use of closed-form operations with Gaussian PSD Models is underlined in \cref{prop:bound-delta-n} in \cref{sec:proof-bound}. We conclude by bounding the second term below a constant $\varepsilon$, which is chosen as small as required.
 
 \section{Extension: filtering with Generalized Gaussian PSD Models}\label{sec:generalized-psd-models}
 Throughout this work, we have focused on Gaussian PSD Models. In fact, many of the properties studied above remain valid for a more general family of models we introduce and study in this section.
 
-Seen as a mixture (with potentially negatively weighted components), Gaussian Mixture Models have components which are aligned with the axes of the space. In cases where $f(u, x) = Q(u, x)$ a transition kernel, we know that $u$ and $x$ are strongly "correlated" (indeed, $Q(u, x)$ is a conditional density) and having non-diagonal precision matrices can be useful. When $Q(u, x)$ is a Gaussian Linear Conditional Distribution, one Gaussian component with non-diagonal precision matrix is enough to approximate $Q$ uniformly. We prove this in \cref{theorem:kalman}.
+Seen as a mixture (with potentially negatively weighted components), Gaussian Mixture Models have components which are aligned with the axes of the space.\todo{figure?} In cases where $f(u, x) = Q(u, x)$ a transition kernel, we know that $u$ and $x$ are strongly ``correlated''. Indeed, $Q(u, x)$ is a conditional density. Thus, having non-diagonal precision matrices can be more effetctive. In particular, when $Q(u, x)$ is a Gaussian Linear Conditional Distribution, one Gaussian component with non-diagonal precision matrix is enough to approximate $Q$ uniformly. We prove this in \cref{theorem:kalman}.
 
-We introduce Generalized Gaussian PSD Models as the family of non-negative combinations of such components. In this section, we show that Generalized Gaussian PSD Models share many of the properties of Gaussian PSD Models. In addition, we show in \cref{theorem:kalman} that they generalize Kalman filters to more general initial distributions such as multi-modal models.
+We introduce Generalized Gaussian PSD Models as a family of non-negative combinations of such components. In this section, we show that Generalized Gaussian PSD Models share many of the properties of Gaussian PSD Models. In addition, we show in \cref{theorem:kalman} that they generalize Kalman filters to more general initial distributions such as multi-modal models. \todo{code}
 
 In this section, for $P$ a positive semi-definite matrix, we denote for any $x, y\in\mathbb R^d$, $k_P(x, y) = e^{-(x-y)^\top  P(x-y)}$ and $C(P) = \int_{\mathbb R^d} k_P(x, 0)dx$.
 
@@ -277,21 +306,18 @@ where $C_{ij} \in \mathbb R$, $x_{ij}\in\mathbb R^d$ and $P_{ij}$ is a $d\times 
 \end{definition}
 We use the notation $f(x; \theta)$ where $\theta = (X, A, P, C)$ and $X = (x_{ij})_{1 \leq i,j\leq M}$, $P=(P_{ij})_{1 \leq i,j\leq M}$, and $C=(C_{ij})_{1 \leq i,j\leq M}$.
 
-Like Gaussian PSD Models, Generalized Gaussian PSD Model are a generalization of Gaussian Mixture Models allowing for negative weights. Indeed, by developing \cref{eq:def} with \cref{eq:developed}, $f$ can be written :  $f(x) = \sum_{i=1}^M\sum_{j=1}^M A_{ij}e^{C_{ij}}k_{P_{ij}}(x, x_{ij})$.
+Like Gaussian PSD Models, Generalized Gaussian PSD Model are a generalization of Gaussian Mixture Models allowing for negative weights. Indeed, by developing \cref{eq:def} with \cref{eq:developed}, $f$ can be written :  $f(x) = \sum_{i=1}^M\sum_{j=1}^M A_{ij}e^{C_{ij}}k_{P_{ij}}(x, x_{ij})$. Unlike Gaussian PSD Models, $C_{ij}$, $P_{ij}$ and $x_{ij}$ can not be chosen arbitrarily: their choice ensures $B(x)$ is PSD for any $x\in\mathbb R^d$. In practice, we construct the models iteratively since they compose well, like Gaussian PSD Models.
 
 \subsection{Examples of Generalized Gaussian PSD Models}
-Below we show that Generalized Gaussian PSD Models generalize Gaussian Mixture Models, Gaussian PSD Models from \cite{ciliberto2021} and indeed, any squared linear combination of Gaussian functions.
+Below we show that Generalized Gaussian PSD Models generalize Gaussian Mixture Models, Gaussian PSD Models, and indeed, any squared linear combination of Gaussian functions.
 
 \begin{example}[Gaussian Mixture Models are Generalized Gaussian PSD Models]
-Let $a\in\mathbb R^d_+$ such that $\sum_{i=1}^d a_i=1$. If $f(x) = \sum_{i=1}^M a_i p(x | \mu_i, P_i)$ with $a_i \geq 0$ and $\sum_{i=1}^Ma_i = 1$, then $f$ verifies \Cref{definition:ggpsd} with $A=\text{diag}(a)$, $P_{ii} = P_i/2$, $x_{ii}=x_i/2$ and $C_{ii} = - \frac{1}{2}\log(C(P_i))$.
+Let $a\in\mathbb R^d_+$ such that $\sum_{i=1}^d a_i=1$. If $f(x) = \sum_{i=1}^M a_i p(x | \mu_i, P_i)$ with $a_i \geq 0$ and $\sum_{i=1}^Ma_i = 1$, then $f$ verifies \cref{definition:ggpsd} with $A=\text{diag}(a)$, $P_{ii} = P_i/2$, $x_{ii}=x_i/2$ and $C_{ii} = - \frac{1}{2}\log(C(P_i))$.
 \end{example}
 
 \begin{example}[Gaussian PSD Models are Generalized Gaussian PSD Models]
 Consider a Gaussian PSD Model $f(x) = \Phi_M(x)^\top  A \Phi_M(x)$ with $\Phi_M(x) = (k_\eta(x, x_1), \ldots, k_\eta(x, x_M)^\top\in\mathbb R^M$. Then, $f$ a Generalized Gaussian PSD Model. Indeed,
 $f(x) = Tr(A \Phi_M(x) \Phi_M(x)^\top )$.
-% \begin{align}
-%     f(x) = \Phi_M(x)^\top A\Phi_M(x) = Tr(\Phi_M(x)A\Phi_M(x)) = Tr(A \Phi_M(x) \Phi_M(x)^\top ).
-% \end{align}
 Each component of the positive semi-definite matrix $\Phi(x)\Phi(x)^\top $ is a function of the form $x \mapsto e^{C_{ij}}k_{2\eta}(x, \frac{x_i + x_j}{\sqrt{2}})$ with $C_{ij}=\Vert x_i\Vert^2 + \Vert x_j \Vert^2 -\frac{\Vert x_i + x_j\Vert^2}{2}$, and $f$ verifies \cref{definition:ggpsd}.
 \end{example}
 \begin{example}[Squared Gaussian Linear Models are Generalized Gaussian PSD Models]
@@ -300,15 +326,15 @@ Consider the function $f(x) = \left( w^\top \Phi_M(x)\right)^2$ where $\Phi_M(x)
 
 
 \subsection{Closed-form stability with respect to probabilistic operations}
-Like Gaussian PSD Models, Generalized Gaussian PSD Models are closed under product, partial evaluation, and marginalization.
+Like Gaussian PSD Models, we prove Generalized Gaussian PSD Models are closed under product, partial evaluation, and marginalization.
 \begin{proposition}\label{prop:ops}
     Let $f(x, y; \theta_1)$ and $g(y, z; \theta_2)$ be two Generalized Gaussian PSD Models of order $M_1$ and $M_2$ respectively, where all precision matrices are positive definite.
-    \begin{itemize}
-        \item\textbf{Integral over $\mathbb R^d$} $\int f(x, y; \theta_1)dxdy$ is given by the algorithm $\integralpsd(\theta_1)$.
-        \item\textbf{Partial evaluation}$f(x, y_0; \theta_1) = h(x; \theta^\prime)$ is a Generalized Gaussian PSD Model of order $M_1$ and $\theta^\prime$ is given by the algorithm $\partialpsd(y_0, \theta_1)$.
-        \item\textbf{Product} $f(x, y; \theta_1)g(y, z; \theta_2)=h(x, y, z; \theta^\prime)$ is a Generalized Gaussian PSD Model of order $M_1\times M_2$ and $\theta^\prime$ is given by the algorithm $\productpsd(\theta_1, \theta_2)$.
-        \item\textbf{Marginalization} $\int f(x, y; \theta_1)dy=h(x; \theta^\prime)$ is a Generalized Gaussian PSD Model of order $M_1$ and $\theta^\prime$ is given by the algorithm $\marginalpsd(y, \theta_1)$.
-    \end{itemize}
+    \begin{enumthm}
+        \item \textbf{Integral over $\mathbb R^d$} $\int f(x, y; \theta_1)dxdy$ is given by the algorithm $\integralpsd(\theta_1)$.
+        \item \textbf{Partial evaluation}$f(x, y_0; \theta_1) = h(x; \theta^\prime)$ is a Generalized Gaussian PSD Model of order $M_1$ and $\theta^\prime$ is given by the algorithm $\partialpsd(y_0, \theta_1)$.
+        \item \textbf{Product} $f(x, y; \theta_1)g(y, z; \theta_2)=h(x, y, z; \theta^\prime)$ is a Generalized Gaussian PSD Model of order $M_1\times M_2$ and $\theta^\prime$ is given by the algorithm $\productpsd(\theta_1, \theta_2)$.
+        \item \textbf{Marginalization} $\int f(x, y; \theta_1)dy=h(x; \theta^\prime)$ is a Generalized Gaussian PSD Model of order $M_1$ and $\theta^\prime$ is given by the algorithm $\marginalpsd(y, \theta_1)$.
+    \end{enumthm}
     \end{proposition}
 \paragraph{Proof sketch for the product} Using \cref{eq:def}, $f(x, y)g(y, z)$ can be written $h(x, y, z) = Tr(A_1\otimes A_2 \times B_1(x, y) \otimes B_2(y, z))$. The entries of $B_1(x, y) \otimes B_2(y, z)$ are products of Gaussian functions which can simplified into the the form \cref{eq:developed}. The complete proof and description of each operation can be found in \cref{sec:proof-ops}.
 
@@ -320,14 +346,19 @@ Let $\mu(x; \theta_\mu)$, $q(x, x^\prime; \theta_q)$ and $g(x, y; \theta_g)$ be 
 
 Applying \cref{proposition:psdfilterstep} recursively as in \cref{alg:fullfilter} to compute an approximate filter $\hat \pi_n$, the order of $\hat\pi_n$ increases exponentially with $n$. A constant number of anchor points can be used by compression $\hat\pi_n$ at each step, for example by learning a Gaussian PSD Model with a given number of anchor points (indeed $\hat\pi_n$ is a smooth sum-of-squares), which is justified by \cref{theorem:learning}.
 
+
+\todo{Explain the Generalized Gaussian PSD Models are the largest stable family?}
+
 \subsection{Generalized Gaussian PSD Models generalize Kalman filters}
 
-Conditional Gaussian Linear Distributions are widely used in filtering and dynamical modeling since they cover transition or observation state-space equations such as $X_{t+1} = FX_t + b + \Sigma U_t$ where $U_t$ is Gaussian noise considered in the Kalman filter and extensions.
+Conditional Gaussian Linear Distributions are widely used in filtering and dynamical modeling since they cover transition or observation state-space equations such as $X_{t+1} = FX_t + b + \Sigma^{1/2} U_t$ where $U_t$ is Gaussian noise considered in the Kalman filter and extensions.
 
 \begin{theorem}[Approximating a Conditional Gaussian Linear Distribution]\label{theorem:kalman}
 Let $p$ be a Conditional Gaussian Linear Distribution defined by $p(y | x) = \mathcal N(y | Fx + b, \Sigma)$ with $F\in\mathbb R^{d ^\prime\times d}$, $b\in\mathbb R^{d^\prime}$ and $\Sigma\in\mathcal S^{++}_{d^\prime}(\mathbb R)$. Then for any $\epsilon>0$ and $R>0$, there exists a Generalized Gaussian PSD Model of order $1$ such that $\vert p(y | x) - \hat p(x, y) \vert \leq \epsilon, $$\forall x, y \in \mathbb R^d \times \mathbb R^{d^\prime}$ such that $\Vert x\Vert_2^2 + \Vert y \Vert_2^2 \leq R^2$.
 \end{theorem}
 
-This shows that a Generalized Gaussian PSD Model of order $1$ can approximate a Conditional Gaussian Linear Model with arbitrary accuracy on a compact. Note that in this case, applying \cref{alg:fullfilter} with $\hat Q$ and $\hat G$ such approximations (each of order $1$) and $\hat\pi_0$ of order $M$ yields an approximation of $\pi_n$ of constant order $M$. The proof of \cref{theorem:kalman} can be found in \cref{sec:proof_kalman}.
+This shows that a Generalized Gaussian PSD Model of order $1$ can approximate a Conditional Gaussian Linear Model with arbitrary accuracy on any given compact. Note that in this case, applying \cref{alg:fullfilter} with $\hat Q$ and $\hat G$ such approximations (each of order $1$) and $\hat\pi_0$ of order $M$ yields an approximation of $\pi_n$ of constant order $M$.
+
+We prove \cref{theorem:kalman} in \cref{sec:proof_kalman}.
 
 Generalized Gaussian PSD Models can be used to learn general transition kernels using non-convex optimization. We discuss this in \cref{sec:learning-general}.
