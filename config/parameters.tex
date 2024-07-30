@@ -218,3 +218,16 @@
 \newlist{enumthm}{enumerate}{1} % set up a dedicated enumeration env.
 \setlist[enumthm]{label=\upshape(\alph*),ref=\upshape\thetheorem(\alph*)}
 \crefalias{enumthmi}{theorem} % alias 'enumthmi' counter to 'thm'
+
+\usepackage{appendix}
+\usepackage{chngcntr}
+\usepackage{etoolbox}
+
+\AtBeginEnvironment{subappendices}{%
+  \clearpage
+  \section*{Appendices}
+  \addcontentsline{toc}{section}{Appendices}
+  \counterwithin{figure}{section}
+  \counterwithin{table}{section}
+  \counterwithin{theorem}{section}
+}
