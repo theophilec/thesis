@@ -79,10 +79,10 @@ Even though its intuition is similar, DiffyTW is different from Diffy, presented
 
 
 \subsection{Invariance to time-warping}
-DiffyTW was designed to be equal to zero when comparing functions that are diffeomorphic one to the other, i.e. $d(f\circ Q, f)=0$. We show this is \cref{thm:diffy-invariance}:
+DiffyTW was designed to be equal to zero when comparing functions that are diffeomorphic one to the other, i.e. $d(f\circ Q, f)=0$. We show this is \cref{thm:diffytw-invariance}:
 
 
-\begin{theorem}\label{thm:diffy-invariance}
+\begin{theorem}\label{thm:diffytw-invariance}
 Let $Q$ be a reparametrization of $[0,1]$ such that $Q^\prime \in \mathcal F_{0, 1}$. Then, for any $f: [0,1] \to \mathcal X$,
 \begin{equation}
     d(f\circ Q, f) = 0.
@@ -132,7 +132,7 @@ d(f \circ Q_0^{-1}, g) &= \min_{Q\in\mathcal Q}\Delta(f\circ Q_0^{-1} \circ Q^{-
 
 DiffyTW is invariant to reparametrizations it searches over. However, it is also invarint to different transformations when $id \in \mathcal Q$. This means that the optimizer (when it exists) $Q \in \mathcal Q$ does not align $f$ and $g$, but $d(f,g)=0$ anyways. When $id \in \mathcal Q$, this is the case for any integral preserving transformations, such as time-flipping ($x \mapsto f(-x)$).
 
-\section{Computing DiffyTW in practice}
+\section{Computing DiffyTW in practice}\label{sec:computing-diffytw}
 DiffyTW is defined over the space of functions $[0,1] \to \mathcal X$ and the optimization problem is defined over an arbitrary set of functions $\mathcal F_{0,1}$, which determines the set of transformations $\mathcal Q$ the divergence is invariant to. In this section, we show DiffyTW can be computed for sampled time-series and with an expressive set of diffeomorphims $\mathcal F_{0,1}^M$ by solving a Quadratic program. We show that this approximate computation is exact if we assume the underlying signals are piece-wise constant. When the signals have regularity, we show that as the number of sample points grow, the approximated DiffyTW value approaches that compyuted on the underlying signals.
 
 \emph{\textbf{In what follows, we highlight the main ingredients and steps in our reasoning.} Formal definitions of components, statements of results and proofs follow in the rest of the section and related appendices.}
@@ -154,17 +154,18 @@ q(x) = \sum_{k=1}^M q_k k(x, \tilde x_k)\text{ such that } q_k\in\mathbb R^+, \i
 %$q(x) = \sum_{k=1}^M q_k k(x, \tilde x_k)$ where $q_k$, $k$ and $\tilde x$ are chosen such that $q\in\mathcal F_{0,1}$.
 For $q\in\mathcal F_{0,1}^M$, $I(q, x, y)$ can be computed in closed-form (see \cref{ex:H-rbf,ex:H-laplace}) and is linear in the coordinates $q$. This also implies that \cref{eq:nnlm} are linear equality and inequality constraints in $q$.
 
-Thus, we define $\hat d_M(f, g)$ as $d(f,g)$ replacing $\mathcal F_{0,1}$ by $\mathcal F_{0,1}^M$ in the optimization problem, i.e.:
-\begin{equation}
-\hat d_M(f, g) = \min_{q \in\mathcal F_{0,1}^M} \Vert \int \phi(f(x))q(x) - \int \phi(g(x))dx\Vert_\mathcal H^2
+We define $d_M(f, g)$ as $d(f,g)$ replacing $\mathcal F_{0,1}$ by $\mathcal F_{0,1}^M$ in the optimization problem, i.e.:
+\begin{equation}\label{eq:hat-d_M}
+d_M(f, g) = \min_{q \in\mathcal F_{0,1}^M} \Vert \int \phi(f(x))q(x) - \int \phi(g(x))dx\Vert_\mathcal H^2
 \end{equation}
 
-\paragraph{Quadratric Program} By combining the two above steps, we can find an expression for $\hat d_M(\hat f, \hat g)$. We exploit the linearity in the coordinates on $q$ in \cref{eq:diffytw-step-2} and develop the squared-norm. It follows that:
-\begin{align}
-    \hat d_M(\hat f, \hat g) &\label{eq:diffytw-step-3}=\min_{\substack{q\in\mathbb R^{M}\\h^\top q=1\\0 \leq q}}\frac{1}{2}q^\top Pq - v^\top q + C
-\end{align}
-where $P\in\mathcal S_{++}(\mathbb R^M)$, $v\in\mathbb R^M$ and $C\in\mathbb R$ are defined in \cref{thm:prob-qp}.
+\paragraph{Quadratric Program} We can now find a natural expression for $\hat d_M(\hat f, \hat g)$ which combines representing $\hat f$ and $\hat g$ by adapted piece-wise constant functions and optimizing over $\mathcal F_{0,1}^M$. We exploit the linearity in the coordinates on $q$ in \cref{eq:diffytw-step-2} and develop the squared-norm. This leads to defining $\hat d_M(\hat f, \hat g)$ as the optimal value to a Quadratic program over the coordinates $q$ with a single equality constraint (corresponding to $\int_0^1q(x)dx = 1$) and $M$ inequality constraints ($q \geq 0$):
+\begin{equation}\label{eq:discrete-diffytw-informal}
+\hat d_M(\hat f, \hat g) :=min_{\substack{q\in\mathbb R^{M}\\h^\top q=1\\0 \leq q}}\frac{1}{2}q^\top Pq - v^\top q + C
+\end{equation}
+We define $\hat d_M(\hat f, \hat g)$ formally in \cref{sec:consistent}.
 
+In the rest of \cref{sec:computing-diffytw}, we prove that \cref{eq:discrete-diffytw-informal} is consistent with \cref{def:diffytw}, that (under mild hypotheses) it is not sensitive to the sampling patterns of $\hat f$ and $\hat g$ as $n, m\to\infty$ and how it can be computed in practice.
 
 %\subsection{Application to sampled time-series}
 
@@ -185,70 +186,74 @@ where $P\in\mathcal S_{++}(\mathbb R^M)$, $v\in\mathbb R^M$ and $C\in\mathbb R$ 
 %where $x \mapsto k(x, y)$ is a basis function, for instance the partial evaluation of a positive definite kernel. Normalized NNLMs are clearly a subset of $\mathcal F_{0,1}$, which we denote $\mathcal F_{0, 1}^M$. Note that $\mathcal F_{0,1}^M$ depends on the choice of kernel $k$ and of the set of anchor points $\tilde X = (\tilde x_k)_{1\leq k\leq M}$, both of which are fixed. When clear from context, we use the same notation for the function $q$ and the vector of coefficients $q\in{\mathbb R^+}^M$.
 
 
-
-\begin{theorem}
-Let $\mathcal F_{0,1}^M$ be the class of NNLMs of order $M$ and with basis function $x \mapsto k(x, \tilde x_k)$ as in \cref{eq:nnlm}. Let $\hat f = (x_i, f_i)_{1 \leq i \leq n}$ and $g = (y_j, g_j)_{1 \leq j \leq m}$, then  Let $\hat d(\hat f, \hat g)$ is the optimal value of the Quadratic program:
-\begin{equation}
-\hat d(\hat f, \hat g) ~= \min_{\substack{q\in\mathbb R^{M}\\h^\top q=1\\0 \leq q}}\frac{1}{2}q^\top P(f, X, \tilde X)q - v(f, X, g, Y, \tilde X)^\top q + C(g, Y, \tilde X)
+\subsection{Discrete DiffyTW is consistent with DiffyTW}\label{sec:consistent}
+We begin by formally defining Discrete DiffyTW, as motivated above:
+\begin{definition}[Discrete DiffyTW]\label{def:discrete-diffytw} Let $\hat f = (x_i, f_i)$ and $\hat g= (y_j, g_j)$. We define the discrete DiffyTW between discrete time series as the optimal value of the Quadratic program:
+\begin{equation}\label{prob:qp}
+    \hat d_M(\hat f, \hat g) :=\min_{\substack{q\in\mathbb R^{M}\\h^\top q=1\\0 \leq q}}\frac{1}{2}q^\top Pq - v^\top q + C
 \end{equation}
-where $P(f, X, \tilde X) = 2H^TK(f, f)H$, $C(g, Y, \tilde X) = \Delta(Y) K(g, g)\Delta(Y)$ and $v(f, X, g, Y, \tilde X) = 2 \Delta(Y)^TK(g, f)\tilde H(X, \tilde X)$ and $H$ is defined in \cref{eq:H}.
+where $P= 2\tilde H^TK_{f, f}\tilde H$, $C= \delta^\top K_{g,g}\delta$ and $v= 2 \delta^TK_{g,f}\tilde H$. $\delta\in\mathbb R^{m-1}$ is defined by $\delta_j = y_{j+1} - y_j$. $\tilde H$ is defined in \cref{eq:H}, $[K_{fg}]_{ij} = K(f_i, g_j)$, $[K_{ff}]_{ij} = K(f_i, f_j)$, and $[K_{gg}]_{ij} = K(g_i, g_j)$, where $K(z_1, z_2) = \langle \phi(z_1), \phi(z_2)\rangle_\mathcal H$.
+\end{definition}
+Notice that $P$ is symmetric, semi-definite positive by construction.
+
+In \cref{thm:prob-qp}, we justify that the definition of Discrete DiffyTW coincides with that of Diffy for piece-wise constant functions, over the set of transformations induced by $\mathcal F_{0, 1}^M$.
+\begin{theorem}\label{thm:prob-qp}
+Let $\hat f = (x_i, f_i)$ and $\hat g = (y_j, g_j)$ be two sampled time series. Let $f$ (resp. $g$) be a piece-wise constant function adapted to $\hat f$ (resp. $\hat g$). Then:
+\begin{equation}
+d_M(f, g) = \hat d_M(\hat f, \hat g)
+\end{equation}
+where $d_M(f, g)$ is defined in \cref{eq:hat-d_M} and $\hat d_M(\hat f, \hat g)$ is defined in \cref{def:discrete-diffytw}.
 \end{theorem}
 
-\begin{theorem}\label{thm:prob-qp}
-Let $\mathcal F_{0,1}^M$ is defined as in \cref{eq:nnlm}, $f$ and $g$ are piece-wise constant functions adapted to $X=(x_i)_{1\leq i\leq n}$ and $Y=(y_j)_{1\leq j\leq m}$ repectively. Let $d_M(f, g)$ be defined as follows:
-\begin{equation}
-d_M(f, g) ~:= \min_{q \in \mathcal F_{0,1}^M}\left\Vert \int_0^1 \phi(f(x))q(x)dx - \int_0^1\phi(g(x))dx\right\Vert^2_\mathcal H
-\end{equation}
+\begin{proof}
+\todo[inline]{Describe how to construct $f$ and $g$ from $\hat f$ and $\hat g$ then do the computation.}
+\end{proof}
 
-Then, $d_M(f, g)$ is the optimal value of the Quadratic program defined in \cref{prob:qp}:
-\begin{equation}\label{prob:qp}
-        \min_{\substack{q\in\mathbb R^{M}\\h^\top q=1\\0 \leq q}}\frac{1}{2}q^\top P(f, X, \tilde X)q - v(f, X, g, Y, \tilde X)^\top q + C(g, Y, \tilde X)
+Because Discrete DiffyTW is defined as an extension of DiffyTW, it maintains certain invariance properties. For instance, \cref{corollary:discrete-invariance} is a consequence of \cref{thm:prob-qp} and of \cref{thm:diffytw-invariance}.
+
+\begin{corollary}\label{corollary:discrete-invariance}
+Let $h$ be a piece-wise constant and $Q$ a reparametrization such that $Q^\prime \in \mathcal F_{0,1}^M$. Let $(x_i)_{1 \leq i \leq n}$ be a sampling pattern. Consider $\hat f = (Q(x_i), h(x_i))$ and $\hat g = (x_i, h(x_i))$. Then,
+\begin{equation}
+\hat d_M(\hat f, \hat g) = 0.
 \end{equation}
-where $P(f, X, \tilde X) = 2H^TK(f, f)H$, $C(g, Y, \tilde X) = \Delta(Y) K(g, g)\Delta(Y)$ and $v(f, X, g, Y, \tilde X) = 2 \Delta(Y)^TK(g, f)\tilde H(X, \tilde X)$ and $H$ is defined in \cref{eq:H}.
+\end{corollary}
+\begin{proof}
+\todo[inline]{Todo, with a drawing}
+\end{proof}
+
+\subsection{Computing Discrete DiffyTW}\label{sec:solving-qp}
+
+\Cref{prob:qp} is a quadratic program with $M$ variables and linear inequality and equality constraints. It is convex, and strongly convex as soon as $K_{f,f}$ is positive definite. The interior point Newton method, for instance in \cite{fabian} solves this type of convex problem. Their time complexity is generally in $O(M^3)$.
+
+As a point of comparaison, Dynamic Time Warping can be computed in $O(M^2)$ time using Dynamic programming.
+
+\subsection{Approximation \& parameter choice}
+\cref{corollary:discrete-invariance} illsutrates that the definition of Discrete DiffyTW is ``tight`` with respect to that of DiffyTW if the underlying signals are piece-wise constant and diffeomorphic. In this section, we raise three questions : how good is this approximation for arbitrary signals $f$ and $g$? how dependent is $\hat d_M(\hat f, \hat g)$ on the sampling patterns? how should one go about choosing $k$, $\tilde x$ and $K$?
+\begin{theorem}[Rectangle approximation]\label{thm:rectangle-approx}
+Let $f,g:[0,1] \to \mathbb R^d$ be two $L$-Lipchitz functions. Let $(x_i)_{1\leq i \leq n}$ and $(y_j)_{1\leq j\leq m}$ two sampling patterns. We denote $\hat f = (x_i, f(x_i))$ and $\hat g = (y_j, g(y_j))$.
+\begin{equation}
+    \left\vert d_M(f, g) - \hat d_M(\hat f_n, \hat g_m)\right\vert \leq \frac{C}{n}
+\end{equation}
 \end{theorem}
 
 
 \begin{proof}
-    Let $f, g \in \mathcal C_{pm}([0,1], \mathcal X)$ two piece-wise constant functions, adapted to $(x_1, \ldots, x_N)$ and $(y_1, \ldots, y_M)$. Given $q\in\mathcal F_{0,1}$, denote $I(q, x, y) = \int_x^y q(x)dx$. Then,
-    \begin{align}
-        d(f, g) = \min_{q\in\mathcal F_{0,1}} \left \Vert \sum_{i=1}^{N-1} I(q, x_i, x_{i+1}) \phi(f(x_i)) - \sum_{j=1}^{M-1} \Delta_j\phi(g(y_j))\right\Vert_\mathcal H^2
-    \end{align}
+By \cref{thm:prob-qp}, we model $\hat f$ and $\hat g$ by piecewise constant functions.
+\todo[inline]{Finish this}
 
-    We can rewrite this as a constrained quadratic program:
-    \begin{align}\label{prob:quadqp}
-        d(f, g) = \min_{\substack{w\in\mathbb R^{N-1} \\ \mathrm{s.t.~} w_i = I(q, x_i, x_{i+1})\\ \mathrm{and~} q \in \mathcal F_{0,1}}} w^\top K(f, f)w - 2 \Delta^\top K(g, f) w + \Delta^\top K(g,g)\Delta
-    \end{align}
-where $K(f,f)_{ij} = k_\mathcal X(f(t_i), f(t_j))$, $K(f, g) = k_\mathcal X(f(t_i), g(t_j^\prime))$, and $\Delta_i = y_{i+1} - y_i$ for $1 \leq i \leq M - 1$.
-\end{proof}
-
-\subsection{Solving the quadratic program}
-
-\cref{prob:qp} is a quadratic program with linear inequality and equality constraints, with $M$ variables. Many algorithms exist for solving this class of problems including... Their time complexity is generally in $O(M^3)$. Many solvers exist including ...
-
-
-\subsection{Approximation and role of $\phi$}
-\begin{theorem}[Rectangle approximation]\label{thm:rectangle-approx}
-\begin{equation}
-    \left\vert d(f, g) - d(\hat f_n, \hat g_m)\right\vert \leq \frac{C}{n^\alpha}
-\end{equation}
-where $\alpha = 1$ if $(t_i)$ and $(s_j)$ are a regular grid and $f, g$ are $L-Lipchitz$, and holds with high probability and $\alpha = 1/2$ if $t_i$ and $s_j$ are sampled uniformly on $[0,1]$ (and re-ordered).
-\end{theorem}
-\todo{Finish this}Let $f$ and $g$ be two $L$-Lipschitz maps from $[0,1] \to\mathcal X$. Let $s, r: [0,1] \to [0,1]$ be two non-decreasing, piecewise-constant maps such that $s(0)=r(0)=0$ and $s(1)=r(1)=1$, with $n$ and $m$ samples each.
-
-\begin{proposition}
+Let $f,g:[0,1] \to \mathbb R^d$ be two $L$-Lipchitz functions. Let $(x_i)_{1\leq i \leq n}$ and $(y_j)_{1\leq j\leq m}$ two sampling patterns. We denote $\hat f = (x_i, f(x_i))$ and $\hat g = (y_j, g(y_j))$.
 Let $\mathcal F_{0,1}$. Then, for any $q\in\mathcal F_{0,1}$,
     \begin{equation}
         \vert d(f, g) - d(f\circ s, g\circ r) \vert \leq \Vert q \Vert \Vert \int \phi(f) - \phi(f\circ s)\Vert_{\mathcal H} + \Vert \int \phi(g)- \phi(g\circ s)\Vert
     \end{equation}
-\end{proposition}
 
-\begin{proposition}
+
 Let $f$ be $L$-Lipschitz on $[0,1]$ and $\phi$ be the RBF kernel with parameter $\gamma > 0$.
 Then, for any $\vert x - u \vert \leq \Delta$,
 \begin{equation}
     \Vert \phi(f(x)) - \phi(f(u)) \Vert^2 \leq 2\left(1 - k(f(x), f(u))\right) \leq 2 \gamma L \Delta
 \end{equation}
-\end{proposition}
+\end{proof}
 
 
 
@@ -375,128 +380,3 @@ Given $(f_i)$ a set of time series and $K > 0$ an integer, the goal of clusterin
 where $d$ is some metric. When $\mu_k$ are chosen among $(f_i)$, the task is known as k-mediods ; when the $\mu_k$ can be chosen arbitrarily, it is known as k-means.
 
 \subsection{Learning using DiffyTW}
-% Acknowledgements and Disclosure of Funding should go at the end, before appendices and references
-
-\section{Relation to implicit differentiation}\label{sec:lagrangian}
-Our approach is to use implicit differentiation. Roughly, we proceed as follows: link optimality of $q^*$ using strong duality (Slater's Condition) and the KKT conditions ; rewrite the KKT conditions as an implicit function ; use the implicit function theorem.
-
-\noindent We first state our result:
-
-\begin{theorem}[Lagrangian approach]
-$v(\theta) = l(\theta, q^*(\theta))$ is differentiable and is gradient is defined as:
-\begin{equation}
-    \nabla v(\theta) = \nabla_1 l(\theta, q^*(\theta)) + \nabla_2 l(\theta, q^*(\theta))J q^*(\theta)
-\end{equation}
-\end{theorem}
-
-\begin{proof}
-The Lagrangian of \cref{prob:fullqp} is:
-\begin{equation}
-    L(q, u, v, \theta) = \underbrace{\frac{1}{2}q^TP(\theta)q - v(\theta)^Tq + C(\theta)}_{l(q, \theta)}+ u^T(h^Tq - 1) - v^Tq
-\end{equation}
-
-where $L: \mathbb R^M \times \mathbb R \times \mathbb R^M\times\Theta\to\mathbb R$, as there are $M$ variables, $1$ equality constraint and $M$ inequality constraints, where we've added dependence on $\theta$.
-
-For an optimal primal and dual solutsion $(q^*(\theta), u^*(\theta), v^*(\theta))$, the KKT conditions are verified:
-\begin{align}
-    0 &= \partial_q l(q^*, \theta) + u^*h - v^* &\text{(primal stationarity)}\\
-    1 & =h^Tq^*(\theta)  & \text{(primal feasibility)} \\
-    0 & \geq q^*(\theta) & \text{(primal feasibility)}\\
-    0 & = \mathrm{Diag}(v^*(\theta))q(\theta) & \text{(complimentary slackness)}
-\end{align}
-
-
-
-
-
-
-\textbf{Step 2: translate the KKT conditions as an implicit function}
-
-Let $g(q, u, v, \theta) = \begin{bmatrix}
-    P(\theta)q - v(\theta) + uh - v\\
-    h^Tq- 1\\
-    \mathrm{Diag}(v)q
-\end{bmatrix}$. $(q^*, u^*, v^*)$ are solutions if and only if $g(q^*, u^*, v^*, \theta) = 0$.
-
-\textbf{Step 3: applying the implicit function theorem}
-Denoting $z = (q, u, v)$, $g$ is a function of two variables $(z, \theta)$. To apply the implicit function theorem, we prove that $\partial_z g(z^*, \theta)$ is invertible for any solution $z^*$.
-
-The partial Jacobian can be written:
-\begin{align}
-    J_z g(z^*, \theta) = \begin{bmatrix}
-    P(\theta) & h^T & - I\\
-    h & 0 & 0\\
-    \mathrm{Diag}(v)& 0 & \mathrm{Diag}(q)
-    \end{bmatrix}
-\end{align}
-
-If there exists $1 \leq i\leq m$ such that $v_i = q_i = 0$, $J_z g$ is not invertible. This corresponds to the "zero-zero" case for complementary slackness : the constraint is active and the Lagrange multiplier is $0$. In this case, at optimality, \textcolor{red}{todo todo}.
-
-
-In the end,
-\begin{align}
-    J_\theta z^*(\theta) = - J_zg(z^*, \theta)^{-1}J_\theta g(z^*, \theta)
-\end{align}
-We can then combine these results:
-\begin{align}
-J_\theta v(\theta) &=  J_q l(q^*, \theta)J_\theta q^*(\theta) + J_\theta l(q^*, \theta),\\
-&= J_q l(q^*, \theta)  \left[J_\theta z^*(\theta)\right]_{q, \theta} + J_\theta l(q^*, \theta),\\
-&= - J_ql(q^*, \theta) \left[J_z g(z^*, \theta)^{-1} J_\theta g(z^*, \theta)\right]_{q,\theta}+ J_\theta l(q^*, \theta)
-\end{align}
-\end{proof}
-
-Here we assume that $\theta$ is such that $q^*(\theta) > 0 $, so $v^*(\theta)=0$. Thus:
-
-\begin{align}
-    J_z g(z^*, \theta) = \begin{bmatrix}
-    P(\theta) & - I & h\\
-    0 & \mathrm{Diag}(q)& 0\\
-    h^T & 0 & 0
-    \end{bmatrix}
-\end{align}
- and recall
-\begin{align}
-    J_\theta g(z^*, \theta) = \begin{bmatrix}
-    -J_\theta v(\theta)\\
-    0 \\
-    0
-    \end{bmatrix}
-\end{align}
-
-We solve the following system:
-\begin{equation}
-\begin{bmatrix}
-    P(\theta) & - I & h\\
-    0 & \mathrm{Diag}(q)& 0\\
-    h^T & 0 & 0
-    \end{bmatrix}
-\begin{bmatrix}
-    A \\
-    B \\
-    C
-    \end{bmatrix} =
-\begin{bmatrix}
-    - J_\theta v(\theta) \\
-    0 \\
-    0
-    \end{bmatrix}
-\end{equation}
-
-which is equivalent to:
-
-\begin{align}
-   P(\theta)A - B + hC =& -J_\theta v(\theta)\\
-   \mathrm{Diag}(q)B =& 0\\
-   h^TA =& 0
-\end{align}
-
-The second equation implies that $B=0$, and the first implies
-\begin{equation}
-    A = - P(\theta)^{-1}hC - P(\theta)^{-1}J_\theta v(\theta)
-\end{equation}
-
-And
-\begin{align}
-    J_ql(q^*,\theta)A &= (q^TP(\theta) - v(\theta)^T)A = h^TA = 0
-\end{align}
-\vskip 0.2in

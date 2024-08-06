@@ -31,3 +31,128 @@ We derive the exact expressions in three cases in the following examples.
 \end{align}
 where $\varphi(u) = (2 - e^u)/\gamma$ if $u \geq 0$ and $\varphi(u) = e^{-u} / \gamma$ else.
 \end{example}
+
+
+\section{Relation to implicit differentiation}\label{sec:lagrangian}
+Our approach is to use implicit differentiation. Roughly, we proceed as follows: link optimality of $q^*$ using strong duality (Slater's Condition) and the KKT conditions ; rewrite the KKT conditions as an implicit function ; use the implicit function theorem.
+
+\noindent We first state our result:
+
+\begin{theorem}[Lagrangian approach]
+$v(\theta) = l(\theta, q^*(\theta))$ is differentiable and is gradient is defined as:
+\begin{equation}
+    \nabla v(\theta) = \nabla_1 l(\theta, q^*(\theta)) + \nabla_2 l(\theta, q^*(\theta))J q^*(\theta)
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+The Lagrangian of \cref{prob:fullqp} is:
+\begin{equation}
+    L(q, u, v, \theta) = \underbrace{\frac{1}{2}q^TP(\theta)q - v(\theta)^Tq + C(\theta)}_{l(q, \theta)}+ u^T(h^Tq - 1) - v^Tq
+\end{equation}
+
+where $L: \mathbb R^M \times \mathbb R \times \mathbb R^M\times\Theta\to\mathbb R$, as there are $M$ variables, $1$ equality constraint and $M$ inequality constraints, where we've added dependence on $\theta$.
+
+For an optimal primal and dual solutsion $(q^*(\theta), u^*(\theta), v^*(\theta))$, the KKT conditions are verified:
+\begin{align}
+    0 &= \partial_q l(q^*, \theta) + u^*h - v^* &\text{(primal stationarity)}\\
+    1 & =h^Tq^*(\theta)  & \text{(primal feasibility)} \\
+    0 & \geq q^*(\theta) & \text{(primal feasibility)}\\
+    0 & = \mathrm{Diag}(v^*(\theta))q(\theta) & \text{(complimentary slackness)}
+\end{align}
+
+
+
+
+
+
+\textbf{Step 2: translate the KKT conditions as an implicit function}
+
+Let $g(q, u, v, \theta) = \begin{bmatrix}
+    P(\theta)q - v(\theta) + uh - v\\
+    h^Tq- 1\\
+    \mathrm{Diag}(v)q
+\end{bmatrix}$. $(q^*, u^*, v^*)$ are solutions if and only if $g(q^*, u^*, v^*, \theta) = 0$.
+
+\textbf{Step 3: applying the implicit function theorem}
+Denoting $z = (q, u, v)$, $g$ is a function of two variables $(z, \theta)$. To apply the implicit function theorem, we prove that $\partial_z g(z^*, \theta)$ is invertible for any solution $z^*$.
+
+The partial Jacobian can be written:
+\begin{align}
+    J_z g(z^*, \theta) = \begin{bmatrix}
+    P(\theta) & h^T & - I\\
+    h & 0 & 0\\
+    \mathrm{Diag}(v)& 0 & \mathrm{Diag}(q)
+    \end{bmatrix}
+\end{align}
+
+If there exists $1 \leq i\leq m$ such that $v_i = q_i = 0$, $J_z g$ is not invertible. This corresponds to the "zero-zero" case for complementary slackness : the constraint is active and the Lagrange multiplier is $0$. In this case, at optimality, \textcolor{red}{todo todo}.
+
+
+In the end,
+\begin{align}
+    J_\theta z^*(\theta) = - J_zg(z^*, \theta)^{-1}J_\theta g(z^*, \theta)
+\end{align}
+We can then combine these results:
+\begin{align}
+J_\theta v(\theta) &=  J_q l(q^*, \theta)J_\theta q^*(\theta) + J_\theta l(q^*, \theta),\\
+&= J_q l(q^*, \theta)  \left[J_\theta z^*(\theta)\right]_{q, \theta} + J_\theta l(q^*, \theta),\\
+&= - J_ql(q^*, \theta) \left[J_z g(z^*, \theta)^{-1} J_\theta g(z^*, \theta)\right]_{q,\theta}+ J_\theta l(q^*, \theta)
+\end{align}
+\end{proof}
+
+Here we assume that $\theta$ is such that $q^*(\theta) > 0 $, so $v^*(\theta)=0$. Thus:
+
+\begin{align}
+    J_z g(z^*, \theta) = \begin{bmatrix}
+    P(\theta) & - I & h\\
+    0 & \mathrm{Diag}(q)& 0\\
+    h^T & 0 & 0
+    \end{bmatrix}
+\end{align}
+ and recall
+\begin{align}
+    J_\theta g(z^*, \theta) = \begin{bmatrix}
+    -J_\theta v(\theta)\\
+    0 \\
+    0
+    \end{bmatrix}
+\end{align}
+
+We solve the following system:
+\begin{equation}
+\begin{bmatrix}
+    P(\theta) & - I & h\\
+    0 & \mathrm{Diag}(q)& 0\\
+    h^T & 0 & 0
+    \end{bmatrix}
+\begin{bmatrix}
+    A \\
+    B \\
+    C
+    \end{bmatrix} =
+\begin{bmatrix}
+    - J_\theta v(\theta) \\
+    0 \\
+    0
+    \end{bmatrix}
+\end{equation}
+
+which is equivalent to:
+
+\begin{align}
+   P(\theta)A - B + hC =& -J_\theta v(\theta)\\
+   \mathrm{Diag}(q)B =& 0\\
+   h^TA =& 0
+\end{align}
+
+The second equation implies that $B=0$, and the first implies
+\begin{equation}
+    A = - P(\theta)^{-1}hC - P(\theta)^{-1}J_\theta v(\theta)
+\end{equation}
+
+And
+\begin{align}
+    J_ql(q^*,\theta)A &= (q^TP(\theta) - v(\theta)^T)A = h^TA = 0
+\end{align}
+\vskip 0.2in
