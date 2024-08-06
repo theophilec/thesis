@@ -1,0 +1,479 @@
+\section{Introduction}
+
+\begin{itemize}
+   \item Divergence between time-series that is robust to warping
+   \item Differentiable to be able to be used in ML algorithms
+   \item Justified by theory (which warps are captured, ...)
+   \item Experimentally behaves like DTW (baseline)
+\end{itemize}
+
+We introduce DiffyTW a dissimilarity between time series, invariant to diffeomorphic reparametrizations of $[0,1]$. It can be computed in practice by solving a quadratic program, and is differentiable with respect to its inputs.
+
+\subsection*{Notation}
+
+$k$ is a kernel. We denote $t_i \in [0, 1]^n$ such that $0 \leq t_1 < \ldots < t_n \leq 1$. Time series are considered to be a couple of sample points (not necessarily random) $(t_i)_{1 \leq i \leq n}$ and values $(f_i)_{1\leq i\leq n}$ where $f_i \in\mathbb R^d$.
+
+\section{DiffyTW}
+\emph{In this section, we introduce \texttt{DiffyTW}, a dissimilarity between functions $[0,1] \to \mathcal X$ which is invariant to a chosen class of diffeomorphic reparametrizations of $[0,1]$.}
+
+\subsection{Intuition}
+Let $\mathcal Q$ be a set of increasing diffeomorphisms on $[0,1]$. Our goal is to concieve a divergence such that $d(f\circ Q, f) = 0$ for any $Q\in\mathcal Q$ and any $f:[0,1] \to \mathbb R^d$. A key idea is to compare the integrals of $f\circ Q$ and $f$. Indeed, this allows one to apply the change of variable theorem:
+
+\begin{equation}
+\int_0^1 f\circ Q(x)Q^\prime(x)dx = \int_0^1 f(x)dx.
+\end{equation}
+
+Then
+\begin{equation}
+\int_0^1 f\circ Q(x)q(x) dx - \int_0^1 f(x)dx
+\end{equation}
+
+is minimized by $q=Q^\prime$ over $q\in \mathcal Q_1$ where $\mathcal Q_1 = \left\lbrace Q^\prime, Q\in\mathcal Q\right\rbrace$. However, $q=Q^\prime$ is not necessarily the only minimizer. Indeed, if $f:[0,1] \to \mathbb R$, then $q(x) = f(x) / f\circ Q(x)$ also minimizes this quantity. To avoid this spurious minimizer, we embed values of the two functions using an embedding function $\phi:\mathbb R^d \to \mathcal H$ where $\mathcal H$ is a Hilbert space. $\phi$ can be any map, for example the feature map of a deep neural network, a hand-crafted feature map, random warping map, or indeed the RKHS embedding of a positive definite kernel $k_\mathcal X$.
+
+In the end, we arrive to the following definintion for Diffy.
+
+\subsection{Definition of DiffyTW}
+
+Let $\mathcal F$ be a space of functions $[0, 1] \to \mathbb R$. Let $\mathcal F_{0,1} \subset \mathcal F$ be a subset of $\mathcal F$ such that if $q\in\mathcal F_{0,1}$, $q\geq 0$ and $\int_0^1q(t)dt =1$. $\mathcal F_{0,1}$ defines the class of diffeormophic reparametrizations the divergence is invariant to through its derivatives. We denote $\mathcal Q$ the set of reparametrizations obtained as the primitives of elements of $\mathcal F_{0,1}$.
+
+\begin{definition}[DiffyTW]\label{def:diffytw}
+Let $d: \mathcal X^{[0,1]} \times \mathcal X^{[0,1]} \to \mathbb R^+$ be for any $f, g\in\mathcal X^{[0,1]}$,
+\begin{equation}\label{eq:diffytw}
+    d(f, g) = \min_{q \in \mathcal F_{0,1}}\left\Vert \int_0^1 \phi(f(x))q(x)dx - \int_0^1\phi(g(x))dx\right\Vert^2_\mathcal H.
+\end{equation}
+We call this divergence DiffyTW.
+\end{definition}
+
+\subsection{Time-series alignment}
+If $f$ and $g$ are two functions representing two time-series, DiffyTW aligns $f$ and $g$. Indeed, we can rewrite \cref{eq:diffytw} as
+\begin{equation}\label{eq:diffytw-Q}
+    d(f, g) = \min_{Q \in \mathcal Q} \left\Vert \int_0^1 \phi(f \circ Q^{-1}))dx - \int_0^1\phi(g(x))dx\right\Vert^2_\mathcal H
+\end{equation}
+
+\noindent \Cref{eq:diffytw-Q} shows we that the minimizer of the optimization problem in \cref{eq:diffytw} is the derivative of the reparametrization that aligns $f$ with $g$ in terms of the embedding $f \mapsto \int \phi(f(x))dx$.
+
+\missingfigure{demo alignment}
+
+\subsection{Comparaison with elastic distances}
+\subparagraph{Comparaison with Dynamic Time Warping} Dynamic time warping minimizes the discrete Euclidean distance (although other pairwise distances could be used) between matched data points with a bijective and non-decreasing matching:
+\begin{equation}\label{eq:dtw-1}
+d_{DTW}((f_1, \ldots, f_n), (g_1, \ldots, g_m)) = \min_{\sigma \in\mathcal A_{n, m}} \sum \left\Vert f_i - g_{\sigma(j)}\right\Vert_2
+\end{equation}
+
+
+\subparagraph{Comparaison with Diffy}
+Even though its intuition is similar, DiffyTW is different from Diffy, presented in \cref{ch:ch1-diffy} and \cite{cantelobre-diffy}. Indeed,
+
+\subparagraph{Comparaison with Fréchet distance}
+
+
+
+\subsection{Invariance to time-warping}
+In the rest of this chapter, we call reparametrization any map $Q: [0,1] \to [0,1]$ that is increasing, bijective, continuously differentiable and has a continuously differentiable inverse.
+
+\begin{proposition}
+Let $Q$ be a reparametrization of $[0,1]$ such that $Q^\prime \in \mathcal F_{0, 1}$. Then, for any $f: [0,1] \to \mathcal X$,
+\begin{equation}
+    d(f\circ Q, f) = 0.
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+    \todo{Change of variable}
+\end{proof}
+
+In particular, if the constant function is included in $\mathcal F_{0,1}$ then $d$ is a semi pseudo-distance: for any $f, g: [0,1] \to\mathcal X$,  $d(f, g)\geq 0$ and $d(f, f)=0$.
+
+
+\begin{proposition} Let $f, g$ and $Q_0$ be such that $d(f, g) = \Delta(f\circ Q_0^{-1}, g)$.
+
+\begin{enumthm}
+\item if $id \in\int\mathcal F$, $d(f \circ Q_0^{-1}, g) \leq d(f, g)$.
+\item if $\int \mathcal F \circ Q_0 = \int \mathcal F$, then $d(f\circ Q_0^{-1}, g) = d(f, g)$.
+\end{enumthm}
+\end{proposition}
+
+\section{Computing DiffyTW in practice}
+DiffyTW is defined over the space of functions $[0,1] \to \mathcal X$ and the optimization problem is defined over an arbitrary set of functions $\mathcal F_{0,1}$, which determines the set of transformations $\mathcal Q$ the divergence is invariant to. In this section, we show DiffyTW can be computed for sampled time-series and with an expressive set of diffeomorphims $\mathcal F_{0,1}^M$ by solving a Quadratic program. We show that this approximate computation is exact if we assume the underlying signals are piece-wise constant. When the signals have regularity, we show that as the number of sample points grow, the approximated DiffyTW value approaches that compyuted on the underlying signals.
+
+\emph{\textbf{In what follows, we highlight the main ingredients and steps in our reasoning.} Formal definitions of components, statements of results and proofs follow in the rest of the section and related appendices.}
+
+\paragraph{Time-series as piece-wise constant functions} Consider $f$ and $g$ two piece-wise constant functions adapted to $(x_1, \ldots, x_n)$ and $(y_1, \ldots, y_m)$. A piece-wise constant function is adapted to an increasing sequence of distinct points in its domain if $f$ is a constant between each point.
+
+Then, we can rewrite the integrals in the definition of \cref{eq:diffytw} as follows:
+\begin{align}
+    d(f, g) &= \min_{q \in \mathcal F_{0,1}}\left\Vert \int_0^1 \phi(f(x))q(x)dx - \int_0^1\phi(g(x))dx\right\Vert^2_\mathcal H\label{eq:diffytw-step-1}\\
+            &\label{eq:diffytw-step-2}= \min_{q\in\mathcal F_{0,1}} \left \Vert \sum_{i=1}^{n-1} \underbrace{\int_{x_i}^{x_{i+1}}q(u)du}_{I(q, x_i, x_{i+1})} \phi(f(x_i)) - \sum_{j=1}^{m-1} (y_{j+1} - y_j)\phi(g(y_j))\right\Vert_\mathcal H^2
+            %&\label{eq:diffytw-step-3}=\min_{\substack{q\in\mathbb R^{M}\\h^\top q=1\\0 \leq q}}\frac{1}{2}q^\top Pq - v^\top q + C
+\end{align}
+
+\paragraph{Linear parametrization of $\mathcal F_{0,1}$} If $\mathcal F_{0,1}$ is chosen to be very general, then the optimization problem in \cref{eq:diffytw} is intractable. Furthermore, from a modelling perspective, very large diffeomorphism classes may encompass transformations that are not representative of the invariance structure present in data. We propose to choose $\mathcal F_{0,1}^M\subset \mathcal F_{0,1}$ such that solving \cref{eq:diffytw} is feasible and such that $\mathcal F_{0,1}^M$ is expressive enough to encompass a wide class of transformations. Anotherway of seeing things -- in the spirit of the approximation litterature -- is to consider how $\mathcal F_{0, 1}^M$ grows as $M \to \infty$. In this work, we rely on Non-Negative Linear Models in the style of Gaussian Mixture Models of the form
+\begin{equation}\label{eq:nnlm}
+q(x) = \sum_{k=1}^M q_k k(x, \tilde x_k)\text{ such that } q_k\in\mathbb R^+, \int_0^1q(u)du=1
+\end{equation}
+%$q(x) = \sum_{k=1}^M q_k k(x, \tilde x_k)$ where $q_k$, $k$ and $\tilde x$ are chosen such that $q\in\mathcal F_{0,1}$.
+Since $I(q, x, y)$ is linear in the coordinates $q$, then \cref{eq:nnlm} are linear equality and inequality constraints in $q$.
+
+\paragraph{Quadratric Program} By exploiting the linearity in $q$ and developing \cref{eq:diffytw-step-2}, we obtain
+\begin{align}
+    d(f, g ~\vert~ \mathcal F_{0,1}^M) &\label{eq:diffytw-step-3}=\min_{\substack{q\in\mathbb R^{M}\\h^\top q=1\\0 \leq q}}\frac{1}{2}q^\top Pq - v^\top q + C
+\end{align}
+where $P\in\mathcal S_{++}(\mathbb R^M)$, $v\in\mathbb R^M$ and $C\in\mathbb R$ are defined in \cref{thm:prob-qp} and we've made explicit that we optimize \cref{eq:diffytw} over $\mathcal F_{0,1}^M$.
+
+
+%\subsection{Application to sampled time-series}
+
+%A time series is a series of data points indexed in by time indexes. Often, the data points are taken at regular intervals. For instance, the position of a smartphone's GPS has a frequency around 1 Hz. However, this is not always the case. Indeed, in power-saving modes, a GPS position can be updated only when required by the algorithm or by the user.
+
+%To incorporate the question of sampling pattern, we model a time series as n-tuple of couples $\left( t_i, f_i\right)_{1\leq i\leq n}$. The value $f_i$ is taken by the time-series at time $t_i$. We call $t_i$ sample points and the set $(t_i)_{1 \leq i \leq n}$ the sampling pattern. Without loss of generality, we assume that $0 \leq t_1 < \ldots < t_n \leq 1$.
+
+%Given $\hat f_n = (t_i, f_i)_{1 \leq i\leq n}$ and $\hat g_m  = (s_j, g_j)_{1\leq j\leq m}$ taken from $f$ and $g$ we show that one can compute $d(\hat f_n, \hat g_m)$, by approximating $f$ and $g$ as rectangle functions. The approximated functions are denoted $\hat f_n$ and $\hat g_m$, by abuse of notation. We then show that $d(\hat f_n, \hat g_m)$ is close to $d(f, g)$ when $f,g$ have minimal regularity properties or if the sample pattern is random. For instance, if $f = g \circ Q$, then when $n, m \to 0$, $d(\hat f, \hat g) \to 0$.
+
+%\subsection{Non-negative linear models}
+
+%Non-negative linear models (NNLM) are widely used in probabilistic modeling, statistics and machine learning. One of the most well known classes are Gaussian Mixture Models (GMM).
+
+%Let $M$ be a positive integer, the order of approximation considered. Let $(\tilde x_k)_{1\leq k\leq M}$ be $M$ distinct points in $[0, 1]$. To simplify our notations, we assume that $k < l \implies \tilde x_k < \tilde x_l$. We define the set of normalized NNLMs on $[0, 1]$ of order $M$ as the set of functions $q$ of the form
+%\begin{equation}\label{eq:nnlm}
+%q(x) = \sum_{k=1}^M q_k k(x, \tilde x_k)\text{ such that } q_k\in\mathbb R^+, \int_0^1q(u)du=1
+%\end{equation}
+%where $x \mapsto k(x, y)$ is a basis function, for instance the partial evaluation of a positive definite kernel. Normalized NNLMs are clearly a subset of $\mathcal F_{0,1}$, which we denote $\mathcal F_{0, 1}^M$. Note that $\mathcal F_{0,1}^M$ depends on the choice of kernel $k$ and of the set of anchor points $\tilde X = (\tilde x_k)_{1\leq k\leq M}$, both of which are fixed. When clear from context, we use the same notation for the function $q$ and the vector of coefficients $q\in{\mathbb R^+}^M$.
+
+%\subsection{Quadrature of non-negative linear models}
+
+%Given $q\in\mathcal F_{0,1}^M$, we introduce . $q\in{\mathbb R_{\geq 0}}^M \mapsto I(q, x, y)$ is linear in the coefficients.
+
+%Consider a fixed set of points $X=(x_i)_{1\leq i\leq n-1}$. We introduce
+%\begin{equation}
+%H: q\in\mathbb R_{\geq 0}^M \mapsto (I(q, x_i, x_{i+1}))_{1\leq i\leq n-1}\in \mathbb R^{N-1}
+%\end{equation}
+
+%$H$ is a linear map and we can represent it by a matrix in $\mathbb R^{N-1 \times M}$ such that if $q\in \mathcal F_{0,1}^M$, then $[Hq]_{i} = \int_{x_i}^{x_{i+1}}q(u)du$. Similarly, the map $q \mapsto \int_0^1 q(u)du$ is a linear form, linear in the coefficients $q$ and can be represented by an adjoint vector $h\in\mathbb R^M$.
+
+%$H$ and $h$ are given as a function of the basis function and the anchor points. For $1 \leq i \leq n-1$ and $1\leq k\leq M$,
+%\begin{align}\label{eq:H}
+%    H_{ik}= \int_{x_i}^{x_{i+1}}k(u, \tilde x_k)du&& h_k = \int_0^1 k(u, \tilde x_k)du
+%\end{align}
+
+%We derive the exact expressions in three cases in the following examples.
+
+%\begin{example}[RBF kernel] If $k$ is the RBF kernel with parameter $\eta > 0$, i.e. $k(x, y) = \exp\left( - \eta (x - y)^2\right)$, then
+%\begin{align}
+%    H_{i,k} &= \frac{1}{2}\sqrt{\frac{\pi}{\eta}}\left[\mathrm{erf}(\sqrt{\eta}(x_{i+1}-\tilde x_k) - \mathrm{erf}(\sqrt{\eta}(x_i- \tilde x_k) \right]\\
+%    h_k &= \frac{1}{2}\sqrt{\frac{\pi}{\eta}}\left[\mathrm{erf}(\sqrt{\eta}(1-\tilde x_k) - \mathrm{erf}(\sqrt{\eta}(- \tilde x_k) \right]
+%\end{align}
+%\end{example}
+%\begin{example}[Laplace kernel] If $k$ is the Laplace kernel with parameter $\gamma > 0$,i.e. $k(x, y) = \exp\left( - \gamma\vert x - y\vert\right)$, then
+%\begin{align}
+%    H_{i,k} &= \varphi(\gamma(x_{i+1} - \tilde x_k)) - \varphi(\gamma(x_i - \tilde x_k))\\
+%    h_{k} &= \varphi(\gamma(1- \tilde x_k)) - \varphi(\gamma(- \tilde x_k))
+%\end{align}
+%where $\varphi(u) = (2 - e^u)/\gamma$ if $u \geq 0$ and $\varphi(u) = e^{-u} / \gamma$ else.
+%\end{example}
+
+\begin{theorem}\label{thm:prob-qp}
+Let $\mathcal F_{0,1}^M$ is defined as in \cref{eq:nnlm}, $f$ and $g$ are piece-wise constant functions adapted to $X=(x_i)_{1\leq i\leq n}$ and $Y=(y_j)_{1\leq j\leq m}$ repectively. Let $d_M(f, g)$ be defined as follows:
+\begin{equation}
+d_M(f, g) ~:= \min_{q \in \mathcal F_{0,1}^M}\left\Vert \int_0^1 \phi(f(x))q(x)dx - \int_0^1\phi(g(x))dx\right\Vert^2_\mathcal H
+\end{equation}
+
+Then, $d_M(f, g)$ is the optimal value of the Quadratic program defined in \cref{prob:qp}:
+\begin{equation}\label{prob:qp}
+        \min_{\substack{q\in\mathbb R^{M}\\h^\top q=1\\0 \leq q}}\frac{1}{2}q^\top P(f, X, \tilde X)q - v(f, X, g, Y, \tilde X)^\top q + C(g, Y, \tilde X)
+\end{equation}
+where $P(f, X, \tilde X) = 2H^TK(f, f)H$, $C(g, Y, \tilde X) = \Delta(Y) K(g, g)\Delta(Y)$ and $v(f, X, g, Y, \tilde X) = 2 \Delta(Y)^TK(g, f)\tilde H(X, \tilde X)$ and $H$ is defined in \cref{eq:H}.
+\end{theorem}
+
+
+\begin{proof}
+    Let $f, g \in \mathcal C_{pm}([0,1], \mathcal X)$ two piece-wise constant functions, adapted to $(x_1, \ldots, x_N)$ and $(y_1, \ldots, y_M)$. Given $q\in\mathcal F_{0,1}$, denote $I(q, x, y) = \int_x^y q(x)dx$. Then,
+    \begin{align}
+        d(f, g) = \min_{q\in\mathcal F_{0,1}} \left \Vert \sum_{i=1}^{N-1} I(q, x_i, x_{i+1}) \phi(f(x_i)) - \sum_{j=1}^{M-1} \Delta_j\phi(g(y_j))\right\Vert_\mathcal H^2
+    \end{align}
+
+    We can rewrite this as a constrained quadratic program:
+    \begin{align}\label{prob:quadqp}
+        d(f, g) = \min_{\substack{w\in\mathbb R^{N-1} \\ \mathrm{s.t.~} w_i = I(q, x_i, x_{i+1})\\ \mathrm{and~} q \in \mathcal F_{0,1}}} w^\top K(f, f)w - 2 \Delta^\top K(g, f) w + \Delta^\top K(g,g)\Delta
+    \end{align}
+where $K(f,f)_{ij} = k_\mathcal X(f(t_i), f(t_j))$, $K(f, g) = k_\mathcal X(f(t_i), g(t_j^\prime))$, and $\Delta_i = y_{i+1} - y_i$ for $1 \leq i \leq M - 1$.
+\end{proof}
+
+\subsection{Solving the quadratic program}
+
+\cref{prob:qp} is a quadratic program with linear inequality and equality constraints, with $M$ variables. Many algorithms exist for solving this class of problems including... Their time complexity is generally in $O(M^3)$. Many solvers exist including ...
+
+
+\subsection{Approximation and role of $\phi$}
+\begin{theorem}[Rectangle approximation]\label{thm:rectangle-approx}
+\begin{equation}
+    \left\vert d(f, g) - d(\hat f_n, \hat g_m)\right\vert \leq \frac{C}{n^\alpha}
+\end{equation}
+where $\alpha = 1$ if $(t_i)$ and $(s_j)$ are a regular grid and $f, g$ are $L-Lipchitz$, and holds with high probability and $\alpha = 1/2$ if $t_i$ and $s_j$ are sampled uniformly on $[0,1]$ (and re-ordered).
+\end{theorem}
+\todo{Finish this}Let $f$ and $g$ be two $L$-Lipschitz maps from $[0,1] \to\mathcal X$. Let $s, r: [0,1] \to [0,1]$ be two non-decreasing, piecewise-constant maps such that $s(0)=r(0)=0$ and $s(1)=r(1)=1$, with $n$ and $m$ samples each.
+
+\begin{proposition}
+Let $\mathcal F_{0,1}$. Then, for any $q\in\mathcal F_{0,1}$,
+    \begin{equation}
+        \vert d(f, g) - d(f\circ s, g\circ r) \vert \leq \Vert q \Vert \Vert \int \phi(f) - \phi(f\circ s)\Vert_{\mathcal H} + \Vert \int \phi(g)- \phi(g\circ s)\Vert
+    \end{equation}
+\end{proposition}
+
+\begin{proposition}
+Let $f$ be $L$-Lipschitz on $[0,1]$ and $\phi$ be the RBF kernel with parameter $\gamma > 0$.
+Then, for any $\vert x - u \vert \leq \Delta$,
+\begin{equation}
+    \Vert \phi(f(x)) - \phi(f(u)) \Vert^2 \leq 2\left(1 - k(f(x), f(u))\right) \leq 2 \gamma L \Delta
+\end{equation}
+\end{proposition}
+
+
+
+
+\section{Differentiability}
+Differentiability makes DiffyTW effective as a building block inside of machine learning algorithms, for example as a loss function for training time-series generation algorithms.
+
+There is a growing body of work on differentiating through convex programs, with three major approaches: analytical differentiation (when a closed-form solution to the convex problem is known, e.g. unconstrained QPs), unrolling (differentiating through the operations in the algorithm used to solve the convex problem), implicit differentiation (applying the implicit function theorem).
+
+In this section, we show directly that $d(f, g)$ is differentiable with respect to the values taken by $g$, over the space of piece-wise continuous functions with fixed sampling pattern.
+
+We consider differentiability of $v(\theta) = d(f, \theta)$. In this section, we denote:
+\begin{equation}\label{prob:fullqp}
+    v(\theta) = \min_{q\in\mathcal C} \ell(q, \theta)
+\end{equation}
+where $\ell(q, \theta) = \frac{1}{2} q^\top Pq - v(\theta)^\top q + C(\theta)$ and $\mathcal C = \left\lbrace q\in\mathbb R^N ~\vert~ h^Tq=1, q \geq 0\right\rbrace$.
+
+
+Our goal is to compute $\nabla v(\theta)$, the gradient of $v$ with respect to $\theta$. We rely on a result from \cite{shapiro} and \cite{lee}, which gives sufficient conditions for differentiability of quadratic programs. For completeness, we prove our result directly.
+
+\begin{theorem}
+    $v(\theta)$ is differentiable and its gradient is given by
+    \begin{equation}
+        \nabla v(\theta) = Jv(\theta)(q^*(\theta)) + \nabla C(\theta),
+    \end{equation} where $q^*(\theta)$ is the unique solution to $\mathcal P(\theta)$.
+\end{theorem}
+
+\begin{proof}
+    $X$ is $\mathbb R^M$ which is a Haussdorf topological space. The set of admissible solutions $\mathcal C$ is non empty and is closed. Indeed, $\mathcal C$ is the intersection of a hyperplane ($h^\top q=1$) and of the non-negative quadrant ($q \geq 0$) ; both are closed so $\mathcal C$ is too.
+
+    Denote $\ell(q, \theta) = \frac{1}{2}q^\top P(\theta) q - v(\theta)^Tq + C(\theta)$ where $\theta \mapsto P(\theta), \theta \mapsto v(\theta), \theta \mapsto C(\theta)$ are $\mathcal C^\infty$.
+
+   Our goal is to show that for any $u_0\in U$, if $\bar x$ is the (unique) solution to quadratic program $\mathcal P(u_0)$, then
+   \begin{equation}\label{eq:goal}
+       v(u_0 + d) - v(u_0) = D_u \ell(\bar x, u)d + o\left(\Vert d\Vert\right)
+   \end{equation}
+   Let $u_0 \in U$, and let $\bar x$ the solution to $\mathcal P(u_0)$. Let $d$ such that $u_0 + d \in U$. Since $v(u_0) = \ell(\bar x, u_0)$, we have $v(u_0+d) \leq \ell(\bar x, u_0 + d)$. Thus,
+   \begin{equation}
+       v(u_0 + d) - v(u_0) - D_u\ell(\bar x, u_0)d \leq \ell(\bar x, u_0 + d) - \ell(\bar x, u_0) - D_u \ell(\bar x, u_0)d
+   \end{equation}
+
+    By the Mean Value Theorem, $\ell(\bar x, u_0 + d) - \ell(\bar x, u_0) = \int_0^1 D_u\ell(\bar x, u_0 + td)ddt$ and we can upper bound the previous equation by:
+   \begin{align}
+       v(u_0 + d) - v(u_0) - D_u\ell(\bar x, u_0)d&\leq \ell(\bar x, u_0 + d) - \ell(\bar x, u_0) - D_u \ell(\bar x, u_0)d\\
+        &\leq \Vert d\Vert \int_0^1 \Vert D_u\ell(\bar x, u_0 +td) - D_u\ell(\bar x, u_0)\Vert dt
+   \end{align}
+
+   We denote $\varepsilon(d)= \int_0^1 \Vert D_u\ell(\bar x, u_0 +td) - D_u\ell(\bar x, u_0)\Vert dt$. By regularity of $x, u \mapsto D_u\ell(x, u)$, $u \mapsto D_u\ell(\bar x, u)$ is continuous at $u_0$ and so $ \delta \mapsto \Vert D_u\ell(\bar x, u_0 + \delta) -D_u\ell(\bar x, u_0)\Vert$ is continuous and equal to $0$ at $\delta=0$. By consequence, $\varepsilon$ is continuous and $\varepsilon(0)=0$.
+
+   So,
+   \begin{equation}
+       v(u_0+d) - v(u_0) - D_u\ell(\bar x, u)d \leq \Vert d\Vert \varepsilon(d)
+   \end{equation}
+
+    Now, we assume corresponding lower bound is false, i.e. for any $\varepsilon>0$ and any $\eta >0$, there exists $d$ such that $u_0 + d\in U$ and
+   \begin{equation}
+       v(u_0+d) - v(u_0) - D_u\ell(\bar x, u)d < -\varepsilon\Vert d\Vert
+   \end{equation}
+    Let $d_n$ a sequence such that $d_n \to 0$ and
+   \begin{equation}\label{eq:proof_hyp}
+       v(u_0+d_n) - v(u_0) - D_u\ell(\bar x, u_0)d_n < -\varepsilon\Vert d_n\Vert
+   \end{equation}
+
+   We have a sequence $x_n\in \mathcal C$ such that $v(u_0+ d_n) = \ell(\bar x_n, u_0 + d_n)$. By Lemma 14.4 (Lee et al), there is subsequence of $(x_n)$ that converges towards $\bar x$ solution to $\mathcal P(u_0)$. By abuse of notation, we denote it $(x_n)$ as well.
+
+   Then, by the Mean Value Theorem,
+   \begin{align}
+       \Vert \ell(x_n, u_0 + d_n) - \ell(x_n, u_0) - D_u \ell(x_n, u_0)d_n\Vert \leq \Vert d_n\Vert \int \Vert D_u \ell(x_n, u_0 + td_n) - D_u \ell(x_n, u_0)\Vert dt
+   \end{align}
+
+   For $n$ large enough, $u_0 + d_n$ is close to $u_0$ and $x_n$ is close to $\bar x$. By continuity of $x, u \mapsto D_u\ell(x, u)$,
+
+   \begin{equation}
+       \Vert \ell(x_n, u_0 + d_n) - \ell(x_n, u_0) - D_u \ell(x_n, u_0)d_n\Vert \leq \frac{1}{10} \varepsilon \Vert d_n \Vert
+   \end{equation}
+
+    and
+    \begin{equation}
+        \Vert D_u \ell(\bar x, u_0)d_n - D_u \ell(x_n, u_0)d_n\Vert \leq \frac{1}{4}\varepsilon \Vert d_n \Vert
+    \end{equation}
+
+    So, by the triangle inequality,
+
+    \begin{equation}
+       \Vert \ell(x_n, u_0 + d_n) - \ell(x_n, u_0) - D_u \ell(\bar x, u_0)d_n\Vert \leq \frac{1}{2} \varepsilon \Vert d_n \Vert
+    \end{equation}
+    Finally,
+    \begin{align}
+        v(u_0 + d_n) - v(u_0) - D_u \ell(x_n, u_0)&\geq\frac{1}{2}\varepsilon\Vert d_n\Vert
+    \end{align}
+    This contradicts \cref{eq:proof_hyp}, CQFD.
+\end{proof}
+
+\begin{remark}[Relation to implicit differentiation for QPs]
+    \cite{bambade,optnet,...} study differentiation of Quadratic programs where the constraints also depend on $\theta$. They rely on implicit differentiation of the KKT conditions for the Quadratic Program and handle a more general setting, including Extended Conservative Jacobians when the QPs are not feasible. As a sanity check, we verify that we recover our result using their method for our setting in \cref{sec:lagrangian}.
+
+
+\end{remark}
+
+\section{Applications}
+
+\subsection{Alignment with synthetic warpings}
+
+Consider the task of aligning times series, where the warp is known and in the function space considered. Formally, let $f$ be a time-series and $Q$ an inscreasing diffeomorphism such that $q = Q^\prime$ is in the function space considered. We compute $d(f, f\circ Q)$.
+
+\subsection{Barycenter computation}
+Given a set $(f_1, \ldots, f_n)$ of time series, computing a barycenter of the data according to the geometry of an elastic distance adapted to time-series is a widely studies problem. \textcolor{red}{DBA} and \textcolor{red}{Soft-DTW} are two examples. These techniques are widely used in machine learning pipelines, for example, for set-based methods, for ...
+
+We use a non-convex solver such as L-BFGS and the gradient expressions in \cref{sec:differentiability} to appromimately minimize the Fréchet function associated to $(f_1, \ldots, f_n)$, namely:
+\begin{equation}\label{eq:barycenter}
+    \mathcal L(\mu) = \frac{1}{n}\sum_{i=1}^n d(f_i, \mu).
+\end{equation}
+
+We consider two variants of \cref{eq:barycenter}: $\mathcal L_1(\mu) = \frac{1}{n}\sum_{i=1}^n d(f_i,\mu)$ and $\mathcal L_2(\mu) = \frac{1}{n}\sum_{i=1}^n d(\mu, f_i)$
+
+
+
+\subsection{Clustering: k-means \& k-medoids}
+
+Given $(f_i)$ a set of time series and $K > 0$ an integer, the goal of clustering is to find $C_i \in \lbrace 1, \ldots, K\rbrace$ and $\mu_k$ such that the association $(f_k, i_k)$ minimizes an energy function such as:
+\begin{align}
+    (\mu_k), (C_i) \in \arg\min \sum_{k=1}^K\sum_{i=1}^n \mathbb I[C_i = k]d(f_i, \mu_k)
+\end{align}
+where $d$ is some metric. When $\mu_k$ are chosen among $(f_i)$, the task is known as k-mediods ; when the $\mu_k$ can be chosen arbitrarily, it is known as k-means.
+
+\subsection{Learning using DiffyTW}
+% Acknowledgements and Disclosure of Funding should go at the end, before appendices and references
+
+\section{Relation to implicit differentiation}\label{sec:lagrangian}
+Our approach is to use implicit differentiation. Roughly, we proceed as follows: link optimality of $q^*$ using strong duality (Slater's Condition) and the KKT conditions ; rewrite the KKT conditions as an implicit function ; use the implicit function theorem.
+
+\noindent We first state our result:
+
+\begin{theorem}[Lagrangian approach]
+$v(\theta) = l(\theta, q^*(\theta))$ is differentiable and is gradient is defined as:
+\begin{equation}
+    \nabla v(\theta) = \nabla_1 l(\theta, q^*(\theta)) + \nabla_2 l(\theta, q^*(\theta))J q^*(\theta)
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+The Lagrangian of \cref{prob:fullqp} is:
+\begin{equation}
+    L(q, u, v, \theta) = \underbrace{\frac{1}{2}q^TP(\theta)q - v(\theta)^Tq + C(\theta)}_{l(q, \theta)}+ u^T(h^Tq - 1) - v^Tq
+\end{equation}
+
+where $L: \mathbb R^M \times \mathbb R \times \mathbb R^M\times\Theta\to\mathbb R$, as there are $M$ variables, $1$ equality constraint and $M$ inequality constraints, where we've added dependence on $\theta$.
+
+For an optimal primal and dual solutsion $(q^*(\theta), u^*(\theta), v^*(\theta))$, the KKT conditions are verified:
+\begin{align}
+    0 &= \partial_q l(q^*, \theta) + u^*h - v^* &\text{(primal stationarity)}\\
+    1 & =h^Tq^*(\theta)  & \text{(primal feasibility)} \\
+    0 & \geq q^*(\theta) & \text{(primal feasibility)}\\
+    0 & = \mathrm{Diag}(v^*(\theta))q(\theta) & \text{(complimentary slackness)}
+\end{align}
+
+
+
+
+
+
+\textbf{Step 2: translate the KKT conditions as an implicit function}
+
+Let $g(q, u, v, \theta) = \begin{bmatrix}
+    P(\theta)q - v(\theta) + uh - v\\
+    h^Tq- 1\\
+    \mathrm{Diag}(v)q
+\end{bmatrix}$. $(q^*, u^*, v^*)$ are solutions if and only if $g(q^*, u^*, v^*, \theta) = 0$.
+
+\textbf{Step 3: applying the implicit function theorem}
+Denoting $z = (q, u, v)$, $g$ is a function of two variables $(z, \theta)$. To apply the implicit function theorem, we prove that $\partial_z g(z^*, \theta)$ is invertible for any solution $z^*$.
+
+The partial Jacobian can be written:
+\begin{align}
+    J_z g(z^*, \theta) = \begin{bmatrix}
+    P(\theta) & h^T & - I\\
+    h & 0 & 0\\
+    \mathrm{Diag}(v)& 0 & \mathrm{Diag}(q)
+    \end{bmatrix}
+\end{align}
+
+If there exists $1 \leq i\leq m$ such that $v_i = q_i = 0$, $J_z g$ is not invertible. This corresponds to the "zero-zero" case for complementary slackness : the constraint is active and the Lagrange multiplier is $0$. In this case, at optimality, \textcolor{red}{todo todo}.
+
+
+In the end,
+\begin{align}
+    J_\theta z^*(\theta) = - J_zg(z^*, \theta)^{-1}J_\theta g(z^*, \theta)
+\end{align}
+We can then combine these results:
+\begin{align}
+J_\theta v(\theta) &=  J_q l(q^*, \theta)J_\theta q^*(\theta) + J_\theta l(q^*, \theta),\\
+&= J_q l(q^*, \theta)  \left[J_\theta z^*(\theta)\right]_{q, \theta} + J_\theta l(q^*, \theta),\\
+&= - J_ql(q^*, \theta) \left[J_z g(z^*, \theta)^{-1} J_\theta g(z^*, \theta)\right]_{q,\theta}+ J_\theta l(q^*, \theta)
+\end{align}
+\end{proof}
+
+Here we assume that $\theta$ is such that $q^*(\theta) > 0 $, so $v^*(\theta)=0$. Thus:
+
+\begin{align}
+    J_z g(z^*, \theta) = \begin{bmatrix}
+    P(\theta) & - I & h\\
+    0 & \mathrm{Diag}(q)& 0\\
+    h^T & 0 & 0
+    \end{bmatrix}
+\end{align}
+ and recall
+\begin{align}
+    J_\theta g(z^*, \theta) = \begin{bmatrix}
+    -J_\theta v(\theta)\\
+    0 \\
+    0
+    \end{bmatrix}
+\end{align}
+
+We solve the following system:
+\begin{equation}
+\begin{bmatrix}
+    P(\theta) & - I & h\\
+    0 & \mathrm{Diag}(q)& 0\\
+    h^T & 0 & 0
+    \end{bmatrix}
+\begin{bmatrix}
+    A \\
+    B \\
+    C
+    \end{bmatrix} =
+\begin{bmatrix}
+    - J_\theta v(\theta) \\
+    0 \\
+    0
+    \end{bmatrix}
+\end{equation}
+
+which is equivalent to:
+
+\begin{align}
+   P(\theta)A - B + hC =& -J_\theta v(\theta)\\
+   \mathrm{Diag}(q)B =& 0\\
+   h^TA =& 0
+\end{align}
+
+The second equation implies that $B=0$, and the first implies
+\begin{equation}
+    A = - P(\theta)^{-1}hC - P(\theta)^{-1}J_\theta v(\theta)
+\end{equation}
+
+And
+\begin{align}
+    J_ql(q^*,\theta)A &= (q^TP(\theta) - v(\theta)^T)A = h^TA = 0
+\end{align}
+\vskip 0.2in
