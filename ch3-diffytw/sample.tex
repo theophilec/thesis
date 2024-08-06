@@ -28,13 +28,16 @@ Then
 \int_0^1 f\circ Q(x)q(x) dx - \int_0^1 f(x)dx
 \end{equation}
 
-is minimized by $q=Q^\prime$ over $q\in \mathcal Q_1$ where $\mathcal Q_1 = \left\lbrace Q^\prime, Q\in\mathcal Q\right\rbrace$. However, $q=Q^\prime$ is not necessarily the only minimizer. Indeed, if $f:[0,1] \to \mathbb R$, then $q(x) = f(x) / f\circ Q(x)$ also minimizes this quantity. To avoid this spurious minimizer, we embed values of the two functions using an embedding function $\phi:\mathbb R^d \to \mathcal H$ where $\mathcal H$ is a Hilbert space. $\phi$ can be any map, for example the feature map of a deep neural network, a hand-crafted feature map, random warping map, or indeed the RKHS embedding of a positive definite kernel $k_\mathcal X$.
+is minimized by $q=Q^\prime$ over $q\in \mathcal F$ where $\mathcal F = \left\lbrace Q^\prime, Q\in\mathcal Q\right\rbrace$. However, $q=Q^\prime$ is not necessarily the only minimizer. Indeed, if $f:[0,1] \to \mathbb R$, then $q(x) = f(x) / f\circ Q(x)$ also minimizes this quantity. To avoid this spurious minimizer, we embed values of the two functions using an embedding function $\phi:\mathbb R^d \to \mathcal H$ where $\mathcal H$ is a Hilbert space. $\phi$ can be any map, for example the feature map of a deep neural network, a hand-crafted feature map, random warping map, or indeed the RKHS embedding of a positive definite kernel $k_\mathcal X$.
 
 In the end, we arrive to the following definintion for Diffy.
 
 \subsection{Definition of DiffyTW}
 
-Let $\mathcal F$ be a space of functions $[0, 1] \to \mathbb R$. Let $\mathcal F_{0,1} \subset \mathcal F$ be a subset of $\mathcal F$ such that if $q\in\mathcal F_{0,1}$, $q\geq 0$ and $\int_0^1q(t)dt =1$. $\mathcal F_{0,1}$ defines the class of diffeormophic reparametrizations the divergence is invariant to through its derivatives. We denote $\mathcal Q$ the set of reparametrizations obtained as the primitives of elements of $\mathcal F_{0,1}$.
+Let $\mathcal F$ be a space of functions $[0, 1] \to \mathbb R$. Let $\mathcal F_{0,1} \subset \mathcal F$ be a subset of $\mathcal F$ such that if $q\in\mathcal F_{0,1}$, $q\geq 0$ and $\int_0^1q(t)dt =1$. $\mathcal F_{0,1}$ defines the class of diffeormophic reparametrizations the divergence is invariant to through its derivatives. We denote $\mathcal Q$ the set of reparametrizations obtained by integrating the elements of $\mathcal F_{0,1}$, i.e.
+\begin{equation}
+    \mathcal Q = \left\lbrace Q: x\in[0,1] \mapsto \int_0^x q(x)dx ~\vert~ q \in \mathcal F_{0,1}\right\rbrace
+\end{equation}
 
 \begin{definition}[DiffyTW]\label{def:diffytw}
 Let $d: \mathcal X^{[0,1]} \times \mathcal X^{[0,1]} \to \mathbb R^+$ be for any $f, g\in\mathcal X^{[0,1]}$,
@@ -44,17 +47,24 @@ Let $d: \mathcal X^{[0,1]} \times \mathcal X^{[0,1]} \to \mathbb R^+$ be for any
 We call this divergence DiffyTW.
 \end{definition}
 
-\subsection{Time-series alignment}
-If $f$ and $g$ are two functions representing two time-series, DiffyTW aligns $f$ and $g$. Indeed, we can rewrite \cref{eq:diffytw} as
+Note that as soon as $f$ and $g$ and measurable, then $d$ is well defined. Indeed, since $\phi$ is bounded on $[0,1]$ and $q$ is integrable, the integrals are well-defined Bochner integrals and $d(f, g)$ is finite and well-defined.
+
+\paragraph{Time-series alignment}
+If $f$ and $g$ are two functions representing two time-series, DiffyTW aligns $f$ and $g$. Indeed, we can --applying the change of variable theorem -- rewrite \cref{eq:diffytw} as
 \begin{equation}\label{eq:diffytw-Q}
-    d(f, g) = \min_{Q \in \mathcal Q} \left\Vert \int_0^1 \phi(f \circ Q^{-1}))dx - \int_0^1\phi(g(x))dx\right\Vert^2_\mathcal H
+    d(f, g) = \min_{Q \in \mathcal Q} \left\Vert \int_0^1 \phi(f \circ Q^{-1}(x))dx - \int_0^1\phi(g(x))dx\right\Vert^2_\mathcal H
 \end{equation}
 
 \noindent \Cref{eq:diffytw-Q} shows we that the minimizer of the optimization problem in \cref{eq:diffytw} is the derivative of the reparametrization that aligns $f$ with $g$ in terms of the embedding $f \mapsto \int \phi(f(x))dx$.
 
+We adopt the following notation for convenience:
+\begin{equation}\label{def:diffytw-delta}
+\Delta(f , g) = \left\Vert \int_0^1 \phi(f(x))dx - \int_0^1\phi(g(x))dx\right\Vert^2_\mathcal H
+\end{equation}
+
 \missingfigure{demo alignment}
 
-\subsection{Comparaison with elastic distances}
+\paragraph{Comparaison with elastic distances}
 \subparagraph{Comparaison with Dynamic Time Warping} Dynamic time warping minimizes the discrete Euclidean distance (although other pairwise distances could be used) between matched data points with a bijective and non-decreasing matching:
 \begin{equation}\label{eq:dtw-1}
 d_{DTW}((f_1, \ldots, f_n), (g_1, \ldots, g_m)) = \min_{\sigma \in\mathcal A_{n, m}} \sum \left\Vert f_i - g_{\sigma(j)}\right\Vert_2
@@ -69,56 +79,91 @@ Even though its intuition is similar, DiffyTW is different from Diffy, presented
 
 
 \subsection{Invariance to time-warping}
-In the rest of this chapter, we call reparametrization any map $Q: [0,1] \to [0,1]$ that is increasing, bijective, continuously differentiable and has a continuously differentiable inverse.
+DiffyTW was designed to be equal to zero when comparing functions that are diffeomorphic one to the other, i.e. $d(f\circ Q, f)=0$. We show this is \cref{thm:diffy-invariance}:
 
-\begin{proposition}
+
+\begin{theorem}\label{thm:diffy-invariance}
 Let $Q$ be a reparametrization of $[0,1]$ such that $Q^\prime \in \mathcal F_{0, 1}$. Then, for any $f: [0,1] \to \mathcal X$,
 \begin{equation}
     d(f\circ Q, f) = 0.
 \end{equation}
-\end{proposition}
+\end{theorem}
 
 \begin{proof}
-    \todo{Change of variable}
+Let $f: [0,1] \to\mathbb R^d$ a measurable function. $Q:[0,1] \to [0,1]$ is continuously differentiable, bijective and $Q^{-1}$ is continuously differentiable. We apply the Change of variable theorem:
+\begin{equation}
+\int_0^1 \phi(f\circ Q(x))\vert Q^\prime(x)\vert dx = \int_0^1 \phi(f(x))dx.
+\end{equation}
+
+Since $Q$ is a reparametrization, it is increasing and $Q^\prime(x) \geq 0$ so we can drop the absolute value.
+
+Since $Q^\prime \in \mathcal F_{0,1}$,
+\begin{equation}
+    d(f\circ Q, f) \leq \left \Vert \int_0^1 \phi(f\circ Q(x))Q^\prime(x)dx - \int_0^1 \phi(f(x))dx\right\Vert_\mathcal H^2
+\end{equation}
+and finally,
+\begin{equation}
+    d(f\circ Q, f) \leq 0.
+\end{equation}
+Since $d(f\circ Q, f) \geq 0$, we have proven the result.
 \end{proof}
 
-In particular, if the constant function is included in $\mathcal F_{0,1}$ then $d$ is a semi pseudo-distance: for any $f, g: [0,1] \to\mathcal X$,  $d(f, g)\geq 0$ and $d(f, f)=0$.
 
-
-\begin{proposition} Let $f, g$ and $Q_0$ be such that $d(f, g) = \Delta(f\circ Q_0^{-1}, g)$.
-
+Of course, in practice, one wishes to compute $d(f, g)$ where $f$ and $g$ are not exactly diffeomorphic. In \cref{prop:diffytw-properties} we show that some intuitive invariance properties remain:
+\begin{proposition}\label{prop:diffytw-properties} Let $f, g:[0,1] \to\mathbb R^d$.
 \begin{enumthm}
-\item if $id \in\int\mathcal F$, $d(f \circ Q_0^{-1}, g) \leq d(f, g)$.
-\item if $\int \mathcal F \circ Q_0 = \int \mathcal F$, then $d(f\circ Q_0^{-1}, g) = d(f, g)$.
+\item if $id \in Q$, $d$ is a semi pseudo-distance, i.e. for any $f, g: [0,1] \to\mathcal X$,  $d(f, g)\geq 0$ and $d(f, f)=0$.\label{prop:properties-1}
+\item if $id \in \mathcal Q$ and $Q_0\in\mathcal Q$ is such that $\Delta(f\circ Q_0^{-1}, g) \leq d(f, g) + \varepsilon$ then, $d(f \circ Q_0^{-1}, g) \leq d(f, g) + \varepsilon$. In particular, if $\Delta(f\circ Q_0^{-1}, g) = d(f,g)$ then $d(f\circ Q_0^{-1}, g)=d(f, g)$.\label{prop:properties-2}
+\item if $Q_0$ is a reparametrization that leaves $\mathcal Q$ invariant (i.e. $\lbrace Q\circ Q_0 ~\vert~ Q\in \mathcal Q \rbrace = \mathcal Q$), then $d(f\circ Q_0^{-1}, g) = d(f, g)$.\label{prop:properties-3}
 \end{enumthm}
 \end{proposition}
+
+\begin{proof} \cref{prop:properties-1} is clear. Proof of \cref{prop:properties-2} follows from noticing that:
+\begin{equation}
+d(f\circ Q_0^{-1}) \leq \Delta(f\circ Q_0^{-1}, g)
+\end{equation}
+Finally, proof of \cref{prop:properties-3} follows from noticing that:
+\begin{align}
+d(f \circ Q_0^{-1}, g) &= \min_{Q\in\mathcal Q}\Delta(f\circ Q_0^{-1} \circ Q^{-1}, g)\\
+& = \min_{R\in\mathcal Q} \Delta(F\circ R^{-1}, g)\\
+& = d(f, g),
+\end{align} where the second equality comes from the change of variable $Q \to R \circ Q_0^{-1}$, which does not modify the set we optimize over by hypothesis.
+\end{proof}
+
+DiffyTW is invariant to reparametrizations it searches over. However, it is also invarint to different transformations when $id \in \mathcal Q$. This means that the optimizer (when it exists) $Q \in \mathcal Q$ does not align $f$ and $g$, but $d(f,g)=0$ anyways. When $id \in \mathcal Q$, this is the case for any integral preserving transformations, such as time-flipping ($x \mapsto f(-x)$).
 
 \section{Computing DiffyTW in practice}
 DiffyTW is defined over the space of functions $[0,1] \to \mathcal X$ and the optimization problem is defined over an arbitrary set of functions $\mathcal F_{0,1}$, which determines the set of transformations $\mathcal Q$ the divergence is invariant to. In this section, we show DiffyTW can be computed for sampled time-series and with an expressive set of diffeomorphims $\mathcal F_{0,1}^M$ by solving a Quadratic program. We show that this approximate computation is exact if we assume the underlying signals are piece-wise constant. When the signals have regularity, we show that as the number of sample points grow, the approximated DiffyTW value approaches that compyuted on the underlying signals.
 
 \emph{\textbf{In what follows, we highlight the main ingredients and steps in our reasoning.} Formal definitions of components, statements of results and proofs follow in the rest of the section and related appendices.}
 
-\paragraph{Time-series as piece-wise constant functions} Consider $f$ and $g$ two piece-wise constant functions adapted to $(x_1, \ldots, x_n)$ and $(y_1, \ldots, y_m)$. A piece-wise constant function is adapted to an increasing sequence of distinct points in its domain if $f$ is a constant between each point.
-
-Then, we can rewrite the integrals in the definition of \cref{eq:diffytw} as follows:
+\paragraph{Time-series as piece-wise constant functions} Times series are discrete objectifs, with data arriving at different time points. By representing them as piece-wise constant functions (i.e. step functions), we take into account the relative position between the sample points and their values. %Consider $f$ and $g$ two piece-wise constant functions adapted to $(x_1, \ldots, x_n)$ and $(y_1, \ldots, y_m)$. A piece-wise constant function is adapted to an increasing sequence of distinct points in its domain if $f$ is a constant between each point.
+Thus we define $\hat f(\hat f, \hat g) =d(f, g)$ where $f$ and $g$ are piece-wise constant functions adapted to $\hat f$ and $\hat g$. By doing so, we can rewrite the integrals in the definition of \cref{eq:diffytw} as follows:
 \begin{align}
-    d(f, g) &= \min_{q \in \mathcal F_{0,1}}\left\Vert \int_0^1 \phi(f(x))q(x)dx - \int_0^1\phi(g(x))dx\right\Vert^2_\mathcal H\label{eq:diffytw-step-1}\\
+    \hat d(\hat f, \hat g) &= \min_{q \in \mathcal F_{0,1}}\left\Vert \int_0^1 \phi(f(x))q(x)dx - \int_0^1\phi(g(x))dx\right\Vert^2_\mathcal H\label{eq:diffytw-step-1}\\
             &\label{eq:diffytw-step-2}= \min_{q\in\mathcal F_{0,1}} \left \Vert \sum_{i=1}^{n-1} \underbrace{\int_{x_i}^{x_{i+1}}q(u)du}_{I(q, x_i, x_{i+1})} \phi(f(x_i)) - \sum_{j=1}^{m-1} (y_{j+1} - y_j)\phi(g(y_j))\right\Vert_\mathcal H^2
             %&\label{eq:diffytw-step-3}=\min_{\substack{q\in\mathbb R^{M}\\h^\top q=1\\0 \leq q}}\frac{1}{2}q^\top Pq - v^\top q + C
 \end{align}
 
-\paragraph{Linear parametrization of $\mathcal F_{0,1}$} If $\mathcal F_{0,1}$ is chosen to be very general, then the optimization problem in \cref{eq:diffytw} is intractable. Furthermore, from a modelling perspective, very large diffeomorphism classes may encompass transformations that are not representative of the invariance structure present in data. We propose to choose $\mathcal F_{0,1}^M\subset \mathcal F_{0,1}$ such that solving \cref{eq:diffytw} is feasible and such that $\mathcal F_{0,1}^M$ is expressive enough to encompass a wide class of transformations. Anotherway of seeing things -- in the spirit of the approximation litterature -- is to consider how $\mathcal F_{0, 1}^M$ grows as $M \to \infty$. In this work, we rely on Non-Negative Linear Models in the style of Gaussian Mixture Models of the form
+\paragraph{Linear parametrization of $\mathcal F_{0,1}$} If $\mathcal F_{0,1}$ is chosen to be very general, then the optimization problem in \cref{eq:diffytw} is intractable. Furthermore, from a modelling perspective, very large diffeomorphism classes may encompass transformations that are not representative of the invariance structure present in data. We propose to choose $\mathcal F_{0,1}^M\subset \mathcal F_{0,1}$ such that solving \cref{eq:diffytw} is feasible and such that $\mathcal F_{0,1}^M$ is expressive enough to encompass a wide class of transformations. Anotherway of seeing things -- in the spirit of the approximation litterature -- is to consider how $\mathcal F_{0, 1}^M$ grows as $M \to \infty$.
+
+In this work, we rely on Non-Negative Linear Models in the style of Gaussian Mixture Models of the form
 \begin{equation}\label{eq:nnlm}
 q(x) = \sum_{k=1}^M q_k k(x, \tilde x_k)\text{ such that } q_k\in\mathbb R^+, \int_0^1q(u)du=1
 \end{equation}
 %$q(x) = \sum_{k=1}^M q_k k(x, \tilde x_k)$ where $q_k$, $k$ and $\tilde x$ are chosen such that $q\in\mathcal F_{0,1}$.
-Since $I(q, x, y)$ is linear in the coordinates $q$, then \cref{eq:nnlm} are linear equality and inequality constraints in $q$.
+For $q\in\mathcal F_{0,1}^M$, $I(q, x, y)$ can be computed in closed-form (see \cref{ex:H-rbf,ex:H-laplace}) and is linear in the coordinates $q$. This also implies that \cref{eq:nnlm} are linear equality and inequality constraints in $q$.
 
-\paragraph{Quadratric Program} By exploiting the linearity in $q$ and developing \cref{eq:diffytw-step-2}, we obtain
+Thus, we define $\hat d_M(f, g)$ as $d(f,g)$ replacing $\mathcal F_{0,1}$ by $\mathcal F_{0,1}^M$ in the optimization problem, i.e.:
+\begin{equation}
+\hat d_M(f, g) = \min_{q \in\mathcal F_{0,1}^M} \Vert \int \phi(f(x))q(x) - \int \phi(g(x))dx\Vert_\mathcal H^2
+\end{equation}
+
+\paragraph{Quadratric Program} By combining the two above steps, we can find an expression for $\hat d_M(\hat f, \hat g)$. We exploit the linearity in the coordinates on $q$ in \cref{eq:diffytw-step-2} and develop the squared-norm. It follows that:
 \begin{align}
-    d(f, g ~\vert~ \mathcal F_{0,1}^M) &\label{eq:diffytw-step-3}=\min_{\substack{q\in\mathbb R^{M}\\h^\top q=1\\0 \leq q}}\frac{1}{2}q^\top Pq - v^\top q + C
+    \hat d_M(\hat f, \hat g) &\label{eq:diffytw-step-3}=\min_{\substack{q\in\mathbb R^{M}\\h^\top q=1\\0 \leq q}}\frac{1}{2}q^\top Pq - v^\top q + C
 \end{align}
-where $P\in\mathcal S_{++}(\mathbb R^M)$, $v\in\mathbb R^M$ and $C\in\mathbb R$ are defined in \cref{thm:prob-qp} and we've made explicit that we optimize \cref{eq:diffytw} over $\mathcal F_{0,1}^M$.
+where $P\in\mathcal S_{++}(\mathbb R^M)$, $v\in\mathbb R^M$ and $C\in\mathbb R$ are defined in \cref{thm:prob-qp}.
 
 
 %\subsection{Application to sampled time-series}
@@ -139,37 +184,15 @@ where $P\in\mathcal S_{++}(\mathbb R^M)$, $v\in\mathbb R^M$ and $C\in\mathbb R$ 
 %\end{equation}
 %where $x \mapsto k(x, y)$ is a basis function, for instance the partial evaluation of a positive definite kernel. Normalized NNLMs are clearly a subset of $\mathcal F_{0,1}$, which we denote $\mathcal F_{0, 1}^M$. Note that $\mathcal F_{0,1}^M$ depends on the choice of kernel $k$ and of the set of anchor points $\tilde X = (\tilde x_k)_{1\leq k\leq M}$, both of which are fixed. When clear from context, we use the same notation for the function $q$ and the vector of coefficients $q\in{\mathbb R^+}^M$.
 
-%\subsection{Quadrature of non-negative linear models}
 
-%Given $q\in\mathcal F_{0,1}^M$, we introduce . $q\in{\mathbb R_{\geq 0}}^M \mapsto I(q, x, y)$ is linear in the coefficients.
 
-%Consider a fixed set of points $X=(x_i)_{1\leq i\leq n-1}$. We introduce
-%\begin{equation}
-%H: q\in\mathbb R_{\geq 0}^M \mapsto (I(q, x_i, x_{i+1}))_{1\leq i\leq n-1}\in \mathbb R^{N-1}
-%\end{equation}
-
-%$H$ is a linear map and we can represent it by a matrix in $\mathbb R^{N-1 \times M}$ such that if $q\in \mathcal F_{0,1}^M$, then $[Hq]_{i} = \int_{x_i}^{x_{i+1}}q(u)du$. Similarly, the map $q \mapsto \int_0^1 q(u)du$ is a linear form, linear in the coefficients $q$ and can be represented by an adjoint vector $h\in\mathbb R^M$.
-
-%$H$ and $h$ are given as a function of the basis function and the anchor points. For $1 \leq i \leq n-1$ and $1\leq k\leq M$,
-%\begin{align}\label{eq:H}
-%    H_{ik}= \int_{x_i}^{x_{i+1}}k(u, \tilde x_k)du&& h_k = \int_0^1 k(u, \tilde x_k)du
-%\end{align}
-
-%We derive the exact expressions in three cases in the following examples.
-
-%\begin{example}[RBF kernel] If $k$ is the RBF kernel with parameter $\eta > 0$, i.e. $k(x, y) = \exp\left( - \eta (x - y)^2\right)$, then
-%\begin{align}
-%    H_{i,k} &= \frac{1}{2}\sqrt{\frac{\pi}{\eta}}\left[\mathrm{erf}(\sqrt{\eta}(x_{i+1}-\tilde x_k) - \mathrm{erf}(\sqrt{\eta}(x_i- \tilde x_k) \right]\\
-%    h_k &= \frac{1}{2}\sqrt{\frac{\pi}{\eta}}\left[\mathrm{erf}(\sqrt{\eta}(1-\tilde x_k) - \mathrm{erf}(\sqrt{\eta}(- \tilde x_k) \right]
-%\end{align}
-%\end{example}
-%\begin{example}[Laplace kernel] If $k$ is the Laplace kernel with parameter $\gamma > 0$,i.e. $k(x, y) = \exp\left( - \gamma\vert x - y\vert\right)$, then
-%\begin{align}
-%    H_{i,k} &= \varphi(\gamma(x_{i+1} - \tilde x_k)) - \varphi(\gamma(x_i - \tilde x_k))\\
-%    h_{k} &= \varphi(\gamma(1- \tilde x_k)) - \varphi(\gamma(- \tilde x_k))
-%\end{align}
-%where $\varphi(u) = (2 - e^u)/\gamma$ if $u \geq 0$ and $\varphi(u) = e^{-u} / \gamma$ else.
-%\end{example}
+\begin{theorem}
+Let $\mathcal F_{0,1}^M$ be the class of NNLMs of order $M$ and with basis function $x \mapsto k(x, \tilde x_k)$ as in \cref{eq:nnlm}. Let $\hat f = (x_i, f_i)_{1 \leq i \leq n}$ and $g = (y_j, g_j)_{1 \leq j \leq m}$, then  Let $\hat d(\hat f, \hat g)$ is the optimal value of the Quadratic program:
+\begin{equation}
+\hat d(\hat f, \hat g) ~= \min_{\substack{q\in\mathbb R^{M}\\h^\top q=1\\0 \leq q}}\frac{1}{2}q^\top P(f, X, \tilde X)q - v(f, X, g, Y, \tilde X)^\top q + C(g, Y, \tilde X)
+\end{equation}
+where $P(f, X, \tilde X) = 2H^TK(f, f)H$, $C(g, Y, \tilde X) = \Delta(Y) K(g, g)\Delta(Y)$ and $v(f, X, g, Y, \tilde X) = 2 \Delta(Y)^TK(g, f)\tilde H(X, \tilde X)$ and $H$ is defined in \cref{eq:H}.
+\end{theorem}
 
 \begin{theorem}\label{thm:prob-qp}
 Let $\mathcal F_{0,1}^M$ is defined as in \cref{eq:nnlm}, $f$ and $g$ are piece-wise constant functions adapted to $X=(x_i)_{1\leq i\leq n}$ and $Y=(y_j)_{1\leq j\leq m}$ repectively. Let $d_M(f, g)$ be defined as follows:

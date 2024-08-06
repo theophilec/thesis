@@ -1,0 +1,33 @@
+\section{First section}
+
+\subsection{Quadrature of non-negative linear models}
+
+Given $q\in\mathcal F_{0,1}^M$, we introduce . $q\in{\mathbb R_{\geq 0}}^M \mapsto I(q, x, y)$ is linear in the coefficients.
+
+Consider a fixed set of points $X=(x_i)_{1\leq i\leq n-1}$. We introduce
+\begin{equation}
+H: q\in\mathbb R_{\geq 0}^M \mapsto (I(q, x_i, x_{i+1}))_{1\leq i\leq n-1}\in \mathbb R^{N-1}
+\end{equation}
+
+$H$ is a linear map and we can represent it by a matrix in $\mathbb R^{N-1 \times M}$ such that if $q\in \mathcal F_{0,1}^M$, then $[Hq]_{i} = \int_{x_i}^{x_{i+1}}q(u)du$. Similarly, the map $q \mapsto \int_0^1 q(u)du$ is a linear form, linear in the coefficients $q$ and can be represented by an adjoint vector $h\in\mathbb R^M$.
+
+$H$ and $h$ are given as a function of the basis function and the anchor points. For $1 \leq i \leq n-1$ and $1\leq k\leq M$,
+\begin{align}\label{eq:H}
+    H_{ik}= \int_{x_i}^{x_{i+1}}k(u, \tilde x_k)du&& h_k = \int_0^1 k(u, \tilde x_k)du
+\end{align}
+
+We derive the exact expressions in three cases in the following examples.
+
+\begin{example}[RBF kernel]\label{ex:H-rbf} If $k$ is the RBF kernel with parameter $\eta > 0$, i.e. $k(x, y) = \exp\left( - \eta (x - y)^2\right)$, then
+\begin{align}
+    H_{i,k} &= \frac{1}{2}\sqrt{\frac{\pi}{\eta}}\left[\mathrm{erf}(\sqrt{\eta}(x_{i+1}-\tilde x_k) - \mathrm{erf}(\sqrt{\eta}(x_i- \tilde x_k) \right]\\
+    h_k &= \frac{1}{2}\sqrt{\frac{\pi}{\eta}}\left[\mathrm{erf}(\sqrt{\eta}(1-\tilde x_k) - \mathrm{erf}(\sqrt{\eta}(- \tilde x_k) \right]
+\end{align}
+\end{example}
+\begin{example}[Laplace kernel]\label{ex:H-laplace} If $k$ is the Laplace kernel with parameter $\gamma > 0$,i.e. $k(x, y) = \exp\left( - \gamma\vert x - y\vert\right)$, then
+\begin{align}
+    H_{i,k} &= \varphi(\gamma(x_{i+1} - \tilde x_k)) - \varphi(\gamma(x_i - \tilde x_k))\\
+    h_{k} &= \varphi(\gamma(1- \tilde x_k)) - \varphi(\gamma(- \tilde x_k))
+\end{align}
+where $\varphi(u) = (2 - e^u)/\gamma$ if $u \geq 0$ and $\varphi(u) = e^{-u} / \gamma$ else.
+\end{example}
