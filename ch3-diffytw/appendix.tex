@@ -1,6 +1,6 @@
-\section{First section}
+\section{Useful computations}
 
-\subsection{Quadrature of non-negative linear models}
+\subsection{Quadrature of non-negative linear models}\label{app:diffytw-quadrature}
 
 Given $q\in\mathcal F_{0,1}^M$, we introduce . $q\in{\mathbb R_{\geq 0}}^M \mapsto I(q, x, y)$ is linear in the coefficients.
 
@@ -32,8 +32,76 @@ We derive the exact expressions in three cases in the following examples.
 where $\varphi(u) = (2 - e^u)/\gamma$ if $u \geq 0$ and $\varphi(u) = e^{-u} / \gamma$ else.
 \end{example}
 
+\section{On the differentiability of DiffyTW}
+\subsection{Proof of \cref{thm:diffytw-grad}}\label{sec:proof-diffytw-grad}
+\begin{proof}
+\todo[inline]{Make clean}
+    $X$ is $\mathbb R^M$ which is a Haussdorf topological space. The set of admissible solutions $\mathcal C$ is non empty and is closed. Indeed, $\mathcal C$ is the intersection of a hyperplane ($h^\top q=1$) and of the non-negative quadrant ($q \geq 0$) ; both are closed so $\mathcal C$ is too.
 
-\section{Relation to implicit differentiation}\label{sec:lagrangian}
+    Denote $\ell(q, \theta) = \frac{1}{2}q^\top P(\theta) q - v(\theta)^Tq + C(\theta)$ where $\theta \mapsto P(\theta), \theta \mapsto v(\theta), \theta \mapsto C(\theta)$ are $\mathcal C^\infty$.
+
+   Our goal is to show that for any $u_0\in U$, if $\bar x$ is the (unique) solution to quadratic program $\mathcal P(u_0)$, then
+   \begin{equation}\label{eq:goal}
+       v(u_0 + d) - v(u_0) = D_u \ell(\bar x, u)d + o\left(\Vert d\Vert\right)
+   \end{equation}
+   Let $u_0 \in U$, and let $\bar x$ the solution to $\mathcal P(u_0)$. Let $d$ such that $u_0 + d \in U$. Since $v(u_0) = \ell(\bar x, u_0)$, we have $v(u_0+d) \leq \ell(\bar x, u_0 + d)$. Thus,
+   \begin{equation}
+       v(u_0 + d) - v(u_0) - D_u\ell(\bar x, u_0)d \leq \ell(\bar x, u_0 + d) - \ell(\bar x, u_0) - D_u \ell(\bar x, u_0)d
+   \end{equation}
+
+    By the Mean Value Theorem, $\ell(\bar x, u_0 + d) - \ell(\bar x, u_0) = \int_0^1 D_u\ell(\bar x, u_0 + td)ddt$ and we can upper bound the previous equation by:
+   \begin{align}
+       v(u_0 + d) - v(u_0) - D_u\ell(\bar x, u_0)d&\leq \ell(\bar x, u_0 + d) - \ell(\bar x, u_0) - D_u \ell(\bar x, u_0)d\\
+        &\leq \Vert d\Vert \int_0^1 \Vert D_u\ell(\bar x, u_0 +td) - D_u\ell(\bar x, u_0)\Vert dt
+   \end{align}
+
+   We denote $\varepsilon(d)= \int_0^1 \Vert D_u\ell(\bar x, u_0 +td) - D_u\ell(\bar x, u_0)\Vert dt$. By regularity of $x, u \mapsto D_u\ell(x, u)$, $u \mapsto D_u\ell(\bar x, u)$ is continuous at $u_0$ and so $ \delta \mapsto \Vert D_u\ell(\bar x, u_0 + \delta) -D_u\ell(\bar x, u_0)\Vert$ is continuous and equal to $0$ at $\delta=0$. By consequence, $\varepsilon$ is continuous and $\varepsilon(0)=0$.
+
+   So,
+   \begin{equation}
+       v(u_0+d) - v(u_0) - D_u\ell(\bar x, u)d \leq \Vert d\Vert \varepsilon(d)
+   \end{equation}
+
+    Now, we assume corresponding lower bound is false, i.e. for any $\varepsilon>0$ and any $\eta >0$, there exists $d$ such that $u_0 + d\in U$ and
+   \begin{equation}
+       v(u_0+d) - v(u_0) - D_u\ell(\bar x, u)d < -\varepsilon\Vert d\Vert
+   \end{equation}
+    Let $d_n$ a sequence such that $d_n \to 0$ and
+   \begin{equation}\label{eq:proof_hyp}
+       v(u_0+d_n) - v(u_0) - D_u\ell(\bar x, u_0)d_n < -\varepsilon\Vert d_n\Vert
+   \end{equation}
+
+   We have a sequence $x_n\in \mathcal C$ such that $v(u_0+ d_n) = \ell(\bar x_n, u_0 + d_n)$. By Lemma 14.4 (Lee et al), there is subsequence of $(x_n)$ that converges towards $\bar x$ solution to $\mathcal P(u_0)$. By abuse of notation, we denote it $(x_n)$ as well.
+
+   Then, by the Mean Value Theorem,
+   \begin{align}
+       \Vert \ell(x_n, u_0 + d_n) - \ell(x_n, u_0) - D_u \ell(x_n, u_0)d_n\Vert \leq \Vert d_n\Vert \int \Vert D_u \ell(x_n, u_0 + td_n) - D_u \ell(x_n, u_0)\Vert dt
+   \end{align}
+
+   For $n$ large enough, $u_0 + d_n$ is close to $u_0$ and $x_n$ is close to $\bar x$. By continuity of $x, u \mapsto D_u\ell(x, u)$,
+
+   \begin{equation}
+       \Vert \ell(x_n, u_0 + d_n) - \ell(x_n, u_0) - D_u \ell(x_n, u_0)d_n\Vert \leq \frac{1}{10} \varepsilon \Vert d_n \Vert
+   \end{equation}
+
+    and
+    \begin{equation}
+        \Vert D_u \ell(\bar x, u_0)d_n - D_u \ell(x_n, u_0)d_n\Vert \leq \frac{1}{4}\varepsilon \Vert d_n \Vert
+    \end{equation}
+
+    So, by the triangle inequality,
+
+    \begin{equation}
+       \Vert \ell(x_n, u_0 + d_n) - \ell(x_n, u_0) - D_u \ell(\bar x, u_0)d_n\Vert \leq \frac{1}{2} \varepsilon \Vert d_n \Vert
+    \end{equation}
+    Finally,
+    \begin{align}
+        v(u_0 + d_n) - v(u_0) - D_u \ell(x_n, u_0)&\geq\frac{1}{2}\varepsilon\Vert d_n\Vert
+    \end{align}
+    This contradicts \cref{eq:proof_hyp}, CQFD.
+\end{proof}
+
+\subsection{Relation to implicit differentiation}\label{sec:lagrangian}
 Our approach is to use implicit differentiation. Roughly, we proceed as follows: link optimality of $q^*$ using strong duality (Slater's Condition) and the KKT conditions ; rewrite the KKT conditions as an implicit function ; use the implicit function theorem.
 
 \noindent We first state our result:
