@@ -1,15 +1,39 @@
+%\todo[inline]{Create two parts in manuscript: Part 1 for Diffy + DiffyTW and Part 2 for HMM}
 \section{Introduction}
 
-\begin{itemize}
-   \item Divergence between time-series that is robust to warping
-   \item Differentiable to be able to be used in ML algorithms
-   \item Justified by theory (which warps are captured, ...)
-   \item Experimentally behaves like DTW (baseline)
-\end{itemize}
+Time-series are ubiquitous in data analysis applications. Some common questions include: What will the weather be like tomorrow? (forecasting) Does this sequence of sensor readings come from a normal machine or a faulty machine? (classification) Among these ECG graphs from a hospital's patients, what groups exist ? (clustering)
 
-We introduce DiffyTW a dissimilarity between time series, invariant to diffeomorphic reparametrizations of $[0,1]$. It can be computed in practice by solving a quadratic program, and is differentiable with respect to its inputs.
+These applications rely on pair-wise comparaisons of time series. Indeed, for forecasting, one needs to compare the forecast to the observed conditions a posteriori (or at training time) ; for classification, one can rely on a divergence-based method or embedding such as kNN ; and clustering is at its heart a distance-based method. However, time-series cannot be compared as if they were vectors in $\mathbb R^T$ where $T$ is their length. First of all, the length can be different for different samples: when comparing machines over the course of a year, one could have been measured once a month while the other could have been inspected twice a month. Second, the points are not necessarily aligned in time: all the machines in the factory are not inspected on the same day.
 
-\subsection*{Notation}
+\paragraph{DTW family of divergences} Dynamic Time Warping (DTW) was introduced by \cite{missing} to compare time series and is the \emph{de facto} standard for comparing time series. Intuitively, Dynamic Time Warping does a matching between the points in each time series, while respecting the order of the points. The cost incurred by each matching is the euclidean distance between the points, and the DTW distance between two time series in the sum of the costs. Formally, consider $\mathcal A_{n, m}$ the set of alignment matrices, i.e. binary matrices of size $n\times m$ such that $A_{1,1}=A_{n, m}=1$ and if $A_{i,j} = 1$ then exactly one of the following is true: $A_{i+1, j}=1$ or $A_{i, j+1}=1$ or $A_{i+1, j+1}=1$. Then:
+\begin{definition}[Dynamic Time Warping]
+\begin{equation}
+    d_{DTW}((f_1, \ldots, f_n), (g_1, \ldots, g_m)) = \min_{A_\pi \in\mathcal A_{n, m}} \langle A_\pi, D(f, g)\rangle
+\end{equation}
+\end{definition}
+$\mathcal A_{n,m}$ is the set of alignments and has exponential cardinality in $n, m$, though DTW can be computed in $O(nm)$ time thanks to dynamic programming.
+
+It is differentiable with respect to one of its inputs as soon as there is a unique solution to the matching (that does not make the DTW zero). Non-differentiability can happen in innocuous situations as illustrated in \cite{tavenar-dtw-diff}
+
+Soft Dynamic Time Warping (sDTW) was proposed in \cite{sdtw} by replacing the $\min$ operator by a softened $\min^\gamma$ operator:
+\begin{definition}[Soft Dynamic Time Warping]
+\begin{equation}
+d_{DTW}^\gamma((f_1, \ldots, f_n), (g_1, \ldots, g_m)) = -\gamma \log \sum_{A \in \mathcal A_{n,m}}\exp\left(-\frac{\langle A, D(f, g)\rangle}{\gamma}\right)
+\end{equation}
+if $\gamma > 0$ and is equal to $d_{DTW}$ if $\gamma=0$.
+\end{definition}
+
+Empirically, sDTW behaves similarly to DTW, has equivalent computational complexity, is differentiable, and works better than DTW-based DBA for averaging based methods like clustering.
+
+\paragraph{Approach \& Contributions} With DiffyTW, we invert the reasoning. Instead of considering a discrete divergence like DTW and making is more continuous, we start with a continuous divergence and make it work for discrete objects.
+
+DiffyTW is divergence between functions on $[0,1]$ representing time-series. It is provably invariant to subset of smooth reparametrizations, the set of which can be tuned. It can be robustly and efficiently used to compare time-series, by solving a quadratic program. DiffyTW is differentiable and can be integrated in wider machine learning workflows. We illustrate and study DiffyTW's behavior on time series empirically.
+
+\paragraph{Time warping for hikers} Consider two hikers (Felix and Gabrielle) that each go on an hour-long hike round-trip from Nice. They each record their altitude. From both recordings, can be determine if they took the same route (in altitude at least)? If they did indeed take the same route, they can have different speeds at different parts of the hour. For instance, Felix may be quicker than Gabrielle when going uphill but tends to be slower when going downhill. This warps their altitude profile as a function of time: Felix seems to have climbed steeper ascents and Gabrielle to have descended steeeper descents.
+\missingfigure{hiking example}
+We model their profiles by two functions $f:[0,1] \to [0, \infty[$ and $g:[0, 1] \to [0, \infty[$. We can model the time-warp caused by their differences in speed by a \emph{reparametrization} of time, i.e. the existence of an increasing diffeomorphism on $[0,1]$, such that $g$ is equal to $f$ composed with the reparametrization. More formally, we would have $g = f \circ Q$ where $Q$ is the reparametrization. Our goal in this work is to develop a divergence $d$ that compares $f$ and $g$ with a divergence $d$ such that $d(f, g)=0$ if there exists $Q$ such that $g = f \circ Q$.
+
+\paragraph{Notation}
 
 $k$ is a kernel. We denote $t_i \in [0, 1]^n$ such that $0 \leq t_1 < \ldots < t_n \leq 1$. Time series are considered to be a couple of sample points (not necessarily random) $(t_i)_{1 \leq i \leq n}$ and values $(f_i)_{1\leq i\leq n}$ where $f_i \in\mathbb R^d$.
 
@@ -63,20 +87,6 @@ We adopt the following notation for convenience:
 \end{equation}
 
 \missingfigure{demo alignment}
-
-\paragraph{Comparaison with elastic distances}
-\subparagraph{Comparaison with Dynamic Time Warping} Dynamic time warping minimizes the discrete Euclidean distance (although other pairwise distances could be used) between matched data points with a bijective and non-decreasing matching:
-\begin{equation}\label{eq:dtw-1}
-d_{DTW}((f_1, \ldots, f_n), (g_1, \ldots, g_m)) = \min_{\sigma \in\mathcal A_{n, m}} \sum \left\Vert f_i - g_{\sigma(j)}\right\Vert_2
-\end{equation}
-
-
-\subparagraph{Comparaison with Diffy}
-Even though its intuition is similar, DiffyTW is different from Diffy, presented in \cref{ch:ch1-diffy} and \cite{cantelobre-diffy}. Indeed,
-
-\subparagraph{Comparaison with Fréchet distance}
-
-
 
 \subsection{Invariance to time-warping}
 DiffyTW was designed to be equal to zero when comparing functions that are diffeomorphic one to the other, i.e. $d(f\circ Q, f)=0$. We show this is \cref{thm:diffytw-invariance}:
