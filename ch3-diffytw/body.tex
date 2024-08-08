@@ -1,60 +1,59 @@
-%\todo[inline]{Create two parts in manuscript: Part 1 for Diffy + DiffyTW and Part 2 for HMM}
+\todo[inline]{Create two parts in manuscript: Part 1 for Diffy + DiffyTW and Part 2 for HMM}
 \section{Introduction}
+\paragraph{Motivating example} Consider two hikers (Felix and Gabrielle) that each go on an hour-long hike round-trip from Nice. They each record their altitude. From both recordings, can be determine if they took the same route (in altitude at least)? If they did indeed take the same route, they can have different speeds at different parts of the hour. For instance, Felix may be quicker than Gabrielle when going uphill but tends to be slower when going downhill. This warps their altitude profile as a function of time: Felix seems to have climbed steeper ascents and Gabrielle to have descended steeeper descents.
+\missingfigure{hiking example}
+We model their profiles by two functions $f:[0,1] \to [0, \infty[$ and $g:[0, 1] \to [0, \infty[$. We can model the time-warp caused by their differences in speed by a \emph{reparametrization} of time, i.e. the existence of an increasing diffeomorphism on $[0,1]$, such that $g$ is equal to $f$ composed with the reparametrization. More formally, we would have $g = f \circ Q$ where $Q$ is the reparametrization. Our goal in this work is to develop a divergence $d$ that compares $f$ and $g$ with a divergence $d$ such that $d(f, g)=0$ if there exists $Q$ such that $g = f \circ Q$.
 
-Time-series are ubiquitous in data analysis applications. Some common questions include: What will the weather be like tomorrow? (forecasting) Does this sequence of sensor readings come from a normal machine or a faulty machine? (classification) Among these ECG graphs from a hospital's patients, what groups exist ? (clustering)
+\paragraph{Time series alignment}
+Time-series are ubiquitous in data analysis applications. Some common tasks include forecasting, classification, clustering. These tasks rely on pair-wise comparaisons of time series, whether as loss functions (for example for training a forecaster), for feature engineering or in a classifier or as the distance function in clustering.
 
-These applications rely on pair-wise comparaisons of time series. Indeed, for forecasting, one needs to compare the forecast to the observed conditions a posteriori (or at training time) ; for classification, one can rely on a divergence-based method or embedding such as kNN ; and clustering is at its heart a distance-based method. However, time-series cannot be compared as if they were vectors in $\mathbb R^T$ where $T$ is their length. First of all, the length can be different for different samples: when comparing machines over the course of a year, one could have been measured once a month while the other could have been inspected twice a month. Second, the points are not necessarily aligned in time: all the machines in the factory are not inspected on the same day.
+Time-series cannot be compared as if they were vectors in Euclidean space. First, the length of the time-series can vary. Second, the points are not necessarily aligned in time: time warping, shifting, ... can be important to ignore in certain applications. In this work we focus on time warping, i.e. the transformation of time interval $[0,1]$ by a smooth reparametrization, i.e. an increasing diffeomorphism.
 
-\paragraph{DTW family of divergences} Dynamic Time Warping (DTW) was introduced by \cite{missing} to compare time series and is the \emph{de facto} standard for comparing time series. Intuitively, Dynamic Time Warping does a matching between the points in each time series, while respecting the order of the points. The cost incurred by each matching is the euclidean distance between the points, and the DTW distance between two time series in the sum of the costs. Formally, consider $\mathcal A_{n, m}$ the set of alignment matrices, i.e. binary matrices of size $n\times m$ such that $A_{1,1}=A_{n, m}=1$ and if $A_{i,j} = 1$ then exactly one of the following is true: $A_{i+1, j}=1$ or $A_{i, j+1}=1$ or $A_{i+1, j+1}=1$. Then:
-\begin{definition}[Dynamic Time Warping]
+
+\paragraph{DTW family of divergences} Dynamic Time Warping (DTW) was introduced by \cite{missing} to compare time series and is the \emph{de facto} standard for comparing time series. Intuitively, Dynamic Time Warping finds a matching between the points in each time series, while respecting the order of the points. More precisely, the cost incurred by each matching is the euclidean distance between the points, the DTW distance between two time series in the sum of the costs. Formally, consider $\mathcal A_{n, m}$ the set of alignment matrices, i.e. binary matrices of size $n\times m$ such that $A_{1,1}=A_{n, m}=1$ and if $A_{i,j} = 1$ then exactly one of the following is true: $A_{i+1, j}=1$ or $A_{i, j+1}=1$ or $A_{i+1, j+1}=1$. Then DTW is defined by
 \begin{equation}
     d_{DTW}((f_1, \ldots, f_n), (g_1, \ldots, g_m)) = \min_{A_\pi \in\mathcal A_{n, m}} \langle A_\pi, D(f, g)\rangle
 \end{equation}
-\end{definition}
 $\mathcal A_{n,m}$ is the set of alignments and has exponential cardinality in $n, m$, though DTW can be computed in $O(nm)$ time thanks to dynamic programming.
 
 It is differentiable with respect to one of its inputs as soon as there is a unique solution to the matching (that does not make the DTW zero). Non-differentiability can happen in innocuous situations as illustrated in \cite{tavenar-dtw-diff}
 
 Soft Dynamic Time Warping (sDTW) was proposed in \cite{sdtw} by replacing the $\min$ operator by a softened $\min^\gamma$ operator:
-\begin{definition}[Soft Dynamic Time Warping]
 \begin{equation}
 d_{DTW}^\gamma((f_1, \ldots, f_n), (g_1, \ldots, g_m)) = -\gamma \log \sum_{A \in \mathcal A_{n,m}}\exp\left(-\frac{\langle A, D(f, g)\rangle}{\gamma}\right)
 \end{equation}
 if $\gamma > 0$ and is equal to $d_{DTW}$ if $\gamma=0$.
-\end{definition}
-
 Empirically, sDTW behaves similarly to DTW, has equivalent computational complexity, is differentiable, and works better than DTW-based DBA for averaging based methods like clustering.
 
-\paragraph{Approach \& Contributions} With DiffyTW, we invert the reasoning. Instead of considering a discrete divergence like DTW and making is more continuous, we start with a continuous divergence and make it work for discrete objects.
+\paragraph{Prior work}
+Other approaches have been proposed: \cite{ref} applies an approximation of the Fréchet distance, \cite{ref} makes DTW more robust to shifts, \cite{ref} combines DTW with the Fréchet distance.
 
-DiffyTW is divergence between functions on $[0,1]$ representing time-series. It is provably invariant to subset of smooth reparametrizations, the set of which can be tuned. It can be robustly and efficiently used to compare time-series, by solving a quadratic program. DiffyTW is differentiable and can be integrated in wider machine learning workflows. We illustrate and study DiffyTW's behavior on time series empirically.
+\paragraph{Approach \& Contributions}
+DiffyTW is divergence between functions on $[0,1]$ representing time-series. It is provably invariant to subset of smooth reparametrizations. The set of transformations it is invariant to can be tuned. It can be robustly and efficiently used to compare time-series, by solving a quadratic program. DiffyTW is differentiable with respect to its input and can be integrated in wider machine learning workflows. We illustrate and study DiffyTW's behavior on time series empirically.
 
-\paragraph{Time warping for hikers} Consider two hikers (Felix and Gabrielle) that each go on an hour-long hike round-trip from Nice. They each record their altitude. From both recordings, can be determine if they took the same route (in altitude at least)? If they did indeed take the same route, they can have different speeds at different parts of the hour. For instance, Felix may be quicker than Gabrielle when going uphill but tends to be slower when going downhill. This warps their altitude profile as a function of time: Felix seems to have climbed steeper ascents and Gabrielle to have descended steeeper descents.
-\missingfigure{hiking example}
-We model their profiles by two functions $f:[0,1] \to [0, \infty[$ and $g:[0, 1] \to [0, \infty[$. We can model the time-warp caused by their differences in speed by a \emph{reparametrization} of time, i.e. the existence of an increasing diffeomorphism on $[0,1]$, such that $g$ is equal to $f$ composed with the reparametrization. More formally, we would have $g = f \circ Q$ where $Q$ is the reparametrization. Our goal in this work is to develop a divergence $d$ that compares $f$ and $g$ with a divergence $d$ such that $d(f, g)=0$ if there exists $Q$ such that $g = f \circ Q$.
-
-\paragraph{Notation}
-
-$k$ is a kernel. We denote $t_i \in [0, 1]^n$ such that $0 \leq t_1 < \ldots < t_n \leq 1$. Time series are considered to be a couple of sample points (not necessarily random) $(t_i)_{1 \leq i \leq n}$ and values $(f_i)_{1\leq i\leq n}$ where $f_i \in\mathbb R^d$.
+\paragraph{Notation} In this chapter, a time series is represented by a sample pattern $(t_i)_{1 \leq i \leq n}$ such that $0 \leq t_1 < \ldots < t_n \leq 1$ (not necessarily random) and values $(f_i)_{1\leq i\leq n}$ where $f_i \in\mathbb R^d$. $\mathcal H$ is a Hilbert space, generally the Reproducing Kernel Hilbert space of a kernel $K$. $\mathcal Q$ is a set of diffeomorphisms on $[0,1]$. Functions $f,g:[0,1] \to \mathcal X$, where $\mathcal X$ is a metric space, generally $\mathcal R^d$.
 
 \section{DiffyTW}
 \emph{In this section, we introduce \texttt{DiffyTW}, a dissimilarity between functions $[0,1] \to \mathcal X$ which is invariant to a chosen class of diffeomorphic reparametrizations of $[0,1]$.}
 
 \subsection{Intuition}
-Let $\mathcal Q$ be a set of increasing diffeomorphisms on $[0,1]$. Our goal is to concieve a divergence such that $d(f\circ Q, f) = 0$ for any $Q\in\mathcal Q$ and any $f:[0,1] \to \mathbb R^d$. A key idea is to compare the integrals of $f\circ Q$ and $f$. Indeed, this allows one to apply the change of variable theorem:
+Let $\mathcal Q$ be a set of increasing diffeomorphisms on $[0,1]$. Our goal is to concieve a divergence such that $d(f\circ Q, f) = 0$ for any $Q\in\mathcal Q$ and any $f:[0,1] \to \mathbb R^d$.
+
+A key idea is to compare the integrals of $f\circ Q$ and $f$. Indeed, this allows one to apply the change of variable theorem:
 
 \begin{equation}
 \int_0^1 f\circ Q(x)Q^\prime(x)dx = \int_0^1 f(x)dx.
 \end{equation}
 
-Then
-\begin{equation}
-\int_0^1 f\circ Q(x)q(x) dx - \int_0^1 f(x)dx
-\end{equation}
+Then,
+%\begin{equation}
+$q \mapsto \left\vert\int_0^1 f\circ Q(x)q(x) dx - \int_0^1 f(x)dx\right\vert$
+%\end{equation}
+is minimized by $q=Q^\prime$
 
-is minimized by $q=Q^\prime$ over $q\in \mathcal F$ where $\mathcal F = \left\lbrace Q^\prime, Q\in\mathcal Q\right\rbrace$. However, $q=Q^\prime$ is not necessarily the only minimizer. Indeed, if $f:[0,1] \to \mathbb R$, then $q(x) = f(x) / f\circ Q(x)$ also minimizes this quantity. To avoid this spurious minimizer, we embed values of the two functions using an embedding function $\phi:\mathbb R^d \to \mathcal H$ where $\mathcal H$ is a Hilbert space. $\phi$ can be any map, for example the feature map of a deep neural network, a hand-crafted feature map, random warping map, or indeed the RKHS embedding of a positive definite kernel $k_\mathcal X$.
+However, $q=Q^\prime$ is not necessarily the only minimizer. Indeed, if $f:[0,1] \to \mathbb R$, then $q(x) = f(x) / f\circ Q(x)$ also minimizes this quantity.
 
-In the end, we arrive to the following definintion for Diffy.
+To avoid these minimizers, consider two refinements: first, embed $f$ using an embedding map $\phi$ such that $\int \phi(f(x))dx$ is close to characterizing $f$ ; second, restrict the search space to the derivatives of reparametrizations.
 
 \subsection{Definition of DiffyTW}
 
@@ -127,7 +126,7 @@ Of course, in practice, one wishes to compute $d(f, g)$ where $f$ and $g$ are no
 \item if $Q_0$ is a reparametrization that leaves $\mathcal Q$ invariant (i.e. $\lbrace Q\circ Q_0 ~\vert~ Q\in \mathcal Q \rbrace = \mathcal Q$), then $d(f\circ Q_0^{-1}, g) = d(f, g)$.\label{prop:properties-3}
 \end{enumthm}
 \end{proposition}
-
+\todo[inline]{Minor: labeled as theorem instead of Proposiotion because of enumthm}
 \begin{proof} \cref{prop:properties-1} is clear. Proof of \cref{prop:properties-2} follows from noticing that:
 \begin{equation}
 d(f\circ Q_0^{-1}) \leq \Delta(f\circ Q_0^{-1}, g)
@@ -139,8 +138,6 @@ d(f \circ Q_0^{-1}, g) &= \min_{Q\in\mathcal Q}\Delta(f\circ Q_0^{-1} \circ Q^{-
 & = d(f, g),
 \end{align} where the second equality comes from the change of variable $Q \to R \circ Q_0^{-1}$, which does not modify the set we optimize over by hypothesis.
 \end{proof}
-
-DiffyTW is invariant to reparametrizations it searches over. However, it is also invarint to different transformations when $id \in \mathcal Q$. This means that the optimizer (when it exists) $Q \in \mathcal Q$ does not align $f$ and $g$, but $d(f,g)=0$ anyways. When $id \in \mathcal Q$, this is the case for any integral preserving transformations, such as time-flipping ($x \mapsto f(-x)$).
 
 \section{Computing DiffyTW in practice}\label{sec:computing-diffytw}
 DiffyTW is defined over the space of functions $[0,1] \to \mathcal X$ and the optimization problem is defined over an arbitrary set of functions $\mathcal F_{0,1}$, which determines the set of transformations $\mathcal Q$ the divergence is invariant to. In this section, we show DiffyTW can be computed for sampled time-series and with an expressive set of diffeomorphims $\mathcal F_{0,1}^M$ by solving a Quadratic program. We show that this approximate computation is exact if we assume the underlying signals are piece-wise constant. When the signals have regularity, we show that as the number of sample points grow, the approximated DiffyTW value approaches that compyuted on the underlying signals.
@@ -171,7 +168,7 @@ d_M(f, g) = \min_{q \in\mathcal F_{0,1}^M} \Vert \int \phi(f(x))q(x) - \int \phi
 
 \paragraph{Quadratric Program} We can now find a natural expression for $\hat d_M(\hat f, \hat g)$ which combines representing $\hat f$ and $\hat g$ by adapted piece-wise constant functions and optimizing over $\mathcal F_{0,1}^M$. We exploit the linearity in the coordinates on $q$ in \cref{eq:diffytw-step-2} and develop the squared-norm. This leads to defining $\hat d_M(\hat f, \hat g)$ as the optimal value to a Quadratic program over the coordinates $q$ with a single equality constraint (corresponding to $\int_0^1q(x)dx = 1$) and $M$ inequality constraints ($q \geq 0$):
 \begin{equation}\label{eq:discrete-diffytw-informal}
-\hat d_M(\hat f, \hat g) :=min_{\substack{q\in\mathbb R^{M}\\h^\top q=1\\0 \leq q}}\frac{1}{2}q^\top Pq - v^\top q + C
+\hat d_M(\hat f, \hat g) :=\min_{\substack{q\in\mathbb R^{M}\\h^\top q=1\\0 \leq q}}\frac{1}{2}q^\top Pq - v^\top q + C
 \end{equation}
 We define $\hat d_M(\hat f, \hat g)$ formally in \cref{sec:consistent}.
 
@@ -206,30 +203,25 @@ where $P= 2\tilde H^TK_{f, f}\tilde H$, $C= \delta^\top K_{g,g}\delta$ and $v= 2
 \end{definition}
 Notice that $P$ is symmetric, semi-definite positive by construction.
 
-In \cref{thm:prob-qp}, we justify that the definition of Discrete DiffyTW coincides with that of Diffy for piece-wise constant functions, over the set of transformations induced by $\mathcal F_{0, 1}^M$.
+Our definition of $\hat d_M(\hat f, \hat g)$ coincides with that of DiffyTW when applied to piece-wise constant functions that interpolate $\hat f$ and $\hat g$ as defined in the \cref{thm:prob-qp} (for short, we say $f$ and $g$ are adapted to $\hat f$ and $\hat g$ respectively).
+
 \begin{theorem}\label{thm:prob-qp}
-Let $\hat f = (x_i, f_i)$ and $\hat g = (y_j, g_j)$ be two sampled time series. Let $f$ (resp. $g$) be a piece-wise constant function adapted to $\hat f$ (resp. $\hat g$). Then:
+Let $\hat f = (x_i, f_i)_{1 \leq i\leq n}$ and $\hat g = (y_j, g_j)_{1 \leq j\leq m}$ be two sampled time series. We define $f[0, 1]\to\mathbb R^d$ (resp. $g$) as the piece-wise constant function defined by $f([x_i, x_{i+1}[) = \lbrace f_i\rbrace$ (resp. $g([y_i, y_{j+1}[) = \lbrace g_j\rbrace$). Then:
 \begin{equation}
 d_M(f, g) = \hat d_M(\hat f, \hat g)
 \end{equation}
 where $d_M(f, g)$ is defined in \cref{eq:hat-d_M} and $\hat d_M(\hat f, \hat g)$ is defined in \cref{def:discrete-diffytw}.
 \end{theorem}
 
-\begin{proof}
-\todo[inline]{Describe how to construct $f$ and $g$ from $\hat f$ and $\hat g$ then do the computation.}
-\end{proof}
-
-Because Discrete DiffyTW is defined as an extension of DiffyTW, it maintains certain invariance properties. For instance, \cref{corollary:discrete-invariance} is a consequence of \cref{thm:prob-qp} and of \cref{thm:diffytw-invariance}.
+The proof of \cref{thm:prob-qp} stems from the development at the beginning of \cref{sec:computing-diffytw} and can be found in \cref{proof:prob-qp}. A consequence of \cref{thm:prob-qp} is that some of the invariance properties of DiffyTW transfer to Discrete DiffyTW, i.e. Discrete DiffyTWequal to zero for discrete time-series which encode the time-warping of a piece-wise constant function:
 
 \begin{corollary}\label{corollary:discrete-invariance}
-Let $h$ be a piece-wise constant and $Q$ a reparametrization such that $Q^\prime \in \mathcal F_{0,1}^M$. Let $(x_i)_{1 \leq i \leq n}$ be a sampling pattern. Consider $\hat f = (Q(x_i), h(x_i))$ and $\hat g = (x_i, h(x_i))$. Then,
+Let $h: [0, 1] \to \mathbb R^d$ be a piece-wise constant function adapted to the sampling pattern $0 \leq x_1 < \ldots < x_n \leq 1$. Let $Q$ be a reparametrization such that $Q^\prime \in \mathcal F_{0,1}^M$. Consider $\hat f = (Q(x_i), h(x_i))$ and $\hat g = (x_i, h(x_i))$. Then,
 \begin{equation}
-\hat d_M(\hat f, \hat g) = 0.
+    \hat d_M(\hat f, \hat g) = 0.
 \end{equation}
 \end{corollary}
-\begin{proof}
-\todo[inline]{Todo, with a drawing}
-\end{proof}
+The proof of \cref{corollary:discrete-invariance} can be found in \cref{proof:discrete-invariance}.
 
 \subsection{Computing Discrete DiffyTW}\label{sec:solving-qp}
 
@@ -238,24 +230,64 @@ Let $h$ be a piece-wise constant and $Q$ a reparametrization such that $Q^\prime
 As a point of comparaison, Dynamic Time Warping can be computed in $O(M^2)$ time using Dynamic programming.
 
 \subsection{Approximation \& parameter choice}
-\cref{corollary:discrete-invariance} illsutrates that the definition of Discrete DiffyTW is ``tight`` with respect to that of DiffyTW if the underlying signals are piece-wise constant and diffeomorphic. In this section, we raise three questions : how good is this approximation for arbitrary signals $f$ and $g$? how dependent is $\hat d_M(\hat f, \hat g)$ on the sampling patterns? how should one go about choosing $k$, $\tilde x$ and $K$?
+\cref{corollary:discrete-invariance} illustrates that the definition of Discrete DiffyTW is ``tight'' with respect to that of DiffyTW if the underlying signals are piece-wise constant and diffeomorphic. In this section, we raise three questions : how good is this approximation for arbitrary signals $f$ and $g$? how dependent is $\hat d_M(\hat f, \hat g)$ on the sampling patterns? how should one go about choosing $k$, $\tilde x$ and $K$?
+
 \begin{theorem}[Rectangle approximation]\label{thm:rectangle-approx}
 Let $f,g:[0,1] \to \mathbb R^d$ be two $L$-Lipchitz functions. Let $(x_i)_{1\leq i \leq n}$ and $(y_j)_{1\leq j\leq m}$ two sampling patterns. We denote $\hat f = (x_i, f(x_i))$ and $\hat g = (y_j, g(y_j))$.
+If $K$ is the RBF kernel with $\gamma > 0$,
 \begin{equation}
-    \left\vert d_M(f, g) - \hat d_M(\hat f_n, \hat g_m)\right\vert \leq \frac{C}{n}
+    \left\vert d_M(f, g) - \hat d_M(\hat f_n, \hat g_m)\right\vert \leq \sqrt{2\gamma L}\left(\sum_{i=1}^{n-1} (x_{i+1} - x_i)^{3/2} + \sum_{j=1}^{m-1} (y_{j+1} - y_j)^{3/2}\right)
+\end{equation}
+
+In particular, if $(x_i)$ and $(y_j)$ are evenly spaced in $[0,1]$, then:
+\begin{equation}
+    \left\vert d_M(f, g) - \hat d_M(\hat f_n, \hat g_m)\right\vert \leq \sqrt{2\gamma L}\left(\frac{1}{n} - \frac{1}{m}\right)
 \end{equation}
 \end{theorem}
 
+\todo[inline]{Optimal rates ? This is with direct naïve proof.}
 
-\begin{proof}
-By \cref{thm:prob-qp}, we model $\hat f$ and $\hat g$ by piecewise constant functions.
-\todo[inline]{Finish this}
+\section{Proof of \cref{thm:rectangle-approx}}
+\begin{lemma}\label{lemma:rectangle-approx}
+Consider $f, g:[0, 1] \to \mathbb R^d$ and $s, r:[0,1] \to[0,1]$ two piece-wise constant functions such that $s(0)=r(0)=0$ and $s(1)=r(1)=1$. Then,
+\begin{equation}
+    \vert d(f, g) - d(f \circ s, g\circ r) \vert \leq \max_{q\in\mathcal F_{0,1}}\max_{x\in[0,1]}\vert q(x) \vert \left\Vert \int \phi(f) - \phi(f\circ s)\right\Vert_{\mathcal H} + \left\Vert \int \phi(g)- \phi(g\circ s)\right\Vert_\mathcal H
+\end{equation}
 
-Let $f,g:[0,1] \to \mathbb R^d$ be two $L$-Lipchitz functions. Let $(x_i)_{1\leq i \leq n}$ and $(y_j)_{1\leq j\leq m}$ two sampling patterns. We denote $\hat f = (x_i, f(x_i))$ and $\hat g = (y_j, g(y_j))$.
-Let $\mathcal F_{0,1}$. Then, for any $q\in\mathcal F_{0,1}$,
-    \begin{equation}
-        \vert d(f, g) - d(f\circ s, g\circ r) \vert \leq \Vert q \Vert \Vert \int \phi(f) - \phi(f\circ s)\Vert_{\mathcal H} + \Vert \int \phi(g)- \phi(g\circ s)\Vert
-    \end{equation}
+\end{lemma}
+\begin{proof}[Proof of \cref{lemma:rectangle-approx}]
+Indeed, let $q\in\mathcal F_{0,1}$. By the triangle inequality,
+\begin{align}
+\left\Vert \int \phi(f(x))q(x)dx - \int \phi(g(x))dx \right\Vert
+\leq
+\left\Vert \int \phi(f(x))q(x)dx - \int \phi(f\circ s(x))q(x)dx \right\Vert\\
++ \left\Vert \int \phi(f\circ s(x))q(x)dx - \int \phi(g\circ r(x))dx \right\Vert
++ \left\Vert \int \phi(g\circ r(x))dx - \int \phi(g(x))dx \right\Vert
+\end{align}
+\end{proof}
+
+\begin{lemma}
+Let $\phi:\mathbb R^d \to \mathcal H$ such that $\langle
+\phi(x), \phi(y)\rangle_\mathcal H = K(x, y)$ where $K$ is the RBF kernel with parameter $\gamma > 0$. Then,
+
+\begin{equation}
+\left\Vert \phi(z) - \phi(u)\right\Vert_\mathcal H \leq \sqrt{2\gamma} \Vert z - u \Vert
+\end{equation}
+\todo[inline]{Finish this!!}
+\end{lemma}
+
+\begin{proof}[Proof of \cref{thm:rectangle-approx}]
+Let $s:[0,1] \to [0,1]$ be a step function such that $f\circ s$ is adapted to $\hat f$. Similarly, let $r:[0,1]\to[0,1]$ be such that $g\circ r$ is adapted to $\hat g$. Then, by \cref{lemma:rectangle-approx},
+\begin{equation}
+    \vert d(f, g) - d(f \circ s, g\circ r) \vert \leq \max_{q\in\mathcal F_{0,1}}\Vert q \Vert_\mathcal H \left\Vert \int \phi(f) - \phi(f\circ s)\right\Vert_{\mathcal H} + \left\Vert \int \phi(g)- \phi(g\circ s)\right\Vert_\mathcal H
+\end{equation}
+By the triangle inequality again,
+\begin{equation}
+\left\Vert \int \phi(f) - \phi(f\circ s)\right\Vert_{\mathcal H} \leq \sum_{i=1}^{n-1} \delta_i^{3/2}\sqrt{2\gamma L}
+\end{equation}
+
+
+
 
 
 Let $f$ be $L$-Lipschitz on $[0,1]$ and $\phi$ be the RBF kernel with parameter $\gamma > 0$.

@@ -31,6 +31,46 @@ We derive the exact expressions in three cases in the following examples.
 \end{align}
 where $\varphi(u) = (2 - e^u)/\gamma$ if $u \geq 0$ and $\varphi(u) = e^{-u} / \gamma$ else.
 \end{example}
+\section{Proof of \cref{thm:prob-qp}}\label{proof:prob-qp}
+\begin{proof}
+Our goal is to prove that our definition of $\hat d_M(\hat f, \hat g)$ coincides with that of DiffyTW when applied to piece-wise constant functions that interpolate $\hat f$ and $\hat g$.
+
+\subparagraph{Encoding the function space} $\mathcal F_{0, 1}^M$ is the set of functions parametrized by $q\in\mathbb R^M$ such that $q(x) \geq 0, \forall x\in [0,1]$ and $\int_0^1 q(x)dx= 1$. Let $h\in\mathbb R^M$ be such that $\int_0^1q(x)dx = h^\top q$. Then, the constraint $q\in\mathcal F_{0,1}^M$ can be replaced by $q\in\mathbb R^M$, $q\geq 0$ (coordinate-wise) and $h^\top q = 1$.
+
+
+\subparagraph{Computing $d_M(f, g)$} Using the fact that $K(z_1, z_2) = \langle \phi(z_1), \phi(z_2)\rangle$ and $I(q, x_i, x_{i+1}) = [Hq]_i$, for any $q\in\mathcal F_{0,1}^M$,
+\begin{align}
+\left \Vert \int_0^1 \phi(f(x))q(x)dx \right\Vert^2_\mathcal H&=\left\Vert\sum_{i=1}^{n-1} \underbrace{\int_{x_i}^{x_{i+1}}q(u)du}_{I(q, x_i, x_{i+1})}\phi(f(x_i))\right\Vert_\mathcal H^2\\
+&=\sum_{i=1}^{n-1}\sum_{j=1}^{n-1}\underbrace{I(q, x_i, x_{i+1})}_{[Hq]_i}I(q, x_j, x_{j+1})\underbrace{\langle \phi(f(x_i)), f(x_j))\rangle}_{K(f(x_i), f(x_j))}\\
+&= q^\top H^\top K_{ff} H q
+\end{align}
+
+\begin{align}
+\left\Vert\int_0^1\phi(g(x))dx\right\Vert_\mathcal H^2 &= \left\Vert\sum_{j=1}^{m-1} \underbrace{(y_{j+1} - y_j)}_{\delta_j}\phi(g(y_j))\right\Vert_\mathcal H^2\\
+&= \sum_{j=1}^{m-1} \sum_{i=1}^{m-1} \delta_i \delta_j K(g(y_j), g(y_i))\\
+& = \delta^\top K_{gg} \delta
+\end{align}
+
+\begin{align}
+\left\langle \int\phi(f(x))q(x)dx, \int\phi(g(x))\right\rangle&=\sum_{i=1}^{n-1}\sum_{j=1}^{m-1} I(q, x_i, x_{i+1}) \delta_j \langle \phi(f(x_i)), \phi(g(x_j))\rangle\\
+&= \delta^\top K_{gf} Hq
+\end{align}
+
+Thus by developing the squared-norm in the definition of $d_M(f, g)$,
+\begin{equation}
+d_M(f, g) = \min_{\substack{q\in\mathbb R^M \\ h^\top q = 1 \\ q \geq 0}} \frac{1}{2} q^\top P q - v^\top q + C
+\end{equation}
+where $P = 2 H^\top K_{ff}H$, $C = \delta^\top K_{gg}\delta$ and $v = 2\delta^\top K_{gf}H$,
+
+and we recover the definition of $\hat d_M(\hat f, \hat g)$.
+\end{proof}
+\section{Proof of \cref{corollary:discrete-invariance}}\label{proof:discrete-invariance}
+\begin{proof}
+$h \circ Q$ is adapted to $\hat f$ and $h$ is adapted to $\hat g$, so from \cref{thm:prob-qp}:
+\begin{equation}
+    \hat d_M(\hat f, \hat g) = d_M(h\circ Q, h) = 0
+\end{equation}
+\end{proof}
 
 \section{On the differentiability of DiffyTW}
 \subsection{Proof of \cref{thm:diffytw-grad}}\label{sec:proof-diffytw-grad}
