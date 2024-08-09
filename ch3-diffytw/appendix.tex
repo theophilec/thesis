@@ -1,6 +1,4 @@
-\section{Useful computations}
-
-\subsection{Quadrature of non-negative linear models}\label{app:diffytw-quadrature}
+\section{Quadrature of non-negative linear models}\label{app:diffytw-quadrature}
 
 Given $q\in\mathcal F_{0,1}^M$, we introduce . $q\in{\mathbb R_{\geq 0}}^M \mapsto I(q, x, y)$ is linear in the coefficients.
 
@@ -69,6 +67,69 @@ and we recover the definition of $\hat d_M(\hat f, \hat g)$.
 $h \circ Q$ is adapted to $\hat f$ and $h$ is adapted to $\hat g$, so from \cref{thm:prob-qp}:
 \begin{equation}
     \hat d_M(\hat f, \hat g) = d_M(h\circ Q, h) = 0
+\end{equation}
+\end{proof}
+\section{Proof of \cref{thm:rectangle-approx}}\label{sec:proof-rectangle-approx}
+\begin{lemma}\label{lemma:rectangle-approx}
+Consider $f, g:[0, 1] \to \mathbb R^d$ and $s, r:[0,1] \to[0,1]$ two piece-wise constant functions such that $s(0)=r(0)=0$ and $s(1)=r(1)=1$. Then,
+\begin{equation}
+    \vert d(f, g) - d(f \circ s, g\circ r) \vert \leq \max_{q\in\mathcal F_{0,1}}\max_{x\in[0,1]}\vert q(x) \vert \left\Vert \int \phi(f) - \phi(f\circ s)\right\Vert_{\mathcal H} + \left\Vert \int \phi(g)- \phi(g\circ s)\right\Vert_\mathcal H
+\end{equation}
+
+\end{lemma}
+\begin{proof}[Proof of \cref{lemma:rectangle-approx}]
+Indeed, let $q\in\mathcal F_{0,1}$. By the triangle inequality,
+\begin{align}
+\left\Vert \int \phi(f(x))q(x)dx - \int \phi(g(x))dx \right\Vert
+\leq
+\left\Vert \int \phi(f(x))q(x)dx - \int \phi(f\circ s(x))q(x)dx \right\Vert\\
++ \left\Vert \int \phi(f\circ s(x))q(x)dx - \int \phi(g\circ r(x))dx \right\Vert
++ \left\Vert \int \phi(g\circ r(x))dx - \int \phi(g(x))dx \right\Vert
+\end{align}
+\end{proof}
+
+\begin{lemma}\label{lemma:rbf-lip}
+Let $\phi:\mathbb R^d \to \mathcal H$ such that $\langle
+\phi(x), \phi(y)\rangle_\mathcal H = K(x, y)$ where $K$ is the RBF kernel with parameter $\gamma > 0$. Then,
+
+\begin{equation}
+\left\Vert \phi(z) - \phi(u)\right\Vert_\mathcal H \leq C_\gamma\sqrt{\Vert z - u \Vert_2}
+\end{equation}
+where $C_\gamma = \sqrt{\frac{2\sqrt{2\gamma}}{\sqrt{e}}}$.
+\end{lemma}
+
+\begin{proof}[Proof of \cref{lemma:rbf-lip}]
+
+\begin{align}
+\Vert \phi(z) - \phi(u)\Vert_\mathcal H^2 &= \Vert \phi(z) \Vert^2+ \Vert \phi(u)\Vert^2 - 2 \langle \phi(z), \phi(u)\rangle\\
+&= 2 \left(1 - K(u, z)\right)
+\end{align}
+
+Denote $\varphi(x) = 1- e^{-\gamma x^2}$. $\varphi^\prime$ attains its global maxima at $x = \pm \sqrt{\frac{1}{2\gamma}}$, with value $\Vert \phi^\prime\Vert_{\infty} = \sqrt{\frac{2\gamma}{e}}$. And so:
+
+\begin{align}
+\Vert \phi(z) - \phi(u)\Vert_\mathcal H^2 & \leq \frac{2\sqrt{2\gamma}}{\sqrt{e}}\Vert z - u \Vert_2
+\end{align}
+\end{proof}
+
+\begin{proof}[Proof of \cref{thm:rectangle-approx}]
+Let $s:[0,1] \to [0,1]$ be a step function such that $f\circ s$ is adapted to $\hat f$. Similarly, let $r:[0,1]\to[0,1]$ be such that $g\circ r$ is adapted to $\hat g$. Then, by \cref{lemma:rectangle-approx},
+\begin{equation}
+    \vert d(f, g) - d(f \circ s, g\circ r) \vert \leq \max_{q\in\mathcal F_{0,1}}\Vert q \Vert_\mathcal H \left\Vert \int \phi(f) - \phi(f\circ s)\right\Vert_{\mathcal H} + \left\Vert \int \phi(g)- \phi(g\circ s)\right\Vert_\mathcal H
+\end{equation}
+By \cref{lemma:rbf-lip},
+\begin{equation}
+\left\Vert \int \phi(f) - \phi(f\circ s)\right\Vert_{\mathcal H} \leq \sum_{i=1}^{n-1} \delta_i^{3/2}C_\gamma\sqrt{\gamma L}
+\end{equation}
+
+
+
+
+
+Let $f$ be $L$-Lipschitz on $[0,1]$ and $\phi$ be the RBF kernel with parameter $\gamma > 0$.
+Then, for any $\vert x - u \vert \leq \Delta$,
+\begin{equation}
+    \Vert \phi(f(x)) - \phi(f(u)) \Vert^2 \leq 2\left(1 - k(f(x), f(u))\right) \leq 2 \gamma L \Delta
 \end{equation}
 \end{proof}
 

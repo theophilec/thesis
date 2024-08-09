@@ -1,4 +1,3 @@
-\todo[inline]{Create two parts in manuscript: Part 1 for Diffy + DiffyTW and Part 2 for HMM}
 \section{Introduction}
 \paragraph{Motivating example} Consider two hikers (Felix and Gabrielle) that each go on an hour-long hike round-trip from Nice. They each record their altitude. From both recordings, can be determine if they took the same route (in altitude at least)? If they did indeed take the same route, they can have different speeds at different parts of the hour. For instance, Felix may be quicker than Gabrielle when going uphill but tends to be slower when going downhill. This warps their altitude profile as a function of time: Felix seems to have climbed steeper ascents and Gabrielle to have descended steeeper descents.
 \missingfigure{hiking example}
@@ -236,71 +235,24 @@ As a point of comparaison, Dynamic Time Warping can be computed in $O(M^2)$ time
 Let $f,g:[0,1] \to \mathbb R^d$ be two $L$-Lipchitz functions. Let $(x_i)_{1\leq i \leq n}$ and $(y_j)_{1\leq j\leq m}$ two sampling patterns. We denote $\hat f = (x_i, f(x_i))$ and $\hat g = (y_j, g(y_j))$.
 If $K$ is the RBF kernel with $\gamma > 0$,
 \begin{equation}
-    \left\vert d_M(f, g) - \hat d_M(\hat f_n, \hat g_m)\right\vert \leq \sqrt{2\gamma L}\left(\sum_{i=1}^{n-1} (x_{i+1} - x_i)^{3/2} + \sum_{j=1}^{m-1} (y_{j+1} - y_j)^{3/2}\right)
+    \left\vert \sqrt{d_M(f, g)} - \sqrt{\hat d_M(\hat f_n, \hat g_m)}\right\vert \leq \sqrt{2\gamma L}\left(\sum_{i=1}^{n-1} (x_{i+1} - x_i)^{3/2} + \sum_{j=1}^{m-1} (y_{j+1} - y_j)^{3/2}\right)
 \end{equation}
 
 In particular, if $(x_i)$ and $(y_j)$ are evenly spaced in $[0,1]$, then:
 \begin{equation}
-    \left\vert d_M(f, g) - \hat d_M(\hat f_n, \hat g_m)\right\vert \leq \sqrt{2\gamma L}\left(\frac{1}{n} - \frac{1}{m}\right)
+    \left\vert \sqrt{d_M(f, g)} - \sqrt{\hat d_M(\hat f_n, \hat g_m)}\right\vert \leq \sqrt{2\gamma L}\left(\frac{1}{\sqrt{n}} - \frac{1}{\sqrt{m}}\right)
 \end{equation}
 \end{theorem}
 
+\todo[inline]{Using $a^2- b^2 = (a-b)(a+b)$, restate on $d_m$ and $\hat d_M$}
 \todo[inline]{Optimal rates ? This is with direct naïve proof.}
 
-\section{Proof of \cref{thm:rectangle-approx}}
-\begin{lemma}\label{lemma:rectangle-approx}
-Consider $f, g:[0, 1] \to \mathbb R^d$ and $s, r:[0,1] \to[0,1]$ two piece-wise constant functions such that $s(0)=r(0)=0$ and $s(1)=r(1)=1$. Then,
-\begin{equation}
-    \vert d(f, g) - d(f \circ s, g\circ r) \vert \leq \max_{q\in\mathcal F_{0,1}}\max_{x\in[0,1]}\vert q(x) \vert \left\Vert \int \phi(f) - \phi(f\circ s)\right\Vert_{\mathcal H} + \left\Vert \int \phi(g)- \phi(g\circ s)\right\Vert_\mathcal H
-\end{equation}
-
-\end{lemma}
-\begin{proof}[Proof of \cref{lemma:rectangle-approx}]
-Indeed, let $q\in\mathcal F_{0,1}$. By the triangle inequality,
-\begin{align}
-\left\Vert \int \phi(f(x))q(x)dx - \int \phi(g(x))dx \right\Vert
-\leq
-\left\Vert \int \phi(f(x))q(x)dx - \int \phi(f\circ s(x))q(x)dx \right\Vert\\
-+ \left\Vert \int \phi(f\circ s(x))q(x)dx - \int \phi(g\circ r(x))dx \right\Vert
-+ \left\Vert \int \phi(g\circ r(x))dx - \int \phi(g(x))dx \right\Vert
-\end{align}
-\end{proof}
-
-\begin{lemma}
-Let $\phi:\mathbb R^d \to \mathcal H$ such that $\langle
-\phi(x), \phi(y)\rangle_\mathcal H = K(x, y)$ where $K$ is the RBF kernel with parameter $\gamma > 0$. Then,
-
-\begin{equation}
-\left\Vert \phi(z) - \phi(u)\right\Vert_\mathcal H \leq \sqrt{2\gamma} \Vert z - u \Vert
-\end{equation}
-\todo[inline]{Finish this!!}
-\end{lemma}
-
-\begin{proof}[Proof of \cref{thm:rectangle-approx}]
-Let $s:[0,1] \to [0,1]$ be a step function such that $f\circ s$ is adapted to $\hat f$. Similarly, let $r:[0,1]\to[0,1]$ be such that $g\circ r$ is adapted to $\hat g$. Then, by \cref{lemma:rectangle-approx},
-\begin{equation}
-    \vert d(f, g) - d(f \circ s, g\circ r) \vert \leq \max_{q\in\mathcal F_{0,1}}\Vert q \Vert_\mathcal H \left\Vert \int \phi(f) - \phi(f\circ s)\right\Vert_{\mathcal H} + \left\Vert \int \phi(g)- \phi(g\circ s)\right\Vert_\mathcal H
-\end{equation}
-By the triangle inequality again,
-\begin{equation}
-\left\Vert \int \phi(f) - \phi(f\circ s)\right\Vert_{\mathcal H} \leq \sum_{i=1}^{n-1} \delta_i^{3/2}\sqrt{2\gamma L}
-\end{equation}
-
-
-
-
-
-Let $f$ be $L$-Lipschitz on $[0,1]$ and $\phi$ be the RBF kernel with parameter $\gamma > 0$.
-Then, for any $\vert x - u \vert \leq \Delta$,
-\begin{equation}
-    \Vert \phi(f(x)) - \phi(f(u)) \Vert^2 \leq 2\left(1 - k(f(x), f(u))\right) \leq 2 \gamma L \Delta
-\end{equation}
-\end{proof}
+The proof on \cref{thm:rectangle-approx} is included in \cref{sec:proof-rectangle-approx}.
 
 \section{Differentiability}
 Differentiability makes Discrete DiffyTW effective as a building block inside of machine learning algorithms, for example as a loss function for training time-series generation algorithms.
 
-We consider differentiability of $V(\theta) = \hat d_M(\hat f, \theta)$ and our goal is to compute $\nabla v(\theta)$, the gradient of $v$ with respect to $\theta$. Here, $\theta$ takes the place of $\hat g$ but we consider its sample pattern fixed. Additionally, $\nabla v(\theta)$ can be chained to extend to the (more common) case where we wish to compare $\hat f$ to $\hat g(\theta)$, a time-series generated by a model.
+We consider differentiability of $V(\theta) = \hat d_M(\hat f, \theta)$ and our goal is to compute $\nabla V(\theta)$, the gradient of $V$ with respect to $\theta$. Here, $\theta$ takes the place of $\hat g$ but we consider its sample pattern fixed. Additionally, $\nabla V(\theta)$ can be chained to extend to the (more common) case where we wish to compare $\hat f$ to $\hat g(\theta)$, a time-series generated by a model.
 
 In this section, we denote:
 \begin{equation}\label{prob:fullqp}
@@ -313,13 +265,13 @@ The difficulty is differentiating through the $\min$ operator since the optimal 
 \begin{theorem}\label{thm:diffytw-grad}
     If $\ell(\cdot, \theta)$ is strictly convex, then $V(\theta)$ is differentiable and
     \begin{equation}
-        \nabla V(\theta) = JV(\theta)q^*(\theta) + \nabla C(\theta),
-    \end{equation} where $q^*(\theta)$ is the unique solution to \cref{prob:fullqp}
+        \nabla V(\theta) = J_\theta \ell(q^*(\theta), \theta) + \nabla C(\theta),
+    \end{equation} where $q^*(\theta)$ is the unique solution to \cref{prob:fullqp}.
 \end{theorem}
 
-In particular, so long as $P$ is positive definite, $V$ is differentiable. This is ensured in all practical situations by definition of the Discrete DiffyTW. In practice, regularization is added to $P$ under the form $P + \lambda I$ to make the Quadratic program solver more stable, so the
+In particular, so long as $P$ is positive definite, $V$ is differentiable. This is ensured in all practical situations by definition of the Discrete DiffyTW. In practice, regularization is added to $P$ under the form $P + \lambda I$ to make the Quadratic program solver more stable.
 
-Our proof of \cref{thm:diffytw-grad} builds on a result from \cite{shapiro} and \cite{lee}, which give sufficient conditions for differentiability of quadratic programs. See \cref{sec:proof-diffytw-grad} for the proof.
+Our proof of \cref{thm:diffytw-grad} builds on a result from \cite{shapiro} and \cite{lee}, which give sufficient conditions for differentiability of quadratic programs. See \cref{sec:proof-diffytw-grad} for the proof. Note that a similar argument is used in \cite{tavenar-blog-diff} for the differentiability of DTW.
 
 \paragraph{Other methods for differentiability of QPs}
 There is a growing body of work on differentiating through convex programs, with three major approaches: analytical differentiation (when a closed-form solution to the convex problem is known, e.g. unconstrained QPs), unrolling (differentiating through the operations in the algorithm used to solve the convex problem), implicit differentiation (applying the implicit function theorem).
@@ -332,24 +284,26 @@ There is a growing body of work on differentiating through convex programs, with
 
 \subsection{Alignment with synthetic warpings}
 
-Consider the task of aligning times series, where the warp is known and in the function space considered. Formally, let $f$ be a time-series and $Q$ an inscreasing diffeomorphism such that $q = Q^\prime$ is in the function space considered. We compute $d(f, f\circ Q)$.
-
-\subsection{Barycenter computation}
-Given a set $(f_1, \ldots, f_n)$ of time series, computing a barycenter of the data according to the geometry of an elastic distance adapted to time-series is a widely studies problem. \textcolor{red}{DBA} and \textcolor{red}{Soft-DTW} are two examples. These techniques are widely used in machine learning pipelines, for example, for set-based methods, for ...
-
-We use a non-convex solver such as L-BFGS and the gradient expressions in \cref{sec:differentiability} to appromimately minimize the Fréchet function associated to $(f_1, \ldots, f_n)$, namely:
-\begin{equation}\label{eq:barycenter}
-    \mathcal L(\mu) = \frac{1}{n}\sum_{i=1}^n d(f_i, \mu).
-\end{equation}
-
-We consider two variants of \cref{eq:barycenter}: $\mathcal L_1(\mu) = \frac{1}{n}\sum_{i=1}^n d(f_i,\mu)$ and $\mathcal L_2(\mu) = \frac{1}{n}\sum_{i=1}^n d(\mu, f_i)$
+Consider the task of aligning times series, where the warp is known and in the function space considered. Formally, let $f$ be a time-series and $Q$ an inscreasing diffeomorphism such that $q = Q^\prime$ is in the function space considered. We compute $d(f\circ Q, f)$.
 
 
 
-\subsection{Clustering: k-means \& k-medoids}
+%\subsection{Barycenter computation}
+%Given a set $(f_1, \ldots, f_n)$ of time series, computing a barycenter of the data according to the geometry of an elastic distance adapted to time-series is a widely studies problem. \textcolor{red}{DBA} and \textcolor{red}{Soft-DTW} are two examples. These techniques are widely used in machine learning pipelines, for example, for set-based methods, for ...
 
-Given $(f_i)$ a set of time series and $K > 0$ an integer, the goal of clustering is to find $C_i \in \lbrace 1, \ldots, K\rbrace$ and $\mu_k$ such that the association $(f_k, i_k)$ minimizes an energy function such as:
-\begin{align}
-    (\mu_k), (C_i) \in \arg\min \sum_{k=1}^K\sum_{i=1}^n \mathbb I[C_i = k]d(f_i, \mu_k)
-\end{align}
-where $d$ is some metric. When $\mu_k$ are chosen among $(f_i)$, the task is known as k-mediods ; when the $\mu_k$ can be chosen arbitrarily, it is known as k-means.
+%We use a non-convex solver such as L-BFGS and the gradient expressions in \cref{sec:differentiability} to appromimately minimize the Fréchet function associated to $(f_1, \ldots, f_n)$, namely:
+%\begin{equation}\label{eq:barycenter}
+%    \mathcal L(\mu) = \frac{1}{n}\sum_{i=1}^n d(f_i, \mu).
+%\end{equation}
+
+%We consider two variants of \cref{eq:barycenter}: $\mathcal L_1(\mu) = \frac{1}{n}\sum_{i=1}^n d(f_i,\mu)$ and $\mathcal L_2(\mu) = \frac{1}{n}\sum_{i=1}^n d(\mu, f_i)$
+
+
+
+%\subsection{Clustering: k-means \& k-medoids}
+
+%Given $(f_i)$ a set of time series and $K > 0$ an integer, the goal of clustering is to find $C_i \in \lbrace 1, \ldots, K\rbrace$ and $\mu_k$ such that the association $(f_k, i_k)$ minimizes an energy function such as:
+%\begin{align}
+%    (\mu_k), (C_i) \in \arg\min \sum_{k=1}^K\sum_{i=1}^n \mathbb I[C_i = k]d(f_i, \mu_k)
+%\end{align}
+%where $d$ is some metric. When $\mu_k$ are chosen among $(f_i)$, the task is known as k-mediods ; when the $\mu_k$ can be chosen arbitrarily, it is known as k-means.
