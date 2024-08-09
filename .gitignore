@@ -1,5 +1,5 @@
 # from https://github.com/github/gitignore/blob/main/TeX.gitignore
-
+.idea/
 ## Core latex/pdflatex auxiliary files:
 *.aux
 *.lof
