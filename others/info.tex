@@ -1,13 +1,13 @@
 \usepackage[nomaketitle]{config/psl-cover/psl-cover}
 
-\sujet{Le titre du manuscrit de thèse pour obtenir le titre de docteur}
+\sujet{Contributions à l'apprentissage statistique structuré : théorie et algorithmes}
 \author{Théophile Cantelobre}
 \encadrant{Benjamin GUEDJ \\ Alessandro RUDI \\ Carlo CILIBERTO}
 
 \institute{Inria Paris - École Normale Supérieure - PSL}
-\doctoralschool{Titre de l'école doctorale}{xxx}
+\doctoralschool{Sciences Mathématiques de Paris Centre}{386}
 \specialty{Informatique}
-\laboratory{Département d'informatique de l'École Normale Supérieure (DI-ENS)}
+\laboratory{Département d'informatique\\École Normale Supérieure}
 \date{16 octobre 2024}
 
 \pslassetspath{config/psl-cover}
@@ -22,15 +22,30 @@
 
 % entre 1700 et 4000 signes ?
 \frabstract{
-\lipsum[10-11]
-}
+Les méthodes d'apprentissage automatique exploitent des biais inductifs liés à la structure des données considérées. Cette structure peut être constituée de symétries, d'invariances, d'équivariances ou d'une structure de dépendance probabiliste. La structure peut être apprise à partir des données, imposée au moment de l'apprentissage à l'aide de techniques telles que l'augmentation de données, ou elle peut être conçue directement dans l'algorithme.
+
+La prise en compte de structures riches dans les algorithmes permet de produire des algorithmes plus efficaces et plus performants. Nous développons, analysons et mettons en œuvre des méthodes permettant de tirer parti de la structure dans différents contextes d'apprentissage et d'inférence statistiques.
+
+Tout d'abord, nous développons une divergence qui est invariante aux difféomorphismes sur des espaces de données généraux. Nous montrons que la divergence peut être calculée en forme close. Nous démontrons qu'elle est invariante, développons un algorithme pour l'approximer permettant de conserver ses propriétés invariantes et étudions ses performances empiriques sur des images.
+
+Deuxièmement, nous développons une divergence différentiable entre les séries temporelles, similaire au Dynamic Time Warping. Nous étudions en détail son invariance, sa différentiabilité et ses propriétés d'approximation, nous présentons comment la calculer en pratique et nous démontrons ses performances sur différents ensembles de données et tâches.
+
+Enfin, nous concevons un algorithme de filtrage séquentiel bayésien qui généralise les estimateurs précédemment proposés et applicable dans des contextes variés. L'algorithme est basé sur des modèles de la famille des kernel sum-of-squares. Nous montrons que l'algorithme est stable et robuste aux erreurs de modèle, et que ses propriétés s'adaptent à la régularité du problème en question. Enfin, nous prouvons qu'il peut avoir une performance comparable au filtre particulaire dans des configurations réalistes.}
 
 \enabstract{
-\lipsum[13-14]
+Machine learning methods encode inductive biases related to the structure of the data considered. Such structure can be symmetries, invariances, equivariances or probabilistic dependence structure. The structure can be learned from the data, enforced at learning time using techniques like data augmentation, or it can be designed into the algorithm.
+
+Encoding richer structure in algorithms can yield more efficient and performant algorithms. We develop, analyse and implement methods for taking advantage of structure in different settings.
+
+First, we develop a divergence which is invariant to diffeomorphisms over general data spaces. We show the divergence can be computed in closed-form. We prove it has invariance properties, develop an algorithm for approximating it in practice while keeping invariance and study its empirical performance on images.
+
+Second, we develop a differentiable divergence between time-series, similar to Dynamic Time Warping. We thoroughly study its invariance, differentiability, and approximation properties, present how to compute it in practice and demonstrate its performance on different datasets and tasks.
+
+Finally,  we design a Sequential Bayesian Filtering algorithm, which generalizes previously proposed estimators and can be applied to a wide variety of settings. The algorithm is based on kernel sum-of-squares models. We show it is stable and robust, and that its properties are adaptive to the regularity of the problem at hand. Finally, we show it can be competitive with the particle filter algorithm in realistic configurations.
 }
 
-\frkeywords{mot clé 1, mot clé 2, mot clé 3, mot clé 4}
-\enkeywords{keyword 1, keyword 2, keyword 3, keyword 4}
+\frkeywords{apprentissage statistique, apprentissage structurée, méthodes à noyaux}
+\enkeywords{statistical learning theory, structured prediction, kernel methods}
 
 
 %%%%%%% Paramètres PDF
