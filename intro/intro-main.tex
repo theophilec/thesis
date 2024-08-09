@@ -1,3 +1,12 @@
-\chapter{Introduction générale}\label{ch:intro}
-\objectif{Objectif rapide du chapitre \lipsum[30]}
+\chapter{Introduction}\label{ch:intro}
+\objectif{\begin{itemize}
+\item Inductive biases are key to machine learning algorithm performance. An example is translation invariance in CNNs.
+\item The goal of this thesis is to design, study and implement methods for leveraging structure in machine learning problems.
+\item Three methods are presented:
+\begin{itemize}
+\item in \cref{ch:diffy}, we show that we can build a divergence that is invariant to smooth diffemorphisms on general spaces. We study the divergence's theoretical and empirical properties.
+\item in \cref{ch:diffytw}, we tackle the time-series alignment problem in the presence of time-warping. Our alignement method is invariant to smooth reparametrizations and is differentiable.
+\item in \cref{ch:hmm}, we introduce a non-linear filtering algorithm in the Markovian setting using positive semi-definite models. Our algorithm offers stable and robust guarantees for smooth densities with computations complexity competitive or outperforming the particle filter.
+\end{itemize}
+\end{itemize}}
 \input{intro/corps}

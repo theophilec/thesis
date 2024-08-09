@@ -1,16 +1,32 @@
 % Corps de l'introduction
 
-\section{Machine learning, statistical infernece and structured data}
+\section{Inductive biases in machine learning}
 
-\todo{Add general introduction, presenting the "why". Identify and work with non triviail structure in data. Markopvian structure fuat time series, inmvariations to diffeomorphisms withy two instances.}
+During training and deployment of machine learning algorithms, scientists and engineers instill their knowledge to make the algorithms as performant as possible. This is done in a variety of ways: in the selection of the datasets (e.g. what is an outlier?), in the choice of the search space (e.g. convolutional or fully connected neural networks?), in the design of a regularization schema (e.g. should solutions have small $L_2$ or $L_1$ norms?), in the training recipe (e.g. which optimizer? small learning rate? large learning rate?), to mention a few examples. Each of these choices impacts the obtained algorithm, its performance and its properties. We call these choices inductive biases\footnote{See \cite{mitchell-inductive,1806.01261} for a formal definition and review of such concepts.}.
 
-\section{Key contributions \& reading guide}
+Inductive biases are -- often, implicit -- assumptions about the learning problem or the solution to learning problem such that constrain the space of solutions or influence the choice between several solutions. They can be opposed to an \emph{end-to-end} approach based solely on data. Deep learning is often cited as a poster child of the end-to-end approach: only the data dictates which model is chosen and deployed, free of any feature engineering or data tweaking.
 
-Beyond the introduction, this thesis is organized in three parts, corresponding to the three main contributions of our work. The contributions are presented in a logical order not in chronological order.
+However, the methods at the heart of the development of deep learning like Convolutional Neural Networks (CNN) encode inductive biases at their core. At their simplest, CNN are neural networks composed of a succession of convolutional layers and a linear classification layer. The parameters of the convolutional layers are learnable, but the same parameters are applied over the entire image. This implies that before the final classification layers, CNNs produce equivariant features\footnote{Loosely, equivariant features are such that $f(\tau \cdot x)=\tau f(x)$ where $x$ is a data point, $\tau$ is a transformation and $f$ is a model. In a nutshell: the features of the transformed datum are the transformed features of the datum.}. Put simply, a signal at the top left of an image will produce the same features as if it were at the bottom right of the image, but in a different position. This design choice constrains models to not be sensitive to the position of an object in an image, a prime example of an inductive bias.
 
-In this section of the introduction, we present each contribution and point to relevant sections of the thesis. Each time, we aim to present the motivation for the contribution (why?), the intuition behind our work (how?), and finally the main results in a simplified manner.
+Inductive biases in deep learning do not stop at CNNs. The importance of neural architectures (ResNet, YOLO, ...) or the recurrent structure of Natural Language Processing models that power ChatGPT are other examples.
 
-\newpage
+While deep learning models have an impressive capacity for learning patterns from data and data is arguably the most valuable component of these systems, they are aided by indusctice biases in their design that enforce known structures, heuristics, symmetries or invariances. Beyond this anecdotal evidence, integrating symmetries and structure has been theoretically proven to make learning more efficient. This structure can be present in the features (e.g. in an image) or in the labels (e.g. the hierarchical structure of a classification). Put together, there is evidence enforcing structure and invariances make the learning process more efficient and \emph{in fine} makes for more performant algorithms.
+
+\section{Goals \& organisation}
+Given this high-level overview of the significance of inductive biases in machine learning, we turn to the goals of our work and our main contributions.
+
+We focus on methods for leveraging structure in learning problems. These methods allow incoporating richer types of structure into machine learning algorithms. We study how these tools perform theoretically and empirically on datasets.
+
+We consider two widely applicable categories of structure. In \Cref{part1}, we study two instances of invariance to diffeomorphisms. Diffeomorphisms are interesting because they contain common examples of invariances such as rotation and translation but also more complex, non-parametric transformations such as warps. In \cref{ch:diffy}, we consider invariance to smooth diffeomorphisms for general data types such as images, point clounds or videos. In \cref{ch:diffytw}, we tackle time warping and comparing time-series, a common and widely studied issue in time-series applications when the sensor modalities vary between instances or when the learning problem is invariant to time-warping. In \Cref{part2} and \cref{ch:hmm}, we turn to inference on time-series with Markovian structure. This type of structure is simple, widespread but remains hard to handle beyond the simplest cases (finite state-space or Kalman filter).
+
+
+\paragraph{Reading guide}
+
+This thesis is organized in five chapters: the introduction (\cref{ch:diffy}), two chapters on divergence invariant to diffeomorphisms (\cref{ch:diffytw,ch:hmm}, which make up \Cref{part1}), a chapter on the topic of using Markovian structure for inference on time-series (Chapter 4 which composes \Cref{part2}), and finally a conclusion.
+
+We aim for this thesis to be self-contained and whenever possible include all proofs. To keep the developement readable, we keep the proofs and more extensive experiments for the appendices at the end of each chapter.
+
+\section{Key contributions}
 \subsection{Divergences for data with smooth invariances}
 
 We are interested in is \emph{designing, studying and implementing a divergence $D$ which is invariant to smooth diffeomorphisms on general data types.}
