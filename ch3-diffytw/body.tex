@@ -27,6 +27,7 @@ Empirically, sDTW behaves similarly to DTW, has equivalent computational complex
 \paragraph{Prior work}
 Other approaches have been proposed: \cite{ref} applies an approximation of the Fréchet distance, \cite{ref} makes DTW more robust to shifts, \cite{ref} combines DTW with the Fréchet distance.
 
+\todo[inline]{Add problem statement... so what?}
 \paragraph{Approach \& Contributions}
 DiffyTW is divergence between functions on $[0,1]$ representing time-series. It is provably invariant to subset of smooth reparametrizations. The set of transformations it is invariant to can be tuned. It can be robustly and efficiently used to compare time-series, by solving a quadratic program. DiffyTW is differentiable with respect to its input and can be integrated in wider machine learning workflows. We illustrate and study DiffyTW's behavior on time series empirically.
 

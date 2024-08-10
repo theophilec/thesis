@@ -346,13 +346,13 @@ In the theoretical analysis above, the rates in $N$ hold for any parameter of th
 
 Finally, the method introduced is empirically quite robust to the choice of parameters.
 
- Here we study an efficient strategy to compute it and its computational complexity. Denote $T(d)$ the cost of one kernel evaluation between two points in $\R^d$ (e.g. for the Laplace kernel $T(d) = O(d)$).
+ %Here we study an efficient strategy to compute it and its computational complexity. Denote $T(d)$ the cost of one kernel evaluation between two points in $\R^d$ (e.g. for the Laplace kernel $T(d) = O(d)$).
 
- \textbf{Offline pre-computation~}
+ %\textbf{Offline pre-computation~}
 
- $R_{\widetilde X}$ is constructed by first computing $K_{\widetilde X\widetilde X}$ in $O(T(d)M_X^2)$ time, then a Cholesky decomposition computation in $O(M_X^3)$ time, for a total ost of $O(T(d)M_X^2 + M_X^3)$. Similarly, computing $R_{\widetilde Y}$ costs $O(T(p)M_Y^2 + M_Y^3)$.  Finally, computing $K_{X\widetilde X}$ costs $O(T(d)M_XN)$.
+ %$R_{\widetilde X}$ is constructed by first computing $K_{\widetilde X\widetilde X}$ in $O(T(d)M_X^2)$ time, then a Cholesky decomposition computation in $O(M_X^3)$ time, for a total ost of $O(T(d)M_X^2 + M_X^3)$. Similarly, computing $R_{\widetilde Y}$ costs $O(T(p)M_Y^2 + M_Y^3)$.  Finally, computing $K_{X\widetilde X}$ costs $O(T(d)M_XN)$.
 
- Thus, the computations that can be done offline cost: $O(T(d)M_X(M_X + N) + T(p)M_Y^2 + M_X^3 + M_Y^3)$.
+ %Thus, the computations that can be done offline cost: $O(T(d)M_X(M_X + N) + T(p)M_Y^2 + M_X^3 + M_Y^3)$.
 
 \begin{figure}[t]
     \centering
@@ -362,15 +362,15 @@ Finally, the method introduced is empirically quite robust to the choice of para
 \end{figure}
 
 
- $\widehat F$ (and $\widehat G$) can be computed in  $O(M_Y^2 N + NM_XM_Y + M_YM_X^2)$ time. This assumes that the computation is done from right to left. If it is done from left to right, then it becomes $O(M_X^2N + N M_XM_Y + M_XM_Y^2)$, which reduces the complexity in $M_Y$. Depending on the application, $M_X$ or $M_Y$ can tend to be larger and in this case one of the orders is advantageous.
+ %$\widehat F$ (and $\widehat G$) can be computed in  $O(M_Y^2 N + NM_XM_Y + M_YM_X^2)$ time. This assumes that the computation is done from right to left. If it is done from left to right, then it becomes $O(M_X^2N + N M_XM_Y + M_XM_Y^2)$, which reduces the complexity in $M_Y$. Depending on the application, $M_X$ or $M_Y$ can tend to be larger and in this case one of the orders is advantageous.
 
- The inverse of $\widehat G \widehat G^* + \lambda I$ is computed in $O(M_X^3)$ time, and its product with $\widehat F_\mu$ and $\widehat F_\mu^*$ is $O(M_X^2M_Y + M_Y^2M_X)$.
+ %The inverse of $\widehat G \widehat G^* + \lambda I$ is computed in $O(M_X^3)$ time, and its product with $\widehat F_\mu$ and $\widehat F_\mu^*$ is $O(M_X^2M_Y + M_Y^2M_X)$.
 
 
- Finally, using a power iteration algorithm
- \cite{trefethen1997numerical} to compute the operator norm of the computed $M_X \times M_X$ matrix is (naïvely) in $O(kM_X^3)$, where the algorithm does $k$ iterations. If $M_Y \ll M_X$ then we can permute terms in the operator norm and reduce the computation to $O(kM_Y^3)$.
+ %Finally, using a power iteration algorithm
+ %\cite{trefethen1997numerical} to compute the operator norm of the computed $M_X \times M_X$ matrix is (naïvely) in $O(kM_X^3)$, where the algorithm does $k$ iterations. If $M_Y \ll M_X$ then we can permute terms in the operator norm and reduce the computation to $O(kM_Y^3)$.
 
- In the online phase of the algorithm, that is when we compute $\widehat D_\lambda(f, g)$ for many pairs $(f, g)$, the complexity is of order $O(NM_XM_Y + N\max(M_X, M_Y)^2)$. As we hinted above, this complexity can be reduced by adapting the order of operations and the computation to the problem, i.e. to the relative sizes of $M_X$, $M_Y$ and $N$.
+ %In the online phase of the algorithm, that is when we compute $\widehat D_\lambda(f, g)$ for many pairs $(f, g)$, the complexity is of order $O(NM_XM_Y + N\max(M_X, M_Y)^2)$. As we hinted above, this complexity can be reduced by adapting the order of operations and the computation to the problem, i.e. to the relative sizes of $M_X$, $M_Y$ and $N$.
 
 
 

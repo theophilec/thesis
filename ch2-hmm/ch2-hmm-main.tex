@@ -2,7 +2,16 @@
 \chaptermark{Closed-form Filtering for Non-linear Systems}
 
 
-\objectif{\lipsum[10]\todo[inline]{todo}}
+\objectif{\begin{itemize}
+    \item \textsc{PSDFilter} is a filtering algorithm that leverages positive semi-definite models to approximate the filtering distribution for a non-linear Hidden Markov Model, recovering classic estimators like the Kalman filter.
+    \item \textsc{PSDFilter} is applicable to any filtering problem where the transition kernels have a smooth density, offering broad versatility.
+    \item We demonstrate that \textsc{PSDFilter} is both stable and robust, with performance that adapts to the regularity properties of the Hidden Markov Model. The error bound for \textsc{PSDFilter} is uniformly controlled across observation sequences, with the ability to minimize this bound by refining the model and using more data.
+    %\\\emph{See \cref{theorem:bound-diagonal} on \cpageref{theorem:bound-diagonal}.}
+    \item Learning the components of \textsc{PSDFilter} is a convex problem, achieving optimal learning rates.
+    %\\\emph{See \cref{theorem:learning} and \cref{alg:learn} in \cref{ch:hmm} on \cpageref{alg:learn,theorem:learning}.}
+    \item \textsc{PSDFilter} surpasses the particle filter in computational efficiency for smooth densities, as it adapts to the smoothness of the densities, unlike the particle filter, which relies on Monte Carlo sampling.
+\end{itemize}
+}
 \input{ch2-hmm/body}
 \begin{subappendices}
 \input{ch2-hmm/appendix}
