@@ -85,7 +85,11 @@ We adopt the following notation for convenience:
 \Delta(f , g) = \left\Vert \int_0^1 \phi(f(x))dx - \int_0^1\phi(g(x))dx\right\Vert^2_\mathcal H
 \end{equation}
 
-\missingfigure{demo alignment}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.8\textwidth]{ch3-diffytw/figures/diffytw-example.png}
+\caption{Example of time-series alignment.}
+\end{figure}
 
 \subsection{Invariance to time-warping}
 DiffyTW was designed to be equal to zero when comparing functions that are diffeomorphic one to the other, i.e. $d(f\circ Q, f)=0$. We show this is \cref{thm:diffytw-invariance}:
@@ -119,19 +123,18 @@ Since $d(f\circ Q, f) \geq 0$, we have proven the result.
 
 
 Of course, in practice, one wishes to compute $d(f, g)$ where $f$ and $g$ are not exactly diffeomorphic. In \cref{prop:diffytw-properties} we show that some intuitive invariance properties remain:
-\begin{proposition}\label{prop:diffytw-properties} Let $f, g:[0,1] \to\mathbb R^d$.
-\begin{enumthm}
-\item if $id \in Q$, $d$ is a semi pseudo-distance, i.e. for any $f, g: [0,1] \to\mathcal X$,  $d(f, g)\geq 0$ and $d(f, f)=0$.\label{prop:properties-1}
-\item if $id \in \mathcal Q$ and $Q_0\in\mathcal Q$ is such that $\Delta(f\circ Q_0^{-1}, g) \leq d(f, g) + \varepsilon$ then, $d(f \circ Q_0^{-1}, g) \leq d(f, g) + \varepsilon$. In particular, if $\Delta(f\circ Q_0^{-1}, g) = d(f,g)$ then $d(f\circ Q_0^{-1}, g)=d(f, g)$.\label{prop:properties-2}
-\item if $Q_0$ is a reparametrization that leaves $\mathcal Q$ invariant (i.e. $\lbrace Q\circ Q_0 ~\vert~ Q\in \mathcal Q \rbrace = \mathcal Q$), then $d(f\circ Q_0^{-1}, g) = d(f, g)$.\label{prop:properties-3}
-\end{enumthm}
+\begin{proposition}\label{prop:diffytw-properties} Let $f, g:[0,1] \to\mathbb R^d$. Then, $d$ verifies the following properties:
+\begin{enumerate}
+\item[(a)]if $id \in Q$, $d$ is a semi pseudo-distance, i.e. for any $f, g: [0,1] \to\mathcal X$,  $d(f, g)\geq 0$ and $d(f, f)=0$.
+\item[(b)]if $id \in \mathcal Q$ and $Q_0\in\mathcal Q$ is such that $\Delta(f\circ Q_0^{-1}, g) \leq d(f, g) + \varepsilon$ then, $d(f \circ Q_0^{-1}, g) \leq d(f, g) + \varepsilon$. In particular, if $\Delta(f\circ Q_0^{-1}, g) = d(f,g)$ then $d(f\circ Q_0^{-1}, g)=d(f, g)$.
+\item[(c)] if $Q_0$ is a reparametrization that leaves $\mathcal Q$ invariant (i.e. $\lbrace Q\circ Q_0 ~\vert~ Q\in \mathcal Q \rbrace = \mathcal Q$), then $d(f\circ Q_0^{-1}, g) = d(f, g)$.
+\end{enumerate}
 \end{proposition}
-\todo[inline]{Minor: labeled as theorem instead of Proposiotion because of enumthm}
-\begin{proof} \cref{prop:properties-1} is clear. Proof of \cref{prop:properties-2} follows from noticing that:
+\begin{proof} (a) is clear. Proof of (b) follows from noticing that:
 \begin{equation}
 d(f\circ Q_0^{-1}) \leq \Delta(f\circ Q_0^{-1}, g)
 \end{equation}
-Finally, proof of \cref{prop:properties-3} follows from noticing that:
+Finally, proof of (c) follows from noticing that:
 \begin{align}
 d(f \circ Q_0^{-1}, g) &= \min_{Q\in\mathcal Q}\Delta(f\circ Q_0^{-1} \circ Q^{-1}, g)\\
 & = \min_{R\in\mathcal Q} \Delta(F\circ R^{-1}, g)\\
@@ -229,7 +232,7 @@ The proof of \cref{corollary:discrete-invariance} can be found in \cref{proof:di
 
 As a point of comparaison, Dynamic Time Warping can be computed in $O(M^2)$ time using Dynamic programming.
 
-\subsection{Approximation \& parameter choice}
+\subsection{Approximation error}
 \cref{corollary:discrete-invariance} illustrates that the definition of Discrete DiffyTW is ``tight'' with respect to that of DiffyTW if the underlying signals are piece-wise constant and diffeomorphic. In this section, we raise three questions : how good is this approximation for arbitrary signals $f$ and $g$? how dependent is $\hat d_M(\hat f, \hat g)$ on the sampling patterns? how should one go about choosing $k$, $\tilde x$ and $K$?
 
 \begin{theorem}[Rectangle approximation]\label{thm:rectangle-approx}
@@ -249,6 +252,13 @@ In particular, if $(x_i)$ and $(y_j)$ are evenly spaced in $[0,1]$, then:
 \todo[inline]{Optimal rates ? This is with direct naïve proof.}
 
 The proof on \cref{thm:rectangle-approx} is included in \cref{sec:proof-rectangle-approx}.
+
+\subsection{Parameter choice}
+Discrete DiffyTW has several hyper-parameters in particular the choice of $\mathcal F_{0,1}^M$ -- i.e. the basis function kernel $k(\cdot, \tilde x)$ and the anchor points $(\tilde x_k)_{1\leq j\leq M}$ -- and of $K$ the kernel on time-series features. When Discrete DiffyTW is integrated into a machine learning algorithm, a solution is to typical hyperparameter tuning strategies such as cross-validation. Below, we give intuition into the impact of the different hyperparameters.
+
+The choice of basis function and the number and positions of the anchor points control the richness of the set of transformations that can be identified in data. The parameters of $k$ as well as $M$ should be chosen as a function of prior knowledge about the transformations present. For $k$ the RBF or Laplce kernel of parameter $\eta>0$, smaller values of $\eta$ and larger values of $M$ lead to richer function spaces. In addition, choosing the Laplace kernel makes for a much richer space than choosing the RBF kernel. Generally, $M$ is chosen to be much smaller than $n$ and $m$. Note that a richer space is not necessarily the goal as ``simple'' reparametrizations may make the most sense for an application.
+
+The choice of kernel on time-series features has no impact on invariance for DiffyTW. However, empirically, we observe that it plays a role with Discrete DiffyTW. This is confirmed in \cref{thm:rectangle-approx} as $\gamma$, the RBF kernel parameter intervenes controls the value of the bound. Large values of $\gamma$ lead to larger values of the bound. Intuitively, this is explained by the fact that large values of $\gamma$ lead to a very discriminative kernel $K$. Loosely, any two distinct points seem very different. This implies having a large number of samples, in order to have sufficient overlap between the time-series (in $d$ this overlap is built-in as the functions are defined over $[0,1]$). On the other hand, a smaller $\gamma$ leads to a smaller bound, which means that $d$ and $\hat d_M$ are close. A small value for $\gamma$ means that $K$ is not very discriminative and any two values seem close. This applies to both $d$ and $\hat d_M$. In other words, $d$ (and $\hat d_M$) will be small for both pairs of diffeomorphic time-series and non-diffeomorphic time-series.
 
 \section{Differentiability}
 Differentiability makes Discrete DiffyTW effective as a building block inside of machine learning algorithms, for example as a loss function for training time-series generation algorithms.

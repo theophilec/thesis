@@ -183,7 +183,7 @@ In defining Discrete DiffyTW $\hat d_M$, we tackle two issues: first, handling d
 \end{equation*}
 where $P$, $v$ and $C$ depend on $\hat f$, $\hat g$ and $h$ depends only on basis functions. Using interior point methods, solving the QP has $O(M^3)$ time complexity.
 
-This definition is consistent with that of DiffyTW for piece-wise constant functions. This allows us to transfer invariance properties from DiffyTW to Discrete DiffyTW in the limit of a large number of samples (see \cref{thm:prob-qp}). Note that additionally, despite being applied to discrete time-series, Discrete DiffyTW still estimates a proper smooth reparametrization. \todo{Add this point to main paper}
+We show this definition is consistent with that of DiffyTW for piece-wise constant functions. This allows us to transfer invariance properties from DiffyTW to Discrete DiffyTW in the limit of a large number of samples (see \cref{thm:prob-qp}). Note that additionally, despite being applied to discrete time-series, Discrete DiffyTW still estimates a proper smooth reparametrization. \todo{Add this point to main paper}
 
 Discrete DiffyTW is differentiable with respect to its second argument. To highlight where the difficulty is, let us recast this as differentiating $V(\theta) = \min_{q\in\mathcal C}\ell(q, \theta)$ where $\ell$ is the QP objective for parameter $\theta$ at $q$ and $\mathcal C$ is the set of constraints. In our setting, we prove we can differentiate ``through'' the $\min$ operator, that is:
 \begin{mdframed}

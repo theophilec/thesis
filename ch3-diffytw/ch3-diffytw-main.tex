@@ -2,7 +2,13 @@
 \chaptermark{DiffyTW}
 
 
-\objectif{\lipsum[10]\todo[inline]{todo}}
+\objectif{\begin{itemize}
+    \item DiffyTW is a divergence specifically designed for comparing functions on $[0,1]$, tailored to represent time-series data.
+    \item DiffyTW is provably invariant to a class of smooth reparametrizations, which can be configured depending on the problem. As a by product of the computations, it produces the reparametrization so the functions can be aligned.
+    \item DiffyTW enables robust and efficient time-series comparison through its discrete counterpart, while approximately preserving the key invariance properties of DiffyTW.
+    \item DiffyTW is differentiable with respect to its inputs, allowing seamless integration into broader machine learning workflows.
+    \item We empirically demonstrate and analyze the behavior of DiffyTW on various time-series datasets, highlighting its effectiveness. All code is made publicly available in the \texttt{diffytw} library.
+\end{itemize}}
 \input{ch3-diffytw/body}
 \begin{subappendices}
 \input{ch3-diffytw/appendix}
