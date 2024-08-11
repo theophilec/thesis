@@ -3,24 +3,24 @@
 
 % Let $\delta > 0$. We would like to find an integer $M$ such that there exists a Generalized Gaussian PSD Model $\hat Q$ and $\hat G$ such that $\forall k\leq T, \delta_k \leq \delta$.
 
-% For any $k\leq T$, let $\alpha_k, \beta_k >0$. For any $\hat Q$ and $\hat G$ any $C\subset X\times Y$ and $D \subset X\times X$, 
+% For any $k\leq T$, let $\alpha_k, \beta_k >0$. For any $\hat Q$ and $\hat G$ any $C\subset X\times Y$ and $D \subset X\times X$,
 % \begin{align}
-%     \delta_k =& \int\int 1_C(x, y) \alpha_k\left( \Vert G\Vert_\infty + \Vert \hat G \Vert_\infty\right) + \Vert Q\pi^\prime_{k-1}\Vert_{L1(C)}\Vert G - \hat G\Vert_{L^\infty(C\times Y)} \\
+%     \delta_k =& \iint 1_C(x, y) \alpha_k\left( \Vert G\Vert_\infty + \Vert \hat G \Vert_\infty\right) + \Vert Q\pi^\prime_{k-1}\Vert_{L1(C)}\Vert G - \hat G\Vert_{L^\infty(C\times Y)} \\
 %     \delta_k =& \alpha_k\left( \Vert G\Vert_\infty + \Vert \hat G \Vert_\infty\right) + \Vert Q\pi^\prime_{k-1}\Vert_{L1(C)}\Vert G - \hat G\Vert_{L^\infty(C\times Y)} \\
-%     &+ \beta_k \left(\Vert Q\Vert_\infty + \Vert \hat Q \Vert_\infty \right) + \int\int_C \hat G(x, y_k)\pi^\prime_{k-1}(u)\vert Q(u, x) - \hat Q(u, x) \vert dudx
+%     &+ \beta_k \left(\Vert Q\Vert_\infty + \Vert \hat Q \Vert_\infty \right) + \iint_C \hat G(x, y_k)\pi^\prime_{k-1}(u)\vert Q(u, x) - \hat Q(u, x) \vert dudx
 % \end{align}
 
 % where $C_k$ is a compact of $X\times Y$ such that $$\int_{X\times Y / C} Q\pi^\prime_{k-1}(x)dx < \alpha_k$$
 % and where $D_k$ is a compact of $X\times X$ such that $$\int_{X \times X / C}\sup_{y\in Y} \hat G(x , y_k)\pi^\prime_{k-1}(u)dudx < \beta_k$$.
 
 
- 
+
 
 % \begin{align}
 %     &\int\left\vert \hat{R_k} \pi_{k-1}^\prime(x) - R_k\pi_{k-1}^\prime(x) \right\vert dx\\
-%     &\leq \int\int\pi_{k-1}^\prime(u)\left\vert G(x, y_k)Q(u, x)- \hat{G}(x, y_k)\hat{Q}(u, x)\right\vert dudx\\
+%     &\leq \iint\pi_{k-1}^\prime(u)\left\vert G(x, y_k)Q(u, x)- \hat{G}(x, y_k)\hat{Q}(u, x)\right\vert dudx\\
 %     &\leq \int\left(\int\pi_{k-1}^\prime(u)Q(u, x)du\right)\left\vert G(x, y_k) - \hat{G}(x, y_k)\right\vert dx\\
-%     &+ \int\int\pi_{k-1}^\prime(u)\hat{G}(x, y_k)\left\vert Q(u, x) - \hat{Q}(u, x)\right\vert dudx\\
+%     &+ \iint\pi_{k-1}^\prime(u)\hat{G}(x, y_k)\left\vert Q(u, x) - \hat{Q}(u, x)\right\vert dudx\\
 %     &=\int Q\pi_{k-1}^\prime(x)\left\vert G(x, y_k) - \hat{G}(x, y_k)\right\vert dx\\
 %     &+ \int \hat{G}(x, y_k)\int\pi_{k-1}^\prime(u)\left\vert Q(u, x) - \hat{Q}(u, x)\right\vert dudx\\
 %     &\leq \Vert Q\pi^\prime_{k-1}\Vert_{L_1}\Vert G - \hat G\Vert_{L^\infty(X\times Y)} + \Vert \hat G\Vert_{L^\infty(X\times Y)}\Vert \pi^\prime_{k-1}\Vert_{L^1(X)}\Vert Q - \hat Q\Vert_{L^\infty(X)L^1(X)}\\

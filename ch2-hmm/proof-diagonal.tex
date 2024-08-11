@@ -109,14 +109,14 @@ Recall that for any $\mu\in\mathcal P(E)$, $\mixing\xi(E) \leq R_n\mu(E)\leq \fr
 
 Because we will be able to bound the quality of approximation between $Q$ and $\hat Q$ (and between $G$ and $\hat G$), we split the above expression:
 \begin{align}
-\Vert\hat R_n(\hat\pi_{n-1}) - R_n(\hat\pi_{n-1})\Vert_{TV} \leq& \int\int \hat \pi_{n-1}(u)\vert Q(u, x)G(x, z_n) - \hat Q(u, x)\hat G(x, z_n)\vert dudx\\
-& \leq \underbrace{\int\int Q(u, x) \hat \pi_{n-1}(u)\vert G(x, z_n) - \hat G(x, z_n)\vert dudx}_{A_n}\label{eq:delta-a} \\
-& + \underbrace{\int\int \hat G(u, x) \hat \pi_{n-1}(u)\vert Q(u, x) - \hat Q(u, x)\vert dudx}_{B_n}.\label{eq:delta-b}
+\Vert\hat R_n(\hat\pi_{n-1}) - R_n(\hat\pi_{n-1})\Vert_{TV} \leq& \iint \hat \pi_{n-1}(u)\vert Q(u, x)G(x, z_n) - \hat Q(u, x)\hat G(x, z_n)\vert dudx\\
+& \leq \underbrace{\iint Q(u, x) \hat \pi_{n-1}(u)\vert G(x, z_n) - \hat G(x, z_n)\vert dudx}_{A_n}\label{eq:delta-a} \\
+& + \underbrace{\iint \hat G(u, x) \hat \pi_{n-1}(u)\vert Q(u, x) - \hat Q(u, x)\vert dudx}_{B_n}.\label{eq:delta-b}
 \end{align}
 
 First, let us bound $A_n$.
 \begin{align}
-A_n &= \int\int Q(u, x) \hat \pi_{n-1}(u)\vert G(x, y_n) - \hat G(x, y_n)\vert dudx\\
+A_n &= \iint Q(u, x) \hat \pi_{n-1}(u)\vert G(x, y_n) - \hat G(x, y_n)\vert dudx\\
 &\leq \Vert G-\hat G\Vert_{L^\infty(E\times E)}\int \hat\pi_{n-1}(u)\int Q(u,x)dxdu\\
 &= \Vert G-\hat G\Vert_{L^\infty(E\times E)}.
 \end{align}
@@ -124,7 +124,7 @@ where we used that $Q$ is a transition kernel (i.e. that $Q(u, E)=1$ for all $u\
 
 Second, let us bound $B_n$:
 \begin{align}
-B_n &= \int\int \hat G(x, z_n) \hat \pi_{n-1}(u)\vert Q(u, x) - \hat Q(u, x)\vert dudx\\
+B_n &= \iint \hat G(x, z_n) \hat \pi_{n-1}(u)\vert Q(u, x) - \hat Q(u, x)\vert dudx\\
     &\leq \Vert Q-\hat Q\Vert_{L^\infty(E\times E)}\int \hat \pi_{n-1}(u)du \int \hat G(x, z_n)dx\\
     &\leq \textrm{Vol}(\Omega)\Vert \hat G\Vert_{L^\infty(E\times E)}\Vert Q-\hat Q\Vert_{L^\infty(E\times E)}
 \end{align}
