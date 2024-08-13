@@ -1,0 +1,237 @@
+\section{Key contributions}
+
+
+
+\subsection*{\cref{ch:diffy}: Measuring dissimilarity with diffeomorphism invariance}
+
+\emph{We focus on designing, analyzing, and implementing a divergence $D$ that remains invariant under smooth diffeomorphisms in general data spaces.}
+
+%\subparagraph{An invariant divergence for invariant distance-based ML methods}
+
+\paragraph{Motivation}
+Distance-based methods -- such as k-nearest neighbors and k-means -- are widely used in practical machine learning settings. They have been studied as proxies for understanding the performance of more complex methods such as neural networks. \cite{thiry} introduces a dictionary-based model achieving comparable performance to shallow Convolutional Neural Networks (CNN). The model replaces the learnable filter in Convolution Neural Networks (CNN) with a fixed dictionary of patches taken from the dataset. The embedded features (before the linear classification layer) are computed via the Euclidean distance between each patch of the image being embedded and the patches of the dictionary, which are then discretized and pooled before a linear classification layer is applied. The main takeaway from \cite{thiry} is that a model that embeds an image according to the distance of its patches to a fixed dictionary sampled from the dataset can perform competitively on image classification tasks.
+
+The model in \cite{thiry} enforces translation invariance, like CNNs do, but does not incorporate any of the other invariances that can be useful in computer vision. In practice, there are two main ways of incorporating invariances into a machine learning algorithm: group averaging and data augmentation.
+
+Group averaging implies agreagating features over the set of invariances (which should have a group structure)
+\begin{equation}
+    \Phi(x) = \sum_{\tau \in \mathcal T} \phi(\tau \cdot x)
+\end{equation}
+where $\mathcal T$ is a group of transformations. An example for $\mathcal T$ is the set of rotations by $90$ degrees, which is a finite group. If $\tau_0\in\mathcal T$, then $\Phi(\tau_0 \cdot x) = \Phi(x)$. Computing $\Phi$ requires computing $\phi(\tau \cdot x)$ for every $\tau\in\mathcal T$. Handling a rich set of invariances makes $\mathcal T$ either very large or infinite. This makes $\Phi$ difficult to express and computationally expensive.
+
+Data augmentation relies on enforcing the invariance at training time by adding transformed versions of training points $\tau \cdot x$ for $\tau \in \mathcal T$ to the training set. In essence, this augments the training set to account for invariances, which are not necessarily present (sufficiently). This makes training computationally more expensive, is limited in the richness of tranformations (augmented examples need to be generated) and does not guarantee invariance at inference.
+
+The divergence we design and study in \cref{ch:diffy} enforces invariance and is meant as a drop-in replacement for other distances in distance-based machine learning methods.
+
+\paragraph{Intuition} The problem we solve is to compare datapoints $x$ and $y$ such that they are close if $y$ is a transformed instance of $x$, i.e. if $y = \tau \cdot x$. A key insight to this problem is to consider data points as functions and transformations $\tau$ as diffeomorphisms that act on their domain\footnote{This insight is also central to \cref{ch:diffytw}.}. For instance, images can be thought as maps from $\mathbb R^2 \to \mathbb R^3$ and transformations of images as diffeomorphisms on $\mathbb R^2$. The problem we solve is thus to design a divergence between functions $D$ such that if $Q$ is a diffeomorphism, $D(f\circ Q, f) = 0$ (or is very small). To achieve this, we notice that diffeomorphisms play well with integration thanks to the change of variable theorem. When comparing $f\circ Q$ and $f$, instead of trying to estimate a $Q$ such that $f\circ Q^{-1}$ and $g$ are close, we estimate the Jacobian determinant of $Q$, which is key ingredient to the change of variable formula.
+
+\paragraph{Main contributions} Diffy is a divergence between functions that is approximately invariant to smooth diffeomorphisms.
+It is defined as an optimization problem (see \cref{sec:informal} for an intuitive derivation) and can be computed in closed-form:
+\begin{mdframed}
+\begin{informaltheorem}[based on \cref{def:D} and \cref{theorem:closed-form}]
+Given $f, g$ to functions and $\mathcal H$ and $\mathcal F$ two reproducing kernel Hilbert spaces, $D_\lambda(f, g)$ is defined and can be computed in closed-form as follows:
+\eqals{\label{eq:def-D}
+    D_\lambda(f, g) := & \max_{\norh{h}\leq 1}\min_{q \in \mathcal H}\max_{\|v\|_{{\cal F}} \leq 1} \Big|  \int_X v(g(x))q(x)\dd x-  \int_X v(f(x))\mu(x)h(x)\dd x\Big|^2 + \lambda \norh{q}^2\\
+   =& \lambda\norop{(GG^* + \lambda I)^{-1/2}F_\mu}^2.
+}
+where $G$, $F_\mu$ linear operators defined with $\phi$, $f$, $\psi$ and $\mu$.
+\end{informaltheorem}
+\end{mdframed}
+
+Diffy is approximately invariant to smooth transformations to data. The residual term is related to the regularization term, which ensures that we only consider smooth solutions $q$ and, in spirit, smooth diffeomorphisms.
+\begin{mdframed}
+\begin{informaltheorem}[based on \cref{theorem:main-theorem}]
+With smooth Sobolev kernels and a smooth diffeomorphism $Q$, we have:
+\eqals{
+ D_\la(f, f \circ Q) ~~\leq~~ \lambda ~ C^2_{\mu} C^2_{Q} \qquad \forall f\, \textrm{measurable},
+}
+where $C_\mu$ and $C_Q$ are independent of $f$.
+\end{informaltheorem}
+\end{mdframed}
+\noindent In the limit of vanishing regularizsation, Diffy is invariant to smooth differomorphisms. Indeed, as $\la \to 0$, the set of admissible solutions become larger and contains all diffeomorphisms determinant jacobian functions and $D_\la(f, f\circ Q)\to 0$.
+
+In practice, Diffy can be computed on discrete objects using domain samples and values. For images, this means the natural pixel locations and values. Plug-in estimators incorporating Nyström techniques achieve convergence of the approximate $\hat D_\lambda(f, g)$ to $D_\lambda(f, g)$ as the number of samples (e.g. of pixels) grows. This is proven in the informal result below:
+\begin{mdframed}
+\begin{informaltheorem}[based on \cref{thm:appr-error-widehatD}]
+With rich enough Nyström approximations, with high probability over the draw of $N$ sample locations for each of $f$ and $g$,
+\eqals{
+ \vert D_\la(f, g) - \widehat D_\la(f, g) \vert = O(N^{-1/4}).
+}
+This induces computational complexity $O(N^{3/2})$.
+\end{informaltheorem}
+\end{mdframed}
+\noindent \cref{thm:appr-error-widehatD} and \cref{theorem:main-theorem} imply that $\hat D_\lambda(f\circ Q, f)\to 0$ as $N\to \infty$.
+
+We apply Diffy to comparing images with natural and synthetic transformations and study its behavior.
+
+\paragraph{Key takeways}
+
+\begin{itemize}
+    \item Diffy is a divergence defined over functions between general spaces, defined as an optimization problem matching the integrals of embeddings of functions in Reproducing kernel Hilbert spaces.
+    \item Diffy is efficient to compute and is useful for comparing a wide range of data types, including images, videos, and point clouds. Specifically, we demonstrate that Diffy is computable in $O(N^{3/2})$ time with a guaranteed bound on the error of order $O(N^{-1/4})$ (see \cref{sec:approximation}) where $N$ is the number of sample points (e.g. pixels for images) in each image, leveraging Nyström approximation methods.
+    \item Diffy is approximately invariant to smooth diffeomorphisms, with level of invariance precisely controlled by a regularization parameter and the parameters of the kernels (see \cref{theorem:main-theorem}).
+    \item We conduct comprehensive experiments to rigorously analyze the behavior of Diffy in practical applications. All code is made publicly available in the \texttt{diffy} library\footnote{Available at \url{github.com/theophilec/diffy}.}.
+\end{itemize}
+
+
+%\subparagraph{-- Computing Diffy in practice}
+%One one hand, we show (Proposition A) that the optimization problem defined in \cref{eq:intro_diffy} can be computed in closed-form as operations on linear operators. In practice, data points are not functions but composed of discrete ``samples'': pixels for images, samples for time series, ... We leverage Nystr\"om approximations to control the computational complexity for the approximation and bound the error committed by the approximation. Basically, we prove that $\hat D_\lambda(f, g)$ can be computed in $O(ZYU)$ time (note that this is less than the square of the number of pixels) and that the error is bounded by
+
+
+%\subparagraph{-- Invariance results}
+%\todo{Add informal theorem env}
+%Diffy is invariant to smooth diffeomorphisms. Indeed, if $Q$ is smooth diffeomorphism, then Theorem X states
+%\begin{informaltheorem}[see \cref{thm:main-theorem}]
+%\begin{equation}
+%D_\lambda(f\circ Q, f) \leq C_QC_\mu\lambda
+%\end{equation}
+%\end{informaltheorem}
+
+%This result can be combined with \cref{eq:intro_approx_diffy} to show (Theorem Y) that
+
+%\begin{informaltheorem}[see \cref{thm:appr-error-widehatD}]
+%\begin{equation}
+%\hat D_\lambda(f\circ Q, f) \leq \frac{C}{\sqrt{N}}.
+%\end{equation}
+%\end{informaltheorem}
+%\subparagraph{-- Experimental support \& library}
+
+%We conduct extensive experiments to study the behavior of Diffy in practice. All code is released in the \texttt{diffy} library at \url{github.com/theophilec/diffy}.
+
+\subsection*{\cref{ch:diffytw}: Differentiable Dynamic Time Warping with invariance properties}
+DiffyTW is a differentiable divergence tailored for time-series that is robust to time-warping.
+
+\paragraph{Motivation}
+Time-series exhibit naturally occurring variations make inference challenging.
+
+One common issue is misalignment. Comparing two time-series of the same signal but with different sample points is not straightforward. Indeed, consider $(x_i, f(x_i))_{1\leq i\leq n}$ and $(y_j, f(y_j))_{1 \leq j \leq m}$ two time-series representing the same underlying signal but with different sampling patterns. Computing a distance between values is not a satisfying solution: indeed, it is even impossible to do so if $n\neq m$.
+
+Dynamic Time Warping (DTW) is a time-tested solution to the time-series alignement problem. It has been successfully applied to many time-series analysis and machine learning tasks. Soft Dynamic Time Warping is a differentiabile variant with similar behavior and is used in deep neural network algorithms for time-dependent processing (time-series, videos, ...).
+
+Beyond time-series alignement, a related problem is invariance to speed differences. A common example is gait analysis. Recordings of a step of running and a step of walking have different shapes, beyond the inherent speed difference. Analyzing this requires eliminating the speed difference. We provide a simple example based on hiking in \cref{sec:diffytw-introduction}.
+
+In this continuous setting, the ultimate goal is the Fréchet distance:
+\begin{equation}
+d_{F}(f, g) = \min_{Q}\min_{R}\max_{x\in[0,1]}\vert f\circ Q(x) - g\circ R(x)\vert
+\end{equation}
+
+However, estimating the Fréchet distance is NP hard.
+
+In both cases, the goal is to eliminate the sampling or speed differences between two time-series. Despite the empirical evidence of their performance, DTW-style methods do not have theoretical guarantees.
+
+There is a fundamental difficulty in this problem. There exist pairs of diffeomorphisms $Q$ and $R$ such that at $n$ distinct points, $f\circ Q$ and $f \circ R$ coincide. For this reason, it is key to consider functions when designing a divergence that is invariant to diffeomorphisms, and check it has consistent properties when sampled.
+
+We recast the problem of time-series alignment as one of comparing functions defined on $[0,1]$.
+
+\paragraph{Intuition}
+The key insight to our approach is inherited from \cref{ch:diffy} (although the methods differ from there): comparing integrals of functions instead of the functions themselves allows us to leverage the change of variable theorem and eliminate differences due to diffeomorphisms.
+
+Contrary to Diffy.
+One cannot infer $Q$ from $\vert \nabla Q(x)\vert$ and more generally, given a smooth, non-negative real function $q$, therethere is no guarantee that there exists a diffeomorphism $Q$ such that $q(x) = \vert \nabla Q(x) \vert$. On the other hand, DiffyTW is designed to produce a proper smooth reparametrization that aligns the two time-series. This stems from the fact that increasing diffeomorphisms on $[0,1]$ are exactly the integrals of smooth non-negative functions that integrate to $1$. In this sense, there is some familiarity between our approach and shape deformation approaches \cite{younes}.
+
+As we explain below and prove in \cref{ch:diffytw}, we can define a discrete counterpart for DiffyTW for time-series that is consistent with DiffyTW. Intuitively, this consistency -- which indirectly guarantees that certain invariance properties are ``transferred'' to Discrete DiffyTW -- relies on using functions to interpolate the time-series and computing DiffyTW between them.
+
+\paragraph{Main contributions}Following the intuition outlined above, we define DiffyTW as follows:
+\begin{equation*}
+d(f, g) = \min_{q \in \mathcal F_{0,1}}\left\Vert \int_0^1 \phi(f(x))q(x)dx - \int_0^1\phi(g(x))dx\right\Vert^2_\mathcal H,
+\end{equation*}
+where $\mathcal F_{0,1}$ is a set of smooth, non-negative functions that sum to $1$ and $\phi$ is an embedding map (for instance a neural network feature embedding or a positive definite kernel embedding).
+
+DiffyTW is invariant to smooth reparametrizations. Indeed, thanks to the change of variable theorem:
+\begin{mdframed}
+\begin{informaltheorem}[based on \cref{thm:diffytw-invariance}]
+For any $f:[0,1] \to\mathbb R^d$ and $Q:[0,1]\to[0,1]$ such that $Q^\prime \in\mathcal F_{0,1}$,
+\begin{equation*}
+d(f\circ Q, f) = 0
+\end{equation*}
+\end{informaltheorem}
+\end{mdframed}
+
+In defining Discrete DiffyTW $\hat d_M$, we tackle two issues: first, handling discrete time-series $\hat f, \hat g$ instead of functions $f, g$; second, choosing $\mathcal F_{0,1}$ to be set of functions we can optimize over. For the first, we interpolate $\hat f$ and $\hat g$ with piece-wise constant functions $f$ and $g$ and use the obtained expression of $d(f, g)$ as the definition of $\hat d_M$. For the second, we consider non-negaitve linear models with $M$ fixed basis functions, in the spirit of Gaussian Mixture Models. This leads to the following definition for Discrete DiffyTW as the optimal value of a Quadratic program with $M$ variables and linear inequality and equality constraints:
+\begin{equation*}
+    \hat d_M(\hat f, \hat g) :=\min_{\substack{q\in\mathbb R^{M}\\h^\top q=1\\0 \leq q}}\frac{1}{2}q^\top Pq - v^\top q + C
+\end{equation*}
+where $P$, $v$ and $C$ depend on $\hat f$, $\hat g$ and $h$ depends only on basis functions. Using interior point methods, solving the QP has $O(M^3)$ time complexity.
+
+We show this definition is consistent with that of DiffyTW for piece-wise constant functions. This allows us to transfer invariance properties from DiffyTW to Discrete DiffyTW in the limit of a large number of samples (see \cref{thm:prob-qp}). Note that additionally, despite being applied to discrete time-series, Discrete DiffyTW still estimates a proper smooth reparametrization. \todo{Add this point to main paper}
+
+Discrete DiffyTW is differentiable with respect to its second argument. To highlight where the difficulty is, let us recast this as differentiating $V(\theta) = \min_{q\in\mathcal C}\ell(q, \theta)$ where $\ell$ is the QP objective for parameter $\theta$ at $q$ and $\mathcal C$ is the set of constraints. In our setting, we prove we can differentiate ``through'' the $\min$ operator, that is:
+\begin{mdframed}
+\begin{informaltheorem}[based on \cref{thm:diffytw-grad}]
+So long as it has a unique solution, then $V$ is differentiable at $\theta$ and its gradient is given by:
+    \begin{equation}
+        \nabla V(\theta) = J_\theta \ell(q^*(\theta), \theta) + \nabla C(\theta),
+    \end{equation} where $q^*(\theta)$ is the unique solution to $\min_{q\in\mathcal C}\ell(q, \theta)$.
+\end{informaltheorem}
+\end{mdframed}
+For intuition, this result can be read as ``$\hat d_M(\hat f, \cdot)$ is differentiable at $\hat g$ with gradient...''.
+
+We apply DiffyTW time-series with synthetic reparametrizations as well as naturally occuring variations and study its behavior.
+
+\paragraph{Key takeaways}
+\begin{itemize}
+    \item DiffyTW is a divergence specifically designed for comparing functions on $[0,1]$, tailored to represent time-series data.
+    \item DiffyTW is provably invariant to a class of smooth reparametrizations, which can be configured depending on the problem. As a by product of the computations, it produces the reparametrization so the functions can be aligned.
+    \item DiffyTW enables robust and efficient time-series comparison through its discrete counterpart, while approximately preserving the key invariance properties of DiffyTW.
+    \item DiffyTW is differentiable with respect to its inputs, allowing seamless integration into broader machine learning workflows.
+    \item We empirically demonstrate and analyze the behavior of DiffyTW on various time-series datasets, highlighting its effectiveness. All code is made publicly available in the \texttt{diffytw} library\footnote{Available at \url{github.com/theophilec/diffytw}.}.
+\end{itemize}
+
+\subsection*{\cref{ch:hmm}: Closed-form filtering for non-linear systems}
+
+\paragraph{Motivation}
+We consider the filtering problem for discrete-time, dynamical models. The goal of filtering is to compute (or approximate) the filtering distribution $\pi_t(dx) = \mathbb P(X_t\vert Y_1, \ldots, Y_{t})$. The filtering distribution is the distributions of a state variable at time $t$, conditionnally on past observations $Y_1, \ldots, Y_t$. $Y_s$ can be any random variable, but one can think of it as a noisy, perhaps indirect, observation of the state $X_s$. The filtering distribution is also known as the optimal filter.
+
+In general, computing $\pi_t$ is intractable as it requires full knowledge of the joint law of $X_t$  and $Y_1, \ldots, Y_t$. Markov assumptions on the model -- which is then called a Hidden Markov Model -- reduce computing the optimal filter to iterating the following equation:
+
+\begin{equation}\label{eq:intro-hmm-iteration}
+\pi_k(dx) = \frac{\int \pi_{k-1}(du)Q(u, dx)G(x, y_k)}{\int \int \pi_{k-1}(du)Q(u, dx)G(x, y_k)}
+\end{equation}
+
+Three main questions arise from the optimal filtering iteration \cref{eq:intro-hmm-iteration}. The first relates to the initialization of the sequence $\pi_k$. Assume two filters are initialized at $\mu$ and $\nu$ respectively. \emph{Stability} quantifies the behavior of $\Vert \pi_t^\mu - \pi_t^\nu \Vert_{TV}$ as $t$ grows. A stable filter sees this distance go to zero as $t$ grows, i.e. the filter forgets its initial condition.The second is \emph{robustness} to model error, which quantifies the behavior of $\Vert \hat\pi_t - \pi_t\Vert_{TV}$ where $\hat \pi$ is obtained by applying \cref{eq:intro-hmm-iteration} with $\hat Q$ and $\hat G$, approximate models, \emph{in lieu} of $Q$ and $G$. A robust filter will have bounded error, for a fixed time horizon. Finally, a filter must be computable in practice. \cref{eq:intro-hmm-iteration} requires complete knowledge of the transition and measurement kernels, which characterize the laws of $X_{t+1}$ conditionally on $X_t$ and $Y_t$ conditionnaly on $X_t$. Furthermore, it implies being able to compute arbitrary marginalizations in practice. Outside of well-known settings (Gaussian Linear Conditional Distributions and finite state space), this is intractable. Two approaches exist: make additional assumptions about the state space (for example the EFK and UKF assume it is Gaussian) ; or, use Monte Carlo sampling to approximate the optimal filter iterations (Sequential Monte Carlo methods such as the particle filter).
+
+Our approach is to approximate $\hat Q$ and $\hat G$ using PSD models introduced in ref and compute the iterations in \cref{eq:intro-hmm-iteration} in closed-form.
+
+\paragraph{Intuition}
+Positive Semi-Definite Models (PSD models) are a class of non-negative functions based on the kernel sum-of-squares framework which optimally approximate smooth, non-negative functions such as (conditional) densities. These approximations are solutions to convex problems. When the RBF kernel is used, this family is useful for approximating probability densities. Indeed, products and marginals of PSD models are PSD models, which can be computed efficiently.
+
+Taken together, this means we can approximate $G$ and $Q$ by PSD models $\hat G$ and $\hat Q$, then compute the filter $\hat \pi_k$ sequence by applying \cref{eq:intro-hmm-iteration}. Indeed, the approach we propose works in two steps. First, using function evaluations of $Q$ and $G$ (we assume the kernels have densities), we learn $\hat Q$, $\hat G$ as Gaussian PSD models. This step is done ``offline''. Second, when we receive a sequence $y_1, \ldots, y_N$, we compute the sequence of approximate filtering distributions $\hat\pi_k$ by applying \cref{eq:intro-hmm-iteration} with $\hat Q$, $\hat G$ and $\hat \pi_k$ \emph{in lieu} of $Q$, $G$ and $\pi_k$.
+
+\paragraph{Main contributions}
+\textsc{PSDFilter} is a non-linear filtering algorithm that approximates the filtering distribution using positive semi-definite models. \textsc{PSDFilter} recovers previously proposed estimators such as the Kalman filter and can be applied to any filtering problem where the transition kernels admit a smooth density.
+
+In \cref{theorem:main-theorem} we show that \textsc{PSDFilter} is stable and robust, and that its performance is adaptive to the regularity properties of the Hidden Markov Model. This is summarized informally below:
+\begin{mdframed}
+\begin{informaltheorem}[based on \cref{theorem:bound-diagonal}]
+For any $\varepsilon > 0$, if the optimal kernel is $\sigma$-mixing and bounded, and we use enough points to learn $\hat G$ and $\hat Q$ from function evaluations, for any observation sequence $y_1, \ldots, y_N$ (not necessarily sampled from the true distribution), with high probability, if $\pi_k$ is the true filter initialized at $\pi_0$ and $\hat \pi_k$ is the result of \textsc{PSDFilter} initialized at $\hat \pi_0$,
+\begin{align*}
+    \Vert \pi_k - \hat\pi_k\Vert_{TV} ~~\leq~~ \frac{C}{\mixing^2}\left(\frac{1-\mixing^2}{1 + \mixing^2}\right)^{k-1}\|\pi_0 - \hat{\pi}_0\|_{TV} ~~+~~ \frac{\varepsilon}{\sigma},
+\end{align*}
+\end{informaltheorem}
+\end{mdframed}
+The first right-hand term shows that the initialization error between the true filter $\pi_k$ and \textsc{PSDFilter} $\hat \pi_k$ is forgotten exponentially, which reflects the $\sigma$-mixing hypothesis. The second term shows that the error is bounded, uniformly on the observation sequence (which does not have to sampled from the HMM). In particular, we can make this bound as small as we want by reducing $\varepsilon$, at the cost of requiring a richer model and more data.
+
+Indeed, we prove that we can learn approximations of the transition kernels with optimal learning rates by solving a convex problem. The approach is to approximate the transition kernel $Q$ by $\hat Q = \hat q^2$ where $\hat q$ is a Kernel Ridge Regression estimator of $\sqrt{Q}$ based on evaluations of $\sqrt{Q}$ (and similarly for the observation kernel $G$). This approach is justified by \cref{theorem:learning} summarized by this informal result:
+\begin{mdframed}
+\begin{informaltheorem}[based on \cref{theorem:learning}]
+If $f$ is a $\beta$-smooth function in dimension $d$ and $\hat g$ is a Kernel Ridge Regression estimator of $g = \sqrt{f}$ with evaluations of $g$, then $\hat f = \hat g^2$ approximates $f$ with optimal rates. With the usual notations:
+\begin{align}
+    \Vert \hat f - f \Vert_{L^\infty(\Omega)}\leq C \Vert \sqrt{f}\Vert_{W^\beta_2(\Omega)}^2\epsilon^{1-\frac{d}{2\beta}}
+\end{align}
+where $C, C^\prime$ are constants depending only on $\beta, d$ and independent of $f$ and $\epsilon$.
+\end{informaltheorem}
+\end{mdframed}
+\noindent \cref{theorem:learning} is interesting beyond the context of filtering since it gives $L_\infty$ learning rates for rank-one PSD models learned from function evaluations.
+
+We show \textsc{PSDFilter} beats the particle filter in computational complexity for a given error level for smooth densities. Indeed, the particle filter relies solely on Monte Carlo sampling and is not adaptive to the smoothness of the densities.
+\paragraph{Key takeaways of \cref{ch:hmm}}
+%\newline
+\begin{itemize}
+    \item \textsc{PSDFilter} is a filtering algorithm that leverages positive semi-definite models to approximate the filtering distribution for a non-linear Hidden Markov Model, recovering classic estimators like the Kalman filter.
+    \item \textsc{PSDFilter} is applicable to any filtering problem where the transition kernels have a smooth density, offering broad versatility.
+    \item We demonstrate that \textsc{PSDFilter} is both stable and robust, with performance that adapts to the regularity properties of the Hidden Markov Model. The error bound for \textsc{PSDFilter} is uniformly controlled across observation sequences, with the ability to minimize this bound by refining the model and using more data.
+    %\\\emph{See \cref{theorem:bound-diagonal} on \cpageref{theorem:bound-diagonal}.}
+    \item Learning the components of \textsc{PSDFilter} is a convex problem, achieving optimal learning rates.
+    %\\\emph{See \cref{theorem:learning} and \cref{alg:learn} in \cref{ch:hmm} on \cpageref{alg:learn,theorem:learning}.}
+    \item \textsc{PSDFilter} surpasses the particle filter in computational efficiency for smooth densities, as it adapts to the smoothness of the densities, unlike the particle filter, which relies on Monte Carlo sampling.
+\end{itemize}
