@@ -228,7 +228,7 @@ Then, for any $\vert x - u \vert \leq \Delta$,
     \begin{align}
         v(u_0 + d_n) - v(u_0) - D_u \ell(x_n, u_0)&\geq\frac{1}{2}\varepsilon\Vert d_n\Vert
     \end{align}
-    This contradicts \cref{eq:proof_hyp}, CQFD.
+    This contradicts \cref{eq:proof_hyp}.
 \end{proof}
 
 \subsection{Relation to implicit differentiation}\label{sec:lagrangian}
@@ -249,7 +249,7 @@ The Lagrangian of \cref{prob:fullqp} is:
     L(q, u, v, \theta) = \underbrace{\frac{1}{2}q^\top P(\theta)q - v(\theta)^\top q + C(\theta)}_{l(q, \theta)}+ u^\top (h^\top q - 1) - v^\top q
 \end{equation}
 
-where $L: \mathbb R^M \times \mathbb R \times \mathbb R^M\times\Theta\to\mathbb R$, as there are $M$ variables, $1$ equality constraint and $M$ inequality constraints, where we've added dependence on $\theta$.
+where $L: \mathbb R^M \times \mathbb R \times \mathbb R^M\times\Theta\to\mathbb R$, as there are $M$ variables, $1$ equality constraint and $M$ inequality constraints, where we added the dependence on $\theta$.
 
 For an optimal primal and dual solutsion $(q^*(\theta), u^*(\theta), v^*(\theta))$, the KKT conditions are verified:
 \begin{align}

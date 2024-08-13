@@ -57,9 +57,7 @@ where $d_{\Omega,Q} := \min[1,~d_H(Q^{-1}(\Omega), Q^{-1}(Z) \cap Z)]$, $d_H(A,B
 
 To apply \citet{bourdaud2011composition} we need a function such that $h(0) = 0$. With this aim, we rewrite $h \circ Q$ as
 $$h \circ Q = h(0) + ((h-h(0)) \circ Q).$$
-\paragraph{Step 1. Construction of $b$.}
-
-Denote by $U$ the open set $U = Q^{-1}(Z) \cap Z$. Note that the set is not empty since, by construction, $Q^{-1}(\Omega) \subset U$.
+\paragraph{Step 1. Construction of $b$.} Denote by $U$ the open set $U = Q^{-1}(Z) \cap Z$. Note that the set is not empty since, by construction, $Q^{-1}(\Omega) \subset U$.
 Define $\tilde{Q} = E_{Z}[Q|_{Z}]$, i.e. the extension to the whole $\R^d$ of the restriction of $Q$ on the set $Z$ (restriction and extension done componentwise). By the first point we have that $Q|_{Z}$ belongs to $H^m(Z,\R^d)$ and, by the second point, that $\tilde{Q}$ belongs to $H^m(\R^d, \R^d)$ and moreover $\tilde{Q}(x) = Q(x)$ for any $x \in Z$.
 Denote by $s = h(0) \in C^\infty(\R^d)$ the constant function equal to $h(0)$ everywhere on $\R^d$. In particular, note that $s|_Z \in H^m(Z)$ via \cref{thm:sobolev-restriction-extension}. Denote by $\tau$, the extension of $s|_Z$ to $\R^d$, i.e., $\tau = E_Z[s|_Z]$. Denote by $u$, the function $u = h|_Z - s|_Z$ and by $\tilde{u} \in H^m(\R^d)$ the function $\tilde{u} = E_{Z}[h|_Z - s|_Z]$. Note that $\tilde{u}(x) = h(x) - h(0)$ for any
 $x \in Z$, and, in particular for any $x \in \Omega$. Define by $\rho$ the $C^\infty(\R^d)$ function that is $1$ on $Q^{-1}(\Omega)$ and $0$ on $\R^d \subseteq U$.
@@ -129,8 +127,8 @@ the constant $C$ depends only on $d, m, Z$, while $d_{\Omega, Q} := \min[1, d_H(
 Let $h \in H^m(\R^d)$ and $\tilde{\mu}$ to be the extension of $\mu$ on $\R^d$ (which corresponds to $\tilde{\mu}(x) = \mu(x)$ for any $x \in \Omega$ and $\tilde{\mu}(x) = 0$ for $x \in \R^d \setminus \Omega$). Define the function $s(x) = h \cdot \tilde{\mu}$ and note that $s \in H^m(\R^d)$ since it is the product of two functions in $H^m(\R^d)$ (see \cref{thm:sobolev-pointwise-product}).
 
 Second, note that the function $r = (|\nabla Q|)|_Z \in H^m(Z)$ since (a) the map $\nabla Q$ belongs to $C^{m+1}(\R^d, \R^d)$ so its entries $(\nabla Q)_{i,j}|_Z$ belong to $H^m(Z)$ (see \cref{thm:sobolev-containCinfty}); and (b) the determinant of a matrix, by the Leibniz formula, is defined in terms of sums and products of its entries and $H^m(Z)$ is closed with respect to multiplication, by \cref{thm:change-of-variable}. To quantify its norm let's write explicitly the Leibniz formula \cite{trefethen1997numerical},
-$$ |\nabla Q| = \sum_{\sigma \in S_d} sgn(\sigma) \prod_{i=1}^d e_{\sigma_i}^\top\frac{\partial Q(x)}{\partial x_i},$$
-where $sgn(\sigma) \in \{-1,1\}$, $S_n$ is the set of permutations of of $d$ elements and $e_1,\dots,e_d$ is the canonical basis of $\R^d$. Note, in particular, that, by the equation above, since $|S_d| = d!$ and that $\|e_{\sigma_i}^\top\frac{\partial Q(x)}{\partial x_i}\|_{H^m(Z)} \leq \|\nabla Q\|_{H^m(Z,\R^d)}$, we have that
+$$ |\nabla Q| = \sum_{\sigma \in S_d} \mathrm{sgn}(\sigma) \prod_{i=1}^d e_{\sigma_i}^\top\frac{\partial Q(x)}{\partial x_i},$$
+where $\mathrm{sgn}(\sigma) \in \{-1,1\}$, $S_n$ is the set of permutations of of $d$ elements and $e_1,\dots,e_d$ is the canonical basis of $\R^d$. Note, in particular, that, by the equation above, since $|S_d| = d!$ and that $\|e_{\sigma_i}^\top\frac{\partial Q(x)}{\partial x_i}\|_{H^m(Z)} \leq \|\nabla Q\|_{H^m(Z,\R^d)}$, we have that
 $$\|r\|_{H^m(Z)} \leq d! \|\nabla Q\|_{H^m(Z, \R^d)}^d.$$
 
 Now consider the function $b \in H^m(\R^d)$ defined according to \cref{thm:sobolev-smooth-composition} we have that $b(x) = s(Q(x))$ for any $x \in \R^d$. Now, define $\tilde{q}$ as follows
@@ -242,7 +240,7 @@ for any $h, q \in \hh$. From which we characterize $D_\lambda$ as
 D_\lambda(f, g) = \max_{\norh{h}\leq 1} \min_{q\in\hh} \norf{F_\mu h - G q}^2 + \lambda \norh{q}^2.
 }
 Now, we prove that the problem above has a characterization in terms of the operatorial norm of a given operator.
-First, notice that $q\mapsto \norf{Fh - Gq}^2 + \lambda \norh{q}^2$ is $2\lambda$-strongly convex. It therefor has a unique global minimizer $q^*(h)$ which is also a critical point. This leads to $q^*(h) = ZFh$ where $Z = (GG^* + \lambda I)^{-1}G^*$. Here $GG^* + \lambda I$ is a positive linear operator, and therefor invertible.
+First, notice that $q\mapsto \norf{Fh - Gq}^2 + \lambda \norh{q}^2$ is $2\lambda$-strongly convex. It has a unique global minimizer $q^*(h)$ which is also a critical point. This leads to $q^*(h) = ZFh$ where $Z = (GG^* + \lambda I)^{-1}G^*$. Here $GG^* + \lambda I$ is a positive linear operator. Thus, it is invertible.
 
 So far, we have shown that: \eqal{D(f, g) = \max_{\norh{h}\leq 1}\norf{Fh - GZFh}^2 + \lambda \norh{ZFh}^2.}
 
@@ -303,9 +301,9 @@ For the same reasons, we have that: (a) The range of $Z^*$ is $\textrm{span}(\Ph
 Now we are ready to state the proof of \cref{lm:widehatD}.
 
 \begin{proof}
-First, note that since $\|A\|_{op}^2 = \|A^*A\|_{op}$ for any bounded linear operator $A$, we have
+First, note that since $\|A\|_{\mathrm{op}}^2 = \|A^*A\|_{\mathrm{op}}$ for any bounded linear operator $A$, we have
 $$
-\widehat{D}_\la = \la \|P_{\tilde{X}} F_{\mu, N}^* P_{\tilde{Y}} (P_{\tilde{Y}} G_N P_{\tilde{X}} G_N^*P_{\tilde{Y}} + \la)^{-1} P_{\tilde{Y}} F_{\mu, N} P_{\tilde{X}} \|_{op}.
+\widehat{D}_\la = \la \|P_{\tilde{X}} F_{\mu, N}^* P_{\tilde{Y}} (P_{\tilde{Y}} G_N P_{\tilde{X}} G_N^*P_{\tilde{Y}} + \la)^{-1} P_{\tilde{Y}} F_{\mu, N} P_{\tilde{X}} \|_{\mathrm{op}}.
 $$
 From \cref{rem:operators} we recall that $P_{\tilde X} = V^*V$ where $V$ is a partial isometry defined in \cref{def:operators}. Analogously $P_{\tilde Y} = U^*U$ where $V$ is a partial isometry defined in \cref{def:operators}.
 Now, we have $U(U^*BU + \la I)^{-1}U^* = (B + \la I)^{-1}$ for any positive semidefinite operator $B \in \R^{M_Y \times M_Y}$, since since $UU^*=I$ and so $U^*UU^* = U^*$, indeed
@@ -317,11 +315,11 @@ U(U^*BU + \la I)^{-1}U^*(B + \la I) &= U(U^*BU + \la I)^{-1}U^*(B + \la I)UU^* \
 }
 In particular, we will use now the result above. Let $C = U G_N P_{\tilde{X}} G_N^* U^*$. So,
 \eqals{
-\widehat{D}_\la & = \la \|V^* VF_{\mu, N}^* U^*U(U^*CU + \la I)^{-1} U^*U F_{\mu, N} V^* V \|_{op}\\
-& = \la \|V^* A^* (C + \la I)^{-1} A V \|_{op}\\
-& = \la \|A^* (C + \la I)^{-1} A \|_{op}
+\widehat{D}_\la & = \la \|V^* VF_{\mu, N}^* U^*U(U^*CU + \la I)^{-1} U^*U F_{\mu, N} V^* V \|_{\mathrm{op}}\\
+& = \la \|V^* A^* (C + \la I)^{-1} A V \|_{\mathrm{op}}\\
+& = \la \|A^* (C + \la I)^{-1} A \|_{\mathrm{op}}
 }
-where $A = U F_{\mu, N} V^*$ and we used the fact that $\|V^* T U\|_{op} = \|T\|_{op}$ for any couple of partial isometries such that $VV^* = I$ and $UU^* = I$.
+where $A = U F_{\mu, N} V^*$ and we used the fact that $\|V^* T U\|_{\mathrm{op}} = \|T\|_{\mathrm{op}}$ for any couple of partial isometries such that $VV^* = I$ and $UU^* = I$.
 By applying the definition of $U, V$ and $F_{\mu, N}$, we see that $A = \widehat{A}$ as in \cref{eq:widehatA}.
 Indeed, by expanding the definitions of $U, V$ from \cref{def:operators} and denoting by $c_i \in \R^{M_Y}$ and $d_i \in \R^{M_X}$ respectively the vectors
 $c_i = Z\,\Phi(f(x_i)) = \left(k_Y(\tilde{y}_1,f(x_i)), \dots,  k_Y(\tilde{y}_{M_Y},f(x_i)) \right)$ and
@@ -340,7 +338,7 @@ $$
 To conclude, note that
 $$C = U G_N P_{\tilde{X}} G_N^* U^* = (U G_N V^*) (V G_N^* U^*) = (U G_N V^*)\,(U G_N V^*)^*  ,$$
 Analogously as we proved that $A = \widehat{A}$, we have that $U G_N V^* = \widehat{B}$, where $\widehat{B}$ is defined in \cref{eq:widehatB}. Then
-$$\widehat{D}_\la = \la \|A^* (C + \la I)^{-1} A \|_{op} = \la \|\widehat{A}^* (\widehat{B}\widehat{B}^* + \la I)^{-1} \widehat{A} \|_{op}.$$
+$$\widehat{D}_\la = \la \|A^* (C + \la I)^{-1} A \|_{\mathrm{op}} = \la \|\widehat{A}^* (\widehat{B}\widehat{B}^* + \la I)^{-1} \widehat{A} \|_{\mathrm{op}}.$$
 \end{proof}
 
 
@@ -386,7 +384,7 @@ for $i=1,\dots,n$. Note now, that
 $$F_{\mu, N} = \frac{1}{N} \sum_{i=1}^n \zeta_i, \quad F_\mu = \mathbb{E} \zeta_1.$$
 Note moreover that
 $$\|\zeta_i\| ~\leq~ v_X \kappa_X \kappa_Y \|\mu\|_{L^\infty} ~=:~ L.$$
-Denote by $\scal{A}{B}_{HS}$ the Hilbert-Schmidt inner product defined as $\scal{A}{B}_{HS} = \tr(A^*B)$. We recall that the space of $HS(\hh,{\cal F})$ with finite $HS$ norm, is a separable Hilbert space. We recall also that $\|\cdot\|_{op} \leq \|\cdot\|_{HS} \leq \|\cdot\|_*$ where the last is the trace norm and that $F_{\mu, N}$ has finite trace norm.
+Denote by $\scal{A}{B}_{HS}$ the Hilbert-Schmidt inner product defined as $\scal{A}{B}_{HS} = \tr(A^*B)$. We recall that the space of $HS(\hh,{\cal F})$ with finite $HS$ norm, is a separable Hilbert space. We recall also that $\|\cdot\|_{\mathrm{op}} \leq \|\cdot\|_{HS} \leq \|\cdot\|_*$ where the last is the trace norm and that $F_{\mu, N}$ has finite trace norm.
 By applying the Bernstein inequality for random vectors (see, e.g. Prop. 11 of \citet{rudi2015less} and references therein), we have that the following holds with probability $1-\rho$
 \eqal{\label{eq:bound-Fmu-FmuN}
 \|F_{\mu, N} - F_{\mu}\|_{HS} \leq \frac{4 L}{\sqrt{N}} \log \frac{2}{\rho}.
@@ -419,38 +417,38 @@ Now we can estimate the distance between $F_\mu$ and $P_{\tilde{Y}}F_{\mu,N} P_{
 \eqals{
 F_\mu - P_{\tilde{Y}}F_{\mu,N} P_{\tilde{X}} \leq (F_\mu - F_{\mu,N}) + (I -  P_{\tilde{Y}})F_{\mu,N} + P_{\tilde{Y}}F_{\mu,N}(I - P_{\tilde{X}}),
 }
-from which, using $\|\cdot\|_{op} \leq \|\cdot\|_{HS}$, we derive
+from which, using $\|\cdot\|_{\mathrm{op}} \leq \|\cdot\|_{HS}$, we derive
 \eqals{
-\|F_\mu - P_{\tilde{Y}}F_{\mu,N} P_{\tilde{X}}\|_{op} \leq \|F_\mu - F_{\mu,N}\|_{HS} + \|(I -  P_{\tilde{Y}})F_{\mu,N}\|_{op} + \|P_{\tilde{Y}}\|_{op}\|F_{\mu,N}(I - P_{\tilde{X}})\|_{op}.
+\|F_\mu - P_{\tilde{Y}}F_{\mu,N} P_{\tilde{X}}\|_{\mathrm{op}} \leq \|F_\mu - F_{\mu,N}\|_{HS} + \|(I -  P_{\tilde{Y}})F_{\mu,N}\|_{\mathrm{op}} + \|P_{\tilde{Y}}\|_{\mathrm{op}}\|F_{\mu,N}(I - P_{\tilde{X}})\|_{\mathrm{op}}.
 }
 Now, the term $\|F_\mu - F_{\mu,N}\|_{HS}$ is already studied in \cref{eq:bound-Fmu-FmuN}. For the second term, note that by expanding the definition of $F_{\mu,N}$ and using \cref{eq:bound-nystr-X} we obtain,
 \eqals{
-\|(I -  P_{\tilde{Y}})F_{\mu,N}\|_{op} &\leq \frac{v_X}{N} \sum_{i=1}^N \|(I -  P_{\tilde{Y}})(\Phi(f(x_i)) \otimes \psi(x_i))\|_{op} |\mu(x_i)|  \leq \\
+\|(I -  P_{\tilde{Y}})F_{\mu,N}\|_{\mathrm{op}} &\leq \frac{v_X}{N} \sum_{i=1}^N \|(I -  P_{\tilde{Y}})(\Phi(f(x_i)) \otimes \psi(x_i))\|_{\mathrm{op}} |\mu(x_i)|  \leq \\
 & \frac{v_X}{N} \sum_{i=1}^N \|(I -  P_{\tilde{Y}})\Phi(f(x_i))\|_{\cal F} \|\psi(x_i)\|_\hh |\mu(x_i)|\\
 & \leq \kappa_X v_X \|\mu\|_{L^\infty} C^\prime_1 M_Y^{-z/p} (\log \tfrac{C^\prime_2 M_Y}{\rho})^{z/p+1/2},
 }
 with probability $1-\rho$.
 Applying the same reasoning to the third term, we obtain
 \eqals{
-\|F_{\mu,N}(I - P_{\tilde{X}})\|_{op} \leq \kappa_Y v_X \|\mu\|_{L^\infty} C_1 M_X^{-s/d} (\log \tfrac{C_2 M_X}{\rho})^{s/d+1/2},
+\|F_{\mu,N}(I - P_{\tilde{X}})\|_{\mathrm{op}} \leq \kappa_Y v_X \|\mu\|_{L^\infty} C_1 M_X^{-s/d} (\log \tfrac{C_2 M_X}{\rho})^{s/d+1/2},
 }
 with probability $1-\rho$.
-Combining all the terms and considering that $\|P_{\tilde{X}}\|_{op} = 1$ since it is a projection, we have
+Combining all the terms and considering that $\|P_{\tilde{X}}\|_{\mathrm{op}} = 1$ since it is a projection, we have
 \eqal{\label{eq:BB}
-\|F_\mu - P_{\tilde{Y}}F_{\mu,N} P_{\tilde{X}}\|_{op} \leq \beta
+\|F_\mu - P_{\tilde{Y}}F_{\mu,N} P_{\tilde{X}}\|_{\mathrm{op}} \leq \beta
 }
 with
 $$ \beta := \frac{4 L}{\sqrt{N}} \log \frac{2}{\rho} + \kappa_X \|\mu\|_{L^\infty} C^\prime_1 M_Y^{-z/p} (\log \tfrac{C^\prime_2 M_Y}{\rho})^{z/p+1/2} + \kappa_Y \|\mu\|_{L^\infty} C_1 M_X^{-s/d} (\log \tfrac{C_2 M_X}{\rho})^{s/d+1/2}.$$
 
 To conclude, note that
-$$\|F_{\mu}\|_{op} \leq \int \|\Phi(f(x))\|_{op}\|\psi(x)\|_{op} |\mu(x)| dx \leq v_X \kappa_X \kappa_Y \|\mu\|_{L^\infty(X)} = L,$$
-and with the same reasoning we have $\|F_{\mu,N}\| \leq L$. Then, by considering that $\|AA^* - \hat{A}\hat{A}^*\| \leq (\|A\|_{op} + \|\hat{A}\|_{op})\|A-\hat{A}\|_{op}$ for any bounded operators $A,A^*$ between the same two Hilbert spaces, we have
+$$\|F_{\mu}\|_{\mathrm{op}} \leq \int \|\Phi(f(x))\|_{\mathrm{op}}\|\psi(x)\|_{\mathrm{op}} |\mu(x)| dx \leq v_X \kappa_X \kappa_Y \|\mu\|_{L^\infty(X)} = L,$$
+and with the same reasoning we have $\|F_{\mu,N}\| \leq L$. Then, by considering that $\|AA^* - \hat{A}\hat{A}^*\| \leq (\|A\|_{\mathrm{op}} + \|\hat{A}\|_{\mathrm{op}})\|A-\hat{A}\|_{\mathrm{op}}$ for any bounded operators $A,A^*$ between the same two Hilbert spaces, we have
 $$
-\|F_\mu F_{\mu}^* - P_{\tilde{Y}}F_{\mu,N} P_{\tilde{X}} F_{\mu,N}^*P_{\tilde{Y}}\|_{op} \leq 2L \beta.
+\|F_\mu F_{\mu}^* - P_{\tilde{Y}}F_{\mu,N} P_{\tilde{X}} F_{\mu,N}^*P_{\tilde{Y}}\|_{\mathrm{op}} \leq 2L \beta.
 $$
 Repeating the same reasoning of the beginning of Step 3 for $G$ and $G_N$ we obtain
 \eqal{\label{eq:QQ}
-\|GG^* - P_{\tilde{Y}}G P_{\tilde{X}} G^*P_{\tilde{Y}}\|_{op} \leq 2L^\prime \beta^\prime,
+\|GG^* - P_{\tilde{Y}}G P_{\tilde{X}} G^*P_{\tilde{Y}}\|_{\mathrm{op}} \leq 2L^\prime \beta^\prime,
 }
 where
 $$
@@ -460,44 +458,44 @@ $$
 
 
 \paragraph{Step 4.}
-Before deriving the final result, we need an algebraic inequality between bounded operators. Let $B,\hat{B},Q,\hat{Q}$ be bounded operators and assume that $Q,\hat{Q}$ are also symmetric and invertible. We recall that $\|A\|^2_{op} = \|A^*A\|_{op} = \|AA^*\|_{op}$ for any bounded operator $A$. We have
+Before deriving the final result, we need an algebraic inequality between bounded operators. Let $B,\hat{B},Q,\hat{Q}$ be bounded operators and assume that $Q,\hat{Q}$ are also symmetric and invertible. We recall that $\|A\|^2_{\mathrm{op}} = \|A^*A\|_{\mathrm{op}} = \|AA^*\|_{\mathrm{op}}$ for any bounded operator $A$. We have
 \eqals{
-\|Q^{-1/2} B\|^2_{op} - \|\hat{Q}^{-1/2} \hat{B}\|^2_{op} = (\|Q^{-1/2} B\|^2_{op} - \|\hat{Q}^{-1/2} B\|^2_{op}) +(\|\hat{Q}^{-1/2} B\|^2_{op} - \|\hat{Q}^{-1/2} \hat{B}\|^2_{op}).
+\|Q^{-1/2} B\|^2_{\mathrm{op}} - \|\hat{Q}^{-1/2} \hat{B}\|^2_{\mathrm{op}} = (\|Q^{-1/2} B\|^2_{\mathrm{op}} - \|\hat{Q}^{-1/2} B\|^2_{\mathrm{op}}) +(\|\hat{Q}^{-1/2} B\|^2_{\mathrm{op}} - \|\hat{Q}^{-1/2} \hat{B}\|^2_{\mathrm{op}}).
 }
 Then, using the equality $A^{-1} - B^{-1} = B^{-1}(A - B)A^{-1}$, valid for any bounded and invertible operator, we have
 \eqals{
-|\|Q^{-1/2} B\|^2_{op} - \|\hat{Q}^{-1/2} B\|^2_{op}| &= |\|B^* Q^{-1} B\|_{op} - \|B^*\hat{Q}^{-1} B\|_{op}| \\
-& \leq \|B^* (Q^{-1} - \hat{Q}^{-1}) B\|_{op} = \|B^* \hat{Q}^{-1} (Q - \hat{Q})Q^{-1} B\|_{op}\\
-& \leq \|B^*\|_{op} \|\hat{Q}^{-1}\|_{op} \|Q - \hat{Q}\|_{op} \|Q^{-1}\|_{op} \|B\|_{op}.
+|\|Q^{-1/2} B\|^2_{\mathrm{op}} - \|\hat{Q}^{-1/2} B\|^2_{\mathrm{op}}| &= |\|B^* Q^{-1} B\|_{\mathrm{op}} - \|B^*\hat{Q}^{-1} B\|_{\mathrm{op}}| \\
+& \leq \|B^* (Q^{-1} - \hat{Q}^{-1}) B\|_{\mathrm{op}} = \|B^* \hat{Q}^{-1} (Q - \hat{Q})Q^{-1} B\|_{\mathrm{op}}\\
+& \leq \|B^*\|_{\mathrm{op}} \|\hat{Q}^{-1}\|_{\mathrm{op}} \|Q - \hat{Q}\|_{\mathrm{op}} \|Q^{-1}\|_{\mathrm{op}} \|B\|_{\mathrm{op}}.
 }
 moreover, we have
 \eqals{
-|\|\hat{Q}^{-1/2} B\|^2_{op} - \|\hat{Q}^{-1/2} \hat{B}\|^2_{op}| & = |\|\hat{Q}^{-1/2} BB^*\hat{Q}^{-1/2}\|^2_{op} - \|\hat{Q}^{-1/2} \hat{B}\hat{B}^*\hat{Q}^{-1/2} \|_{op}| \\
-& \leq \|\hat{Q}^{-1/2} (BB^* - \hat{B}\hat{B}^*) \hat{Q}^{-1/2} \|_{op} \\
-& \leq \|\hat{Q}^{-1/2}\|^2_{op} \|BB^* - \hat{B}\hat{B}^*\|_{op}.
+|\|\hat{Q}^{-1/2} B\|^2_{\mathrm{op}} - \|\hat{Q}^{-1/2} \hat{B}\|^2_{\mathrm{op}}| & = |\|\hat{Q}^{-1/2} BB^*\hat{Q}^{-1/2}\|^2_{\mathrm{op}} - \|\hat{Q}^{-1/2} \hat{B}\hat{B}^*\hat{Q}^{-1/2} \|_{\mathrm{op}}| \\
+& \leq \|\hat{Q}^{-1/2} (BB^* - \hat{B}\hat{B}^*) \hat{Q}^{-1/2} \|_{\mathrm{op}} \\
+& \leq \|\hat{Q}^{-1/2}\|^2_{\mathrm{op}} \|BB^* - \hat{B}\hat{B}^*\|_{\mathrm{op}}.
 }
-Now, noting that $\|\hat{Q}^{-1/2}\|^2_{op} = \|\hat{Q}^{-1}\|_{op}$ and combining the inequalities above, we obtain
+Now, noting that $\|\hat{Q}^{-1/2}\|^2_{\mathrm{op}} = \|\hat{Q}^{-1}\|_{\mathrm{op}}$ and combining the inequalities above, we obtain
 \eqal{\label{eq:alg-ineq}
-|\|Q^{-1/2} B\|^2_{op} - \|\hat{Q}^{-1/2} \hat{B}\|^2_{op}| \leq \|B\|^2_{op} \|\hat{Q}^{-1}\|_{op}\|Q^{-1}\|_{op} \|Q - \hat{Q}\|_{op} + \|\hat{Q}^{-1}\|_{op} \|BB^* - \hat{B}\hat{B}^*\|_{op}.
+|\|Q^{-1/2} B\|^2_{\mathrm{op}} - \|\hat{Q}^{-1/2} \hat{B}\|^2_{\mathrm{op}}| \leq \|B\|^2_{\mathrm{op}} \|\hat{Q}^{-1}\|_{\mathrm{op}}\|Q^{-1}\|_{\mathrm{op}} \|Q - \hat{Q}\|_{\mathrm{op}} + \|\hat{Q}^{-1}\|_{\mathrm{op}} \|BB^* - \hat{B}\hat{B}^*\|_{\mathrm{op}}.
 }
 
 \paragraph{Step 5.}
 With the tools derived above we can proceed to bound $\widehat{D}_\la(f,g) - D_\la(f,g)$.
 First, note that, by \cref{lm:widehatD}, $\widehat{D}_\la(f,g)$ of \cref{eq:widehatD-finite-dimensional} is equivalent to
 \eqals{
-\widehat{D}_\la(f,g) := \la \|(P_{\tilde{Y}} G_N P_{\tilde{X}} G_N^*P_{\tilde{Y}} + \la)^{-\frac{1}{2}} P_{\tilde{Y}} F_{\mu, N} P_{\tilde{X}} \|^2_{op}.
+\widehat{D}_\la(f,g) := \la \|(P_{\tilde{Y}} G_N P_{\tilde{X}} G_N^*P_{\tilde{Y}} + \la)^{-\frac{1}{2}} P_{\tilde{Y}} F_{\mu, N} P_{\tilde{X}} \|^2_{\mathrm{op}}.
 }
 Then,
 \eqals{
-|D_\la(f,g) - \widehat{D}_\la(f,g)| \leq = \la | \|(GG^* + \la)^{-\frac{1}{2}} F_{\mu}\|^2_{op} - \|(P_{\tilde{Y}} G_N P_{\tilde{X}} G_N^*P_{\tilde{Y}} + \la)^{-\frac{1}{2}} P_{\tilde{Y}} F_{\mu, N} P_{\tilde{X}}\|^2_{op}|.
+|D_\la(f,g) - \widehat{D}_\la(f,g)| \leq = \la | \|(GG^* + \la)^{-\frac{1}{2}} F_{\mu}\|^2_{\mathrm{op}} - \|(P_{\tilde{Y}} G_N P_{\tilde{X}} G_N^*P_{\tilde{Y}} + \la)^{-\frac{1}{2}} P_{\tilde{Y}} F_{\mu, N} P_{\tilde{X}}\|^2_{\mathrm{op}}|.
 }
-By applying \cref{eq:alg-ineq} with $Q = GG^* + \la$, $\hat{Q} = P_{\tilde{Y}} G_N P_{\tilde{X}} G_N^*P_{\tilde{Y}} + \la$, $B = F_{\mu}$ and $\hat{B} = P_{\tilde{Y}} F_{\mu, N} P_{\tilde{X}}$ and noting that $Q \succeq \la I$ and $\hat{Q} \succeq \la I$, then $\|Q^{-1}\|_{op} \leq \la^{-1}$ and $\|\hat{Q}^{-1}\|_{op} \leq \la^{-1}$,
-and that $\|F_{\mu}\|_{op} \leq L$, we have
+By applying \cref{eq:alg-ineq} with $Q = GG^* + \la$, $\hat{Q} = P_{\tilde{Y}} G_N P_{\tilde{X}} G_N^*P_{\tilde{Y}} + \la$, $B = F_{\mu}$ and $\hat{B} = P_{\tilde{Y}} F_{\mu, N} P_{\tilde{X}}$ and noting that $Q \succeq \la I$ and $\hat{Q} \succeq \la I$, then $\|Q^{-1}\|_{\mathrm{op}} \leq \la^{-1}$ and $\|\hat{Q}^{-1}\|_{\mathrm{op}} \leq \la^{-1}$,
+and that $\|F_{\mu}\|_{\mathrm{op}} \leq L$, we have
 \eqals{
-|D_\la(f,g) - \widehat{D}_\la(f,g)| &\leq \la \|B\|^2_{op} \|\hat{Q}^{-1}\|_{op}\|Q^{-1}\|_{op} \|Q - \hat{Q}\|_{op}  + \|\hat{Q}^{-1}\|_{op} \|BB^* - \hat{B}\hat{B}^*\|_{op} \\
-& \leq L^2 \la^{-1} \|Q - \hat{Q}\|_{op}  + \|BB^* - \hat{B}\hat{B}^*\|_{op}.
+|D_\la(f,g) - \widehat{D}_\la(f,g)| &\leq \la \|B\|^2_{\mathrm{op}} \|\hat{Q}^{-1}\|_{\mathrm{op}}\|Q^{-1}\|_{\mathrm{op}} \|Q - \hat{Q}\|_{\mathrm{op}}  + \|\hat{Q}^{-1}\|_{\mathrm{op}} \|BB^* - \hat{B}\hat{B}^*\|_{\mathrm{op}} \\
+& \leq L^2 \la^{-1} \|Q - \hat{Q}\|_{\mathrm{op}}  + \|BB^* - \hat{B}\hat{B}^*\|_{\mathrm{op}}.
 }
-Now, since $\|Q - \hat{Q}\|_{op} = \|GG^* - P_{\tilde{Y}}G_{N} P_{\tilde{X}}\|_{op}$ and  $\|BB^* - \hat{B}\hat{B}^*\|_{op} = \|F_\mu - P_{\tilde{Y}}F_{\mu,N} P_{\tilde{X}}\|_{op}$, which are bounded in \cref{eq:QQ,eq:BB}
+Now, since $\|Q - \hat{Q}\|_{\mathrm{op}} = \|GG^* - P_{\tilde{Y}}G_{N} P_{\tilde{X}}\|_{\mathrm{op}}$ and  $\|BB^* - \hat{B}\hat{B}^*\|_{\mathrm{op}} = \|F_\mu - P_{\tilde{Y}}F_{\mu,N} P_{\tilde{X}}\|_{\mathrm{op}}$, which are bounded in \cref{eq:QQ,eq:BB}
 \eqals{
 |D_\la(f,g) - \widehat{D}_\la(f,g)| \leq 2L^\prime L^2 \la^{-1} \beta^\prime  + 2L\beta.
 }

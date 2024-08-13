@@ -204,7 +204,7 @@ The theorem above is a special case of \cref{thm:general-theorem}, presented in 
 
 A first consequence of \cref{theorem:main-theorem} is that the regularization parameter $\lambda$ controls the threshold to decide whenever $g \approx f \circ Q$. In particular, we easily see that $D_\la(f, f \circ Q) \to 0$, when $\la \to 0$. This result confirms that in the limit where the regularization vanishes, so does the bias and we have the result we would have imagined à la \cref{thm:ideal}. We will see in \cref{sec:approximation} that $\la$ has also an important role in controlling the approximation error of $D(f,g)$. This shows that $\la$ controls a similar bias-variance trade-off as in classical kernel supervised learning \cite{shawe-taylor2004}.
 
-To show concretely the dependence of $C_Q$ with respect to $Q$, in the following example we show $C_Q$ explicitly for an interesting class of diffeomorphisms.
+To illustrate  the dependence of $C_Q$ with respect to $Q$, in the following example we explicitly compute $C_Q$ for an interesting class of diffeomorphisms.
 
 \begin{example}[Magnitude of $C_Q$ for rigid transforms]\label{ex:diffeo}
 Let $X$ be the unit ball in $\R^d$ and let $\mu$ be a mask supported on $\Omega$, the ball of radius $r < 1$. We consider the diffeomorphisms $Q(x) = \alpha R x$, with $R$ a unitary matrix and $r < \alpha < 1/r$. We use the Laplace kernel $k_X(x,x^\prime) = \exp(-\|x-x^\prime\|)$ for $k_X$ (analogously for $k_Y$).
@@ -212,7 +212,7 @@ Then, we compute explicitly the bound in \cref{eq:def-CQ}, since the Laplace ker
 $$C_Q ~~\leq~~ C_0 \left(\frac{\alpha}{\min(\alpha,1) - r}\right)^{m+d/2}\alpha^d (1 + \alpha + \alpha^m).$$
 \end{example}
 \begin{remark}
-By seeing data points as functions, we are able to efficiently reason about them. Hence, since data points are continuous objects, $d=\dim(X)$, the dimensions of $X$, and not the number of pixels, which we denote $N$ below. Indeed, $X$ is low-dimensional by nature : for images, $d=2$ since images are 2-d objects, while $N$ could be very large. This way, the dimensional dependence of $C_Q$ is very reasonable. In the extreme case where we consider time series of point clouds (for example, brain scans through time), $d = 4$ (time $+$ 3 spatial coordinates). If we consider a scale change range of $50\%$, then $C_Q$ is of the order of $1.5^4 \approx 5$. We emphasize that $C_Q$ is not related to the number of samples (for images, the number of pixels) used to compute DID in practice.
+By seeing data points as functions, we are able to efficiently reason about them. Hence, since data points are continuous objects, $d=\dim(X)$, the dimensions of $X$, and not the number of pixels, which we denote $N$ below. Indeed, $X$ is low-dimensional by nature: for images, $d=2$ since images are 2-d objects, while $N$ could be very large. This way, the dimensional dependence of $C_Q$ is very reasonable. In the extreme case where we consider time series of point clouds (for example, brain scans through time), $d = 4$ (time $+$ 3 spatial coordinates). If we consider a scale change range of $50\%$, then $C_Q$ is of the order of $3/2^4 \approx 5$. We emphasize that $C_Q$ is not related to the number of samples (for images, the number of pixels) used to compute DID in practice.
 \end{remark}
 \subsection{Discussion on the discriminatory power of $D_\la$} \label{sec:discussion-selectivity}
 In \cref{theorem:main-theorem}, we proved that when $g = f \circ Q$ for some diffeomorphism $Q$, then $D(f,g)$ is small, i.e. that the dissimilarity is essentially invariant to the diffeomorphisms. However, to fully characterize the properties of the proposed dissimilarity it would be interesting to study also its discriminatory power, i.e. the fact that $D(f,g)$ is small {\em only if} there exists a diffeomorphism $Q$ such that $g = f \circ Q$. \cref{fig:warping} investigates this question from the empirical perspective. The details of these experiments are reported in \cref{sec:experiments} (and further explored in \cref{app:additional-experiments}). They show that, \Diffy is very robust to significant transformations $f\circ Q$ of the original signal $f$. Additionally we observe that $D_\la$ is very discriminative, in contrast to less diffeomorphism invariant metrics such as the euclidean distance, when comparing $D_\la(f,f\circ Q)$ with $D_\la(f,g)$ for a random signal $g$. We care to point out however, that the theoretical analysis of \Diffy's the discriminative abilities is beyond the scope of this work (whose aim is to introduce the discrepancy and study its invariance properties) and we postpone it to future research.
@@ -284,14 +284,14 @@ Note that the set of $\lbrace x_1, \ldots, x_N \rbrace$ can be chosen at random 
 
 From the previous section, it is clear that $\rank{F_{\mu, N}} \leq N$ and $\rank{G_N} \leq N$. This justifies using the low-rank approximations we introduce in this section. It is possible to further reduce the rank of the matrices, while keeping a good accuracy, by using the so-called {\em Nystr\"om approximation} \cite{williams2001using,drineas2005nystrom,rudi2015less}.
 
-Let $M_X, M_Y \in \N$ and choose the set of points $\widetilde{X} = \lbrace \widetilde x_1, \ldots, \widetilde x_{M_X}\rbrace \subset X$ and $\widetilde{Y} = \lbrace \widetilde y_1, \ldots, \widetilde y_{M_Y} \} \subset Y$. The Nystr\"om approximation of a vector $v \in \hh$ consists in the projected vector $P_{\tilde{X}} v$, where $P_{\tilde{X}} :\hh \to \hh$ is the projection operator with range corresponding to $\textrm{span} \{\psi(\tilde{x}_1),\dots,\psi(\tilde{x}_{M_X})\}$. Note, in particular, that $P_{\tilde{X}}$ has rank $M_X$ when $k_X$ is universal. $P_{\tilde{Y}}: {\cal F} \to {\cal F}$ on $\tilde{Y}$ in defined analogously.
+Let $M_X, M_Y \in \N$ and choose the set of points $\widetilde{X} = \lbrace \widetilde x_1, \ldots, \widetilde x_{M_X}\rbrace \subset X$ and $\widetilde{Y} = \lbrace \widetilde y_1, \ldots, \widetilde y_{M_Y} \} \subset Y$. The Nystr\"om approximation of a vector $v \in \hh$ is the projected vector $P_{\tilde{X}} v$, where $P_{\tilde{X}} :\hh \to \hh$ is the projection operator with range corresponding to $\textrm{span} \{\psi(\tilde{x}_1),\dots,\psi(\tilde{x}_{M_X})\}$. Note, in particular, that $P_{\tilde{X}}$ has rank $M_X$ when $k_X$ is universal. $P_{\tilde{Y}}: {\cal F} \to {\cal F}$ on $\tilde{Y}$ in defined analogously.
 
 
 \paragraph{Combining the two approximations.}
 Assume in this section, that the kernels of choice are universal (as, e.g., the Laplacian or the Gaussian kernel).
 Let $P_{\tilde{X}}:\hh \to \hh$ be the projection operator associated to the Nystr\"om points on $X$ and $P_{\tilde{Y}}$ the one associated to the Nystr\"om point on $Y$. Combining the two approximations, we define the following estimator for $D_\la$,
 \eqals{
-\widehat{D}_\la(f,g) := \la \|(P_{\tilde{Y}} G_N P_{\tilde{X}} G_N^*P_{\tilde{Y}} + \la)^{-\frac{1}{2}} P_{\tilde{Y}} F_{\mu, N} P_{\tilde{X}} \|^2_{op}.
+\widehat{D}_\la(f,g) := \la \|(P_{\tilde{Y}} G_N P_{\tilde{X}} G_N^*P_{\tilde{Y}} + \la)^{-\frac{1}{2}} P_{\tilde{Y}} F_{\mu, N} P_{\tilde{X}} \|^2_{\mathrm{op}}.
 }
 Note, however, that $\widehat{D}_\la(f,g)$ has a finite dimensional characterization that we are going to derive now.
 Let $K_{\widetilde Y f} \in \mathbb R^{M_Y \times N}$ the matrix defined by $(K_{\widetilde Y f})_{i, j} = k_Y(\widetilde y_i, f(x_j))$, $K_{\widetilde Y g}$ in an analogous way, and finally, $K_{X \widetilde X}\in\R^{N \times M_X}$ the matrix defined by $(K_{X\widetilde X})_{i, j} = K_X(x_i, \widetilde x_j)$. Let $\widehat \mu = \left[ \mu(x_1), \ldots, \mu(x_{M_X})\right]$ and $R_{\widetilde X} \in\R^{M_X \times M_X}$ be the upper-triangular Cholesky decomposition of $K_{\widetilde X \widetilde X}$ defined by $(K_{\widetilde X \widetilde X})_{ij} = k_X(\widetilde x_i, \widetilde x_j)$. Analogously, define $K_{\widetilde Y \widetilde Y}$ and define $R_{\widetilde Y}\in\R^{M_Y \times M_Y}$ its Cholesky decomposition. Note that the decomposition exists since the kernel $k_X$ is universal and so the kernel matrix $K_{\tilde{X},\tilde{X}}$ is invertible.
@@ -306,7 +306,7 @@ In particular, we have the following characterization for $\widehat{D}_\la$.
 \begin{lemma}\label{lm:widehatD}
 With the notation above,
 \eqal{\label{eq:widehatD-finite-dimensional}
-\widehat{D}_\la(f,g) = \la \|\widehat{A}^* (\widehat{B} \widehat{B}^* + \la I)^{-1} \widehat{A}\|_{op}.
+\widehat{D}_\la(f,g) = \la \|\widehat{A}^* (\widehat{B} \widehat{B}^* + \la I)^{-1} \widehat{A}\|_{\mathrm{op}}.
 }
 \end{lemma}
 
@@ -330,12 +330,12 @@ Clearly the choice of $r,s$ while reducing the number of Nystr\"om points requir
 %%%%%{\color{red}\bf[Algorithm?]}
 
 \paragraph{Algorithm and computational complexity.}
-The final form of the empirical estimator $\widehat{D}_\la$ is \cref{eq:widehatD-finite-dimensional}. An efficient algorithm to compute it consists in (1) first computing the matrices $\widehat{A}$ and $\widehat{B}$, then the inverse $\widehat{C} = (\widehat{B}\widehat{B}^* + \la)^{-1}$ and finally compute the largest eigenvalue of $\widehat{A}^* \widehat{C} \widehat{A}$ via a power iteration method \cite{trefethen1997numerical}. %that is a method based on matrix vector products. In particular this last step avoids to compute explicitly the product of the three matrices, $\widehat{A}^* \widehat{C} \widehat{A} v = \widehat{A}^* (\widehat{C} (\widehat{A} v))$.
+The final form of the empirical estimator $\widehat{D}_\la$ is \cref{eq:widehatD-finite-dimensional}. An efficient algorithm to compute it is, for instance, (1) first computing the matrices $\widehat{A}$ and $\widehat{B}$, then the inverse $\widehat{C} = (\widehat{B}\widehat{B}^* + \la)^{-1}$ and finally compute the largest eigenvalue of $\widehat{A}^* \widehat{C} \widehat{A}$ via a power iteration method \cite{trefethen1997numerical}. %that is a method based on matrix vector products. In particular this last step avoids to compute explicitly the product of the three matrices, $\widehat{A}^* \widehat{C} \widehat{A} v = \widehat{A}^* (\widehat{C} (\widehat{A} v))$.
 
 Assuming that (a) the cost of one kernel computation in $\R^d$ is $O(d)$ (as in the case of any translation invariant kernel as the Laplace kernel) (b) $M_X \leq N$ and $M_Y \leq N$ (which is reasonable in light of \cref{thm:appr-error-widehatD}), then the cost of computing $\widehat{D}_\la$ with the algorithm above is
 $O(d N M_X + p N M_Y + M_XM_Y^2 + M_X^3 + M_Y^3)$.
 Choosing the parameters, as in the discussion after \cref{thm:appr-error-widehatD}, with $r = 1$, would lead to a total computational cost of
-$O(N^{1.5}(p+d)).$
+$O(N^{3/2}(p+d)).$
 
 Computing \Diffy between different pairs of data-points can easily be parallelized as each computation relies on matrix-vector products and matrix inversions.
 
@@ -398,9 +398,9 @@ We generalize it to higher-dimension by considering its tensor-product over dime
 Because we work with images in the experiments we present, $X = \R^2$ (coordinate space) and $Y = \R^3$ (color space). We consider the Gaussian kernel defined as $k(x, x^\prime) = \exp(- \|x - x^\prime\|^2/(2\sigma^2))$ on $X$ and the Laplace kernel defined as $k(y, y^\prime) = \exp(-a \| y - y^\prime \|)$ on $Y$. For the experiments presented in this paper, unless otherwise stated, \Diffy has parameters: $M_X = 100$, $M_Y = 16^3$, $\sigma = 1/6$ and $a=5$.
 
 \paragraph{Datasets.}
-We rely on images from Imagenet (more precisely from the \texttt{Imagenette} subset), example images from the Matlab software (\texttt{peppers}), and finally images taken with our personal devices for illustrations (\texttt{raccon, flowers, objects}). All images are made available with the source code.
+We rely on images from Imagenet (more precisely from the \texttt{Imagenette} subset), example images from the Matlab software (\texttt{peppers}), and finally images taken with our personal devices for illustrations (\texttt{raccoon, flowers, objects}). All images are made available with the source code.
 
-\paragraph{Diffeomorphism generation.} Diffeomorphism are obtained either by affine transformations or by generating warpings. In particular, for warpings, we use the code from \cite{wyartdiffeo}. We generate random transformations of images by displacing each of its coordinates independently (while enforcing zero displacement at the edge of the grid) then interpolating the colors.  We choose the standard deviation of the displacements of each pixel so as to obtain a transformation of given (average) displacement norm. This can be controlled by two parameters $T$ (a temperature, between $10^{-4}$ and $10$) and $c$ (a cut-off parameter, taking $c=2$). We denote $\text{warp}(f, T)$ such a (random) warp. Examples of warps for various $T$ parameters (and samples) are provided in \cref{sec:appendix-warping}.
+\paragraph{Diffeomorphism generation.} Diffeomorphism are obtained either by affine transformations or by generating warpings. In particular, for warpings, we use the code from \cite{wyartdiffeo}. We generate random transformations of images by displacing each of its coordinates independently (while enforcing zero displacement at the edge of the grid) then interpolating the colors.  We choose the standard deviation of the displacements of each pixel so as to obtain a transformation of given (average) displacement norm. This can be controlled by two parameters $T$ (a temperature, between $10^{-4}$ and $10^1$) and $c$ (a cut-off parameter, taking $c=2$). We denote $\text{warp}(f, T)$ such a (random) warp. Examples of warps for various $T$ parameters (and samples) are provided in \cref{sec:appendix-warping}.
 
 \subsection{Illustrative examples}\label{sec:illustration}
 
