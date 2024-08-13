@@ -25,14 +25,14 @@ According to \cite{ciliberto2021} and \cite{sampling-ulysse} (Proposition 7) the
 We formalize \cref{eq:learning-problem} explicitly as a kernel ridge regression problem below:
 %
 \begin{align}\label{eq:learning-problem-appendix}
-    \min_{a\in\mathbb R^d} \frac{1}{n} \vert a^T\Phi_{\eta}(X_i) - y_i\vert^2 + \lambda a^TK a
+    \min_{a\in\mathbb R^d} \frac{1}{n} \vert a^\top \Phi_{\eta}(X_i) - y_i\vert^2 + \lambda a^\top K a
 \end{align}
 %
-where $\Phi_\eta(x) = (k_\eta(x, \tilde x_1) \dots k_\eta(x, \tilde x_M))^T\in\mathbb R^M$ and $K\in\mathbb R^{M\times M}$ is given by $K_{ij}=k_\eta(\tilde x_i, \tilde x_j)$.
+where $\Phi_\eta(x) = (k_\eta(x, \tilde x_1) \dots k_\eta(x, \tilde x_M))^\top \in\mathbb R^M$ and $K\in\mathbb R^{M\times M}$ is given by $K_{ij}=k_\eta(\tilde x_i, \tilde x_j)$.
 %
 Problem \cref{eq:learning-problem-appendix} is strongly convex and has a unique solution $\hat a$.
 %
-We denote $\hat g$ the Gaussian Linear Model defined by $\hat a, \eta,$ and $\tilde X$, i.e. such that for any $x \in\mathbb R^d$, $\hat g(x) = \hat a^T\Phi_\eta(x)$. Define $\hat f$ the Gaussian PSD Model $\hat f= \hat g^2$ where $\hat f(x) = \Phi_\eta(x)^T\hat a\hat a^T\Phi_\eta(x)$.
+We denote $\hat g$ the Gaussian Linear Model defined by $\hat a, \eta,$ and $\tilde X$, i.e. such that for any $x \in\mathbb R^d$, $\hat g(x) = \hat a^\top \Phi_\eta(x)$. Define $\hat f$ the Gaussian PSD Model $\hat f= \hat g^2$ where $\hat f(x) = \Phi_\eta(x)^\top \hat a\hat a^\top \Phi_\eta(x)$.
 %
 The analysis of \cite{sampling-ulysse} shows that when $M \geq C^\prime \log^d(\frac{1}{\epsilon})\log(\frac{1}{\delta\epsilon})\epsilon^{-d/\beta}$, and $n \geq C^\prime \epsilon^{-d/\beta}\log \frac{1}{\delta}$, then there exist two constants $C_3$ and $C_4$ independent of $g$ and $\hat g$ such that $\hat g$ verifies the following inequalities each with probability at least $1-\delta$,
 \begin{align}

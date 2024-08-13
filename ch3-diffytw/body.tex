@@ -1,50 +1,31 @@
 \section{Introduction}
-\paragraph{Motivating example} Consider two hikers (Felix and Gabrielle) that each go on an hour-long hike round-trip from Nice. They each record their altitude. From both recordings, can be determine if they took the same route (in altitude at least)? If they did indeed take the same route, they can have different speeds at different parts of the hour. For instance, Felix may be quicker than Gabrielle when going uphill but tends to be slower when going downhill. This warps their altitude profile as a function of time: Felix seems to have climbed steeper ascents and Gabrielle to have descended steeeper descents.
-\missingfigure{hiking example}
-We model their profiles by two functions $f:[0,1] \to [0, \infty[$ and $g:[0, 1] \to [0, \infty[$. We can model the time-warp caused by their differences in speed by a \emph{reparametrization} of time, i.e. the existence of an increasing diffeomorphism on $[0,1]$, such that $g$ is equal to $f$ composed with the reparametrization. More formally, we would have $g = f \circ Q$ where $Q$ is the reparametrization. Our goal in this work is to develop a divergence $d$ that compares $f$ and $g$ with a divergence $d$ such that $d(f, g)=0$ if there exists $Q$ such that $g = f \circ Q$.
 
-\paragraph{Time series alignment}
-Time-series are ubiquitous in data analysis applications. Some common tasks include forecasting, classification, clustering. These tasks rely on pair-wise comparaisons of time series, whether as loss functions (for example for training a forecaster), for feature engineering or in a classifier or as the distance function in clustering.
+Time-series are ubiquitous in data analysis applications with tasks such as forecasting, classification or clustering and in fields such as medecine, atmospheric sciences and weather, finance and economics, or robotics.
 
-Time-series cannot be compared as if they were vectors in Euclidean space. First, the length of the time-series can vary. Second, the points are not necessarily aligned in time: time warping, shifting, ... can be important to ignore in certain applications. In this work we focus on time warping, i.e. the transformation of time interval $[0,1]$ by a smooth reparametrization, i.e. an increasing diffeomorphism.
+At its heart, time-series analysis factors in the time-dependent structure of collected data\footnote{We will also study this problem for filtering in \cref{ch:hmm}.}. If this structure is to be exploited, time-series cannot be compared as if they were vectors in Euclidean space. Indeed, the points of two time-series do not necessarily portray data captured at comparable times (we say they are not \emph{aligned}). In fact, the instances can have a different number of points!
+
+Dynamic Time Warping (DTW) was introduced by \cite{dtw-sakoe} to compare time series and account for misalignment. DTW became the \emph{de facto} standard for comparing time series in analysis tasks, as well as a strong baseline for classification when combined with the nearest neighbor classifier\cite{dtw-baseline-1, dtw-baseline-2}. Intuitively, Dynamic Time Warping finds a minimal-cost alignment between two time series, while respecting the order of the points. In practice refinements of the DTW are used that constrain the possible matchings\cite{dtw-baseline-1}. This minimization is carried out in $O(nm)$ where the compared time-series are of length $n$ and $m$. DTW does not take into account when the samples occur, only their relative order. DTW is differentiable with respect to one of its inputs as soon as there is a unique solution to the matching (that does not make the DTW zero). Non-differentiability can happen in innocuous situations as illustrated in \cite{tavenard-dtw-diff}. Despite being non-smooth, DTW-based averaging methods such as DBA have been proposed\cite{dba-petitjean}.
+
+Soft Dynamic Time Warping (Soft-DTW) was proposed in \cite{sdtw} as a smooth replacement for DTW. Empirically, Soft-DTW behaves similarly to DTW, has equivalent computational complexity, is differentiable, and works better than DTW-based DBA for averaging based methods like clustering.
+
+With DTW and Soft-DTW are the most widely used elastic distances on time-series, we mention some extensions and other examples: the Fréchet distance\cite{frechet-clustering}, the Continuous-DTW distance\cite{cdtw}, extensions of (soft)DTW to comparing the feature space as well\cite{dtw-incomparable,vayer2022time}.
 
 
-\paragraph{DTW family of divergences} Dynamic Time Warping (DTW) was introduced by \cite{missing} to compare time series and is the \emph{de facto} standard for comparing time series. Intuitively, Dynamic Time Warping finds a matching between the points in each time series, while respecting the order of the points. More precisely, the cost incurred by each matching is the euclidean distance between the points, the DTW distance between two time series in the sum of the costs. Formally, consider $\mathcal A_{n, m}$ the set of alignment matrices, i.e. binary matrices of size $n\times m$ such that $A_{1,1}=A_{n, m}=1$ and if $A_{i,j} = 1$ then exactly one of the following is true: $A_{i+1, j}=1$ or $A_{i, j+1}=1$ or $A_{i+1, j+1}=1$. Then DTW is defined by
-\begin{equation}
-    d_{DTW}((f_1, \ldots, f_n), (g_1, \ldots, g_m)) = \min_{A_\pi \in\mathcal A_{n, m}} \langle A_\pi, D(f, g)\rangle
-\end{equation}
-$\mathcal A_{n,m}$ is the set of alignments and has exponential cardinality in $n, m$, though DTW can be computed in $O(nm)$ time thanks to dynamic programming.
-
-It is differentiable with respect to one of its inputs as soon as there is a unique solution to the matching (that does not make the DTW zero). Non-differentiability can happen in innocuous situations as illustrated in \cite{tavenar-dtw-diff}
-
-Soft Dynamic Time Warping (sDTW) was proposed in \cite{sdtw} by replacing the $\min$ operator by a softened $\min^\gamma$ operator:
-\begin{equation}
-d_{DTW}^\gamma((f_1, \ldots, f_n), (g_1, \ldots, g_m)) = -\gamma \log \sum_{A \in \mathcal A_{n,m}}\exp\left(-\frac{\langle A, D(f, g)\rangle}{\gamma}\right)
-\end{equation}
-if $\gamma > 0$ and is equal to $d_{DTW}$ if $\gamma=0$.
-Empirically, sDTW behaves similarly to DTW, has equivalent computational complexity, is differentiable, and works better than DTW-based DBA for averaging based methods like clustering.
-
-\paragraph{Prior work}
-Other approaches have been proposed: \cite{ref} applies an approximation of the Fréchet distance, \cite{ref} makes DTW more robust to shifts, \cite{ref} combines DTW with the Fréchet distance.
-
-\todo[inline]{Add problem statement... so what?}
 \paragraph{Approach \& Contributions}
-DiffyTW is divergence between functions on $[0,1]$ representing time-series. It is provably invariant to subset of smooth reparametrizations. The set of transformations it is invariant to can be tuned. It can be robustly and efficiently used to compare time-series, by solving a quadratic program. DiffyTW is differentiable with respect to its input and can be integrated in wider machine learning workflows. We illustrate and study DiffyTW's behavior on time series empirically.
+DiffyTW is divergence between functions on $[0,1]$ representing time-series. It is provably invariant to subset of smooth reparametrizations. The set of transformations it is invariant to can be tuned. It can be robustly and efficiently used to compare time-series, by solving a quadratic program. DiffyTW produces a dissimilarity score and a reparametrization that aligns the time series. DiffyTW is differentiable with respect to its input and can be integrated in wider machine learning workflows. We illustrate and study DiffyTW's behavior on time series empirically.
 
-\paragraph{Notation} In this chapter, a time series is represented by a sample pattern $(t_i)_{1 \leq i \leq n}$ such that $0 \leq t_1 < \ldots < t_n \leq 1$ (not necessarily random) and values $(f_i)_{1\leq i\leq n}$ where $f_i \in\mathbb R^d$. $\mathcal H$ is a Hilbert space, generally the Reproducing Kernel Hilbert space of a kernel $K$. $\mathcal Q$ is a set of diffeomorphisms on $[0,1]$. Functions $f,g:[0,1] \to \mathcal X$, where $\mathcal X$ is a metric space, generally $\mathcal R^d$.
+\paragraph{Notation} In this chapter, a time series is represented by a sample pattern $(t_i)_{1 \leq i \leq n}$ such that $0 \leq t_1 < \ldots < t_n \leq 1$ (not necessarily random) and values $(f_i)_{1\leq i\leq n}$ where $f_i \in\mathbb R^d$. $k$ is a positive definite kernel on $\mathbb R$ with reproducing kernel Hilbert space $\mathcal F$. $K$ is a positive definite kernel with reproducing kernel Hilbert space $\mathcal H$. Functions $f,g:[0,1] \to \mathcal X$, where $\mathcal X$ is a metric space, generally $\mathcal R^d$.
 
 \section{DiffyTW}
 \emph{In this section, we introduce \texttt{DiffyTW}, a dissimilarity between functions $[0,1] \to \mathcal X$ which is invariant to a chosen class of diffeomorphic reparametrizations of $[0,1]$.}
 
 \subsection{Intuition}
-Let $\mathcal Q$ be a set of increasing diffeomorphisms on $[0,1]$. Our goal is to concieve a divergence such that $d(f\circ Q, f) = 0$ for any $Q\in\mathcal Q$ and any $f:[0,1] \to \mathbb R^d$.
+We call \emph{reparametrization} any increasing, diffeomorphic function $Q:[0,1] \to [0,1]$. Let $\mathcal Q$ be a set of such functions. Our goal is to concieve a divergence such that $d(f\circ Q, f) = 0$ for any $Q\in\mathcal Q$ and any $f:[0,1] \to \mathbb R^d$.
 
 A key idea is to compare the integrals of $f\circ Q$ and $f$. Indeed, this allows one to apply the change of variable theorem:
-
 \begin{equation}
 \int_0^1 f\circ Q(x)Q^\prime(x)dx = \int_0^1 f(x)dx.
 \end{equation}
-
 Then,
 %\begin{equation}
 $q \mapsto \left\vert\int_0^1 f\circ Q(x)q(x) dx - \int_0^1 f(x)dx\right\vert$
@@ -73,7 +54,7 @@ We call this divergence DiffyTW.
 Note that as soon as $f$ and $g$ and measurable, then $d$ is well defined. Indeed, since $\phi$ is bounded on $[0,1]$ and $q$ is integrable, the integrals are well-defined Bochner integrals and $d(f, g)$ is finite and well-defined.
 
 \paragraph{Time-series alignment}
-If $f$ and $g$ are two functions representing two time-series, DiffyTW aligns $f$ and $g$. Indeed, we can --applying the change of variable theorem -- rewrite \cref{eq:diffytw} as
+If $f$ and $g$ are two functions representing two time-series, DiffyTW aligns $f$ and $g$. Indeed, we can -- applying the change of variable theorem -- rewrite \cref{eq:diffytw} as
 \begin{equation}\label{eq:diffytw-Q}
     d(f, g) = \min_{Q \in \mathcal Q} \left\Vert \int_0^1 \phi(f \circ Q^{-1}(x))dx - \int_0^1\phi(g(x))dx\right\Vert^2_\mathcal H
 \end{equation}
@@ -86,9 +67,12 @@ We adopt the following notation for convenience:
 \end{equation}
 
 \begin{figure}[ht!]
-\centering
-\includegraphics[width=0.8\textwidth]{ch3-diffytw/figures/diffytw-example.png}
-\caption{Example of time-series alignment.}
+\begin{center}
+\includegraphics[width=0.45\textwidth]{ch3-diffytw/figures/trace-demo.pdf}
+\includegraphics[width=0.45\textwidth]{ch3-diffytw/figures/trace-demo-Q.pdf}
+\end{center}
+\caption[Time series alignment with DiffyTW]{Time series aligment with DiffyTW: in this example, time series $g$ is transformed into $f=g\circ Q$ by reparametrization $Q$. The reparametrization computed by DiffyTW is $\hat Q$, and reconstruction $\hat f$ of $f$, which agrees with $f$.\textsuperscript{*}}
+\small\textsuperscript{*} Details: An instance $g$ of the Trace dataset from the UCR repository is transformed into $f$ by a reparametrization $Q$ induced by a NNLM from $\mathcal F_{0,1}^{M_w}$ with $M_{w}=30$ and $\eta_w= 100$ for the RBF kernel (see right plot, continous line). $\hat d_M$ is computed using parameters $M=100$, $\eta =100$ for the Laplace kernel (kernel $k$ that over time) and $\gamma=10$ for the RBF kernel (kernel $K$ over features). $\hat Q$ is the reconstruction of $Q$ from the solution to DiffyTW.
 \end{figure}
 
 \subsection{Invariance to time-warping}
@@ -169,6 +153,7 @@ We define $d_M(f, g)$ as $d(f,g)$ replacing $\mathcal F_{0,1}$ by $\mathcal F_{0
 d_M(f, g) = \min_{q \in\mathcal F_{0,1}^M} \Vert \int \phi(f(x))q(x) - \int \phi(g(x))dx\Vert_\mathcal H^2
 \end{equation}
 
+
 \paragraph{Quadratric Program} We can now find a natural expression for $\hat d_M(\hat f, \hat g)$ which combines representing $\hat f$ and $\hat g$ by adapted piece-wise constant functions and optimizing over $\mathcal F_{0,1}^M$. We exploit the linearity in the coordinates on $q$ in \cref{eq:diffytw-step-2} and develop the squared-norm. This leads to defining $\hat d_M(\hat f, \hat g)$ as the optimal value to a Quadratic program over the coordinates $q$ with a single equality constraint (corresponding to $\int_0^1q(x)dx = 1$) and $M$ inequality constraints ($q \geq 0$):
 \begin{equation}\label{eq:discrete-diffytw-informal}
 \hat d_M(\hat f, \hat g) :=\min_{\substack{q\in\mathbb R^{M}\\h^\top q=1\\0 \leq q}}\frac{1}{2}q^\top Pq - v^\top q + C
@@ -202,7 +187,7 @@ We begin by formally defining Discrete DiffyTW, as motivated above:
 \begin{equation}\label{prob:qp}
     \hat d_M(\hat f, \hat g) :=\min_{\substack{q\in\mathbb R^{M}\\h^\top q=1\\0 \leq q}}\frac{1}{2}q^\top Pq - v^\top q + C
 \end{equation}
-where $P= 2\tilde H^TK_{f, f}\tilde H$, $C= \delta^\top K_{g,g}\delta$ and $v= 2 \delta^TK_{g,f}\tilde H$. $\delta\in\mathbb R^{m-1}$ is defined by $\delta_j = y_{j+1} - y_j$. $\tilde H$ is defined in \cref{eq:H}, $[K_{fg}]_{ij} = K(f_i, g_j)$, $[K_{ff}]_{ij} = K(f_i, f_j)$, and $[K_{gg}]_{ij} = K(g_i, g_j)$, where $K(z_1, z_2) = \langle \phi(z_1), \phi(z_2)\rangle_\mathcal H$.
+where $P= 2\tilde H^\top K_{f, f}\tilde H$, $C= \delta^\top K_{g,g}\delta$ and $v= 2 \delta^\top K_{g,f}\tilde H$. $\delta\in\mathbb R^{m-1}$ is defined by $\delta_j = y_{j+1} - y_j$. $\tilde H$ is defined in \cref{eq:H}, $[K_{gf}]_{ij} = K(g_i, f_j)$, $[K_{ff}]_{ij} = K(f_i, f_j)$, and $[K_{gg}]_{ij} = K(g_i, g_j)$, where $K(z_1, z_2) = \langle \phi(z_1), \phi(z_2)\rangle_\mathcal H$.
 \end{definition}
 Notice that $P$ is symmetric, semi-definite positive by construction.
 
@@ -269,7 +254,7 @@ In this section, we denote:
 \begin{equation}\label{prob:fullqp}
     V(\theta) = \min_{q\in\mathcal C} \ell(q, \theta)
 \end{equation}
-where $\ell(q, \theta) = \frac{1}{2} q^\top Pq - v(\theta)^\top q + C(\theta)$ and $\mathcal C = \left\lbrace q\in\mathbb R^N ~\vert~ h^Tq=1, q \geq 0\right\rbrace$.
+where $\ell(q, \theta) = \frac{1}{2} q^\top Pq - v(\theta)^\top q + C(\theta)$ and $\mathcal C = \left\lbrace q\in\mathbb R^N ~\vert~ h^\top q=1, q \geq 0\right\rbrace$.
 
 The difficulty is differentiating through the $\min$ operator since the optimal $q^*$ depends on $\theta$. $V$ is differentiable and its gradient can be computed from the optimal solution $q^*$. Our proof is direct and does not rely on the Implicit Function Theorem (see below for a comparaison with other approaches).
 
@@ -282,7 +267,7 @@ The difficulty is differentiating through the $\min$ operator since the optimal 
 
 In particular, so long as $P$ is positive definite, $V$ is differentiable. This is ensured in all practical situations by definition of the Discrete DiffyTW. In practice, regularization is added to $P$ under the form $P + \lambda I$ to make the Quadratic program solver more stable.
 
-Our proof of \cref{thm:diffytw-grad} builds on a result from \cite{shapiro} and \cite{lee}, which give sufficient conditions for differentiability of quadratic programs. See \cref{sec:proof-diffytw-grad} for the proof. Note that a similar argument is used in \cite{tavenar-blog-diff} for the differentiability of DTW.
+Our proof of \cref{thm:diffytw-grad} builds on a result from \cite{shapiro} and \cite{lee}, which give sufficient conditions for differentiability of quadratic programs. See \cref{sec:proof-diffytw-grad} for the proof. Note that a similar argument is used in \cite{tavenard-dtw-diff} for the differentiability of DTW.
 
 \paragraph{Other methods for differentiability of QPs}
 There is a growing body of work on differentiating through convex programs, with three major approaches: analytical differentiation (when a closed-form solution to the convex problem is known, e.g. unconstrained QPs), unrolling (differentiating through the operations in the algorithm used to solve the convex problem), implicit differentiation (applying the implicit function theorem).
@@ -292,29 +277,60 @@ There is a growing body of work on differentiating through convex programs, with
 \end{remark}
 
 \section{Experiments}
+DiffyTW is implemented in the \texttt{difftw} library, open-sourced at \url{github.com/theophilec/diffytw}. This library implements the computation of DiffyTW, the gradient computation using the \texttt{jax} library. It can be used with different QP solvers.
 
-\subsection{Alignment with synthetic warpings}
+In this section, we demonstrate and study DiffyTW's behavior on the UCR dataset. Some takeaways of these experiments are:
 
-Consider the task of aligning times series, where the warp is known and in the function space considered. Formally, let $f$ be a time-series and $Q$ an inscreasing diffeomorphism such that $q = Q^\prime$ is in the function space considered. We compute $d(f\circ Q, f)$.
+\begin{itemize}
+    \item DiffyTW captures synthetic diffeomorphisms.
+    \item DiffyTW is sensitive to the choice of $\gamma$ (and more generally to the choice of $\phi$), including with synthetic warpings. Making DiffyTW more robust to this choice is key to making it useful for applied settings (such as averaging), and this is left for future work.
+    \item Regularizing the choice of $q$ has significant effect on the robustness of DiffyTW. Regularization is not studied in the previous sections and it is incorporated in practice by padding the Hessian matrix, which is necessary for numerical reasons. Adding regularization to the definition of DiffyTW (in the spirit of Diffy in \cref{ch:diffy}) and analyzing its role is left for future work.
+\end{itemize}
+
+\subsection{Introduction}
+
+\paragraph{Experiment design}
+We choose $\tilde X = (\tilde x_k)_{1\leq k \leq M}$ anchor points, $\eta >0$ and choose $\mathcal F_{0,1}^M$ to be the set of functions of the form $q(x) = \sum_{k=1}^Mq_k k_\eta(x, \tilde x_k)$ where $q\in\mathbb R^M$ verifies: $q \geq 0$, $g^\top q =1$, and $\int_0^1 q(u)du =1$.
+We consider $K$ the RBF kernel with $\gamma> 0$.
+
+\paragraph{Datasets} We rely on the UCR dataset\cite{ucr}. Specifically we use the Trace dataset. We compare elements of datasets, but also synthetic transformations of times-series from the UCR dataset. In that case, we consider the linear interpolation of $g \circ Q$. For completeness here is the Python code used for a time-series $x, g$ and a warping function $Q$: \texttt{np.interp(Q(x), x, g)}. Since these time series are well-sampled, we ignore the errors caused by interpolation.
 
 
 
-%\subsection{Barycenter computation}
-%Given a set $(f_1, \ldots, f_n)$ of time series, computing a barycenter of the data according to the geometry of an elastic distance adapted to time-series is a widely studies problem. \textcolor{red}{DBA} and \textcolor{red}{Soft-DTW} are two examples. These techniques are widely used in machine learning pipelines, for example, for set-based methods, for ...
+\subsection{Alignment with synthetic warpings} \emph{In this section, we illustrate the behavior of DiffyTW on a real dataset with synthetic warpings. This ensures that the warpings are attainable by DiffyTW.}
 
-%We use a non-convex solver such as L-BFGS and the gradient expressions in \cref{sec:differentiability} to appromimately minimize the Fréchet function associated to $(f_1, \ldots, f_n)$, namely:
-%\begin{equation}\label{eq:barycenter}
-%    \mathcal L(\mu) = \frac{1}{n}\sum_{i=1}^n d(f_i, \mu).
-%\end{equation}
-
-%We consider two variants of \cref{eq:barycenter}: $\mathcal L_1(\mu) = \frac{1}{n}\sum_{i=1}^n d(f_i,\mu)$ and $\mathcal L_2(\mu) = \frac{1}{n}\sum_{i=1}^n d(\mu, f_i)$
+Here we choose $\hat g\in\mathcal S$ (for Trace), generate $q \in \mathcal F_{0, 1}^M$ and $\hat f$ the transformation of $g$ by $Q = \int q$ (according to linear interpolation). We then compute $\hat d_M(\hat f, \hat g)$ over the same space $\mathcal F_{0,1}^M$ (we call this setting ``in-domain''). The value of $\eta$ is fixed by $\mathcal F^M$ but we show results with the best value of $\gamma$. We study the dependence on $\gamma$ in \cref{sec:XP-gamma}.
 
 
 
-%\subsection{Clustering: k-means \& k-medoids}
 
-%Given $(f_i)$ a set of time series and $K > 0$ an integer, the goal of clustering is to find $C_i \in \lbrace 1, \ldots, K\rbrace$ and $\mu_k$ such that the association $(f_k, i_k)$ minimizes an energy function such as:
-%\begin{align}
-%    (\mu_k), (C_i) \in \arg\min \sum_{k=1}^K\sum_{i=1}^n \mathbb I[C_i = k]d(f_i, \mu_k)
-%\end{align}
-%where $d$ is some metric. When $\mu_k$ are chosen among $(f_i)$, the task is known as k-mediods ; when the $\mu_k$ can be chosen arbitrarily, it is known as k-means.
+
+
+
+
+
+
+\subsection{Dependence of $\gamma$}\label{sec:XP-gamma}
+
+\begin{figure}[ht!]
+\begin{center}
+\includegraphics[width=\textwidth]{ch3-diffytw/figures/Figure-50words-rbf-30_rbf-100-laplace-10000.0-100-1.0e-05.pdf}
+\end{center}
+\caption[itopto]{Sensitivity to choice of $\gamma$}
+\small\textsuperscript{*} Details: For computing DiffyTW between the original and transformed time-series, the RBF kernel with parameter $\eta=100.0$ and $M=100$ anchor points is used for the time space, and the Laplace kernel with varying parameter $\gamma$.
+\end{figure}
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.8\textwidth]{ch3-diffytw/figures/Figure-outkernel-parameters.pdf}
+\caption[Sensitivity of DiffyTW to the choice of $\gamma$.]{\textbf{Sensitivity to the choice of $\gamma$.} This graph shows the residual Euclidean error after alignment by DiffyTW: $\Vert f\circ Q - f\Vert_2\circ \hat Q$ where $Q(x) = \int_0^x q(u)du$ where $q$ is drawn from $\mathcal F_{0,1}^M$ and $\hat Q(x) = \int_0^x \hat q(u)du$ where $\hat q$ is the solution to Discrete DiffyTW over $\mathcal F_{0,1}^M$.}
+\end{figure}
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.8\textwidth]{ch3-diffytw/figures/Figure-qnorm-qhatnorm.pdf}
+\caption{}
+\end{figure}
+
+
+\subsection{Runtime speed}

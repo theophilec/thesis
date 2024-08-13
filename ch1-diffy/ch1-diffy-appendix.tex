@@ -90,12 +90,13 @@ Note also that for the Sobolev space $W^1_\infty$ there exists the same type of 
 $$\|\tilde{u}\|_{W^1_\infty(\R^d)} \leq c_2 \|h\|_{W^1_\infty(Z)} + c_2 h(0),$$
 and also
 \eqals{
-\|\tilde{Q}\|_{W^1_\infty(\R^d,\R^d)}  &\leq c_2 \|Q|_Z\|_{W^1_\infty(Z, \R^d)}  = c_2\sup_{x \in Z} \max(\|Q(x)\|, \|\nabla Q(x)\|) \leq  c_2\textrm{diam}(Z) + c_2 \sup_{x \in Z} \|\nabla Q (x)\|.
+\|\tilde{Q}\|_{W^1_\infty(\R^d,\R^d)}  &\leq c_2 \|Q|_Z\|_{W^1_\infty(Z, \R^d)} \\&= c_2\sup_{x \in Z} \max(\|Q(x)\|, \|\nabla Q(x)\|) \\&\leq  c_2\textrm{diam}(Z) + c_2 \sup_{x \in Z} \|\nabla Q (x)\|.
 }
 Substituting the six bounds above in \cref{eq:bound-composition}, we obtain
-$$
-\|b\|_{H^m(\R^d)} \leq c \|\rho\|_{H^m(\R^d)}(c_2 h(0) \textrm{vol}(Z)^{1/2} ~+~ c^\prime ( \|h\|_{H^m(W)} + \|h\|_{W^1_\infty(Z)} + h(0) c^{\prime\prime})(\|Q|_Z\|_{H^m(Z, \R^d)} + D^m + L^m)),
-$$
+\begin{align*}
+\|b\|_{H^m(\R^d)} \leq &c \|\rho\|_{H^m(\R^d)}(c_2 h(0) \textrm{vol}(Z)^{1/2}\\
+& ~+~ c^\prime ( \|h\|_{H^m(W)} + \|h\|_{W^1_\infty(Z)} + h(0) c^{\prime\prime})(\|Q|_Z\|_{H^m(Z, \R^d)} + D^m + L^m)),
+\end{align*}
 where $D =\textrm{diam}(Z)^m $, $L = \sup_{x \in Z} \|\nabla Q (x)\|$ and $c^\prime = c c_2^2 (1 + 2^m c_2^{m-1})$, $c^{\prime\prime}=1+\textrm{vol}(Z)^{1/2}$, with $c, c_2$ depending only on $d, m, Z$.
 The final result is obtained considering that $x A + d (B + y A) R \leq (1+ d + d y)(B+A)(1+R)$ for any $x,y,d,A,B, R \geq 0$, and applying this result with $x=c_2(Z)\textrm{vol}(Z)^{1/2}$, $A = h(0)$, $d = c^\prime$, $B = \|h\|_{H^m(Z)} + \|h\|_{W^1_\infty(Z)}$, $y= c^{\prime \prime}$, $R = \|Q|_Z\|_{H^m(Z, \R^d)} + D^m + L^m$. In particular, in the final result, the constant $C$ corresponds to $C = 3(1+ d + d y)$ and we used the fact that $h(0) \leq \|h\|_{W^1_\infty(Z)} \leq \|h\|_{H^m(Z)}$, then $\|h\|_{H^m(Z)} + \|h\|_{W^1_\infty(Z)} + h(0) \leq 3 \|h\|_{H^m(Z)}$.
 
@@ -135,7 +136,9 @@ $$\|r\|_{H^m(Z)} \leq d! \|\nabla Q\|_{H^m(Z, \R^d)}^d.$$
 Now consider the function $b \in H^m(\R^d)$ defined according to \cref{thm:sobolev-smooth-composition} we have that $b(x) = s(Q(x))$ for any $x \in \R^d$. Now, define $\tilde{q}$ as follows
 $$ \tilde{q} = b  \cdot  E_Z[r].$$
 The function $\tilde{q}$ is in $H^m(Z)$, since it is the product of two functions in $H^m(Z)$ (see \cref{thm:sobolev-pointwise-product} and $r \in H^m(Z)$ (see \cref{thm:sobolev-restriction-extension}). Note, in particular, that \cref{eq:q-equivalence} holds, by construction. To conclude, note that, by applying \cref{thm:sobolev-pointwise-product} and \cref{thm:sobolev-restriction-extension}, we have
-$$ \|q\|_{H^m(\R^d)} \leq c_0 \|E_Z[r]\|_{H^m(\R^d)} \|b\|_{H^m(\R^d)} \leq c_0 c_2 \|r\|_{H^m(Z)} \|b\|_{H^m(\R^d)} \leq d! c_0 c_2 \|\nabla Q\|_{H^m(Z,\R^d)}^d \|b\|_{H^m(\R^d)}.$$
+\begin{align*}
+\|q\|_{H^m(\R^d)} &\leq c_0 \|E_Z[r]\|_{H^m(\R^d)} \|b\|_{H^m(\R^d)} \\&\leq c_0 c_2 \|r\|_{H^m(Z)} \|b\|_{H^m(\R^d)} \\&\leq d! c_0 c_2 \|\nabla Q\|_{H^m(Z,\R^d)}^d \|b\|_{H^m(\R^d)}.
+\end{align*}
 To conclude, we bound $b$ according with \cref{thm:sobolev-smooth-composition}, obtaining
 $$\|b\|_{H^m(\R^d)} \leq C\, \|s\|_{H^m(W)}\, d_{\Omega, Q}^{-m-d/2}(1 + \|Q\|_{H^m(Z, \R^d)} + D^m + L^m), $$
 and $\|s\|_{H^m(W)} \leq \|s\|_{H^m(\R^d)} \leq c_0 \|h\|_{H^m(\R^d)}\|\mu\|_{H^m(\R^d)}$, by \cref{thm:sobolev-pointwise-product}.
@@ -212,13 +215,13 @@ Moreover, for any $h, q \in \hh$ and $v \in {\cal F}$, we have
 }
 \end{lemma}
 \begin{proof}
-Since $k_Y$ is bounded, and $f, g$ are measurable, then $\Phi(f(\cdot)):X \to {\cal F}$ is bounded and measurable. Since $\mu \in C^\infty(\R^d)$ by assumption $X$ is bounded and $h$ is bounded and continuous since it belongs to $\hh$ and $k_X$ is bounded and continuous, so $J := \int_X \|\Phi(f(x))\|_{\cal F} \|\psi(x)\|_{\hh}|\mu(x)| \dd x < \infty$. This guarantees the existence of the following Bochner integral
-$F_\mu:=\int_X \Phi(f(x)) \otimes \psi(x) \mu(x)\dd x ~~ \in {\cal F} \otimes {\hh}.$
+Since $k_Y$ is bounded, and $f, g$ are measurable, then $\Phi(f(\cdot)):X \to {\cal F}$ is bounded and measurable. Since $\mu \in C^\infty(\R^d)$ by assumption $X$ is bounded and $h$ is bounded and continuous since it belongs to $\hh$ and $k_X$ is bounded and continuous, so $$J := \int_X \|\Phi(f(x))\|_{\cal F} \|\psi(x)\|_{\hh}|\mu(x)| \dd x < \infty$$. This guarantees the existence of the following Bochner integral
+$$F_\mu:=\int_X \Phi(f(x)) \otimes \psi(x) \mu(x)\dd x ~~ \in {\cal F} \otimes {\hh}.$$
 In particular, denoting by $\|\cdot\|_*$ the trace norm, i.e. $\|A\|_* = \tr(\sqrt{A^*A})$, and recalling that
 $\|u \otimes v\|_* = \tr(\sqrt{(u \otimes v)^*(u \otimes v)}) = \|u\|_{F}\|v\|_{\hh}$ for any $u \in {\cal U}, v \in {\cal V}$ and any two separable Hilbert spaces ${\cal U}, {\cal V}$, we have
 $$\|F_\mu\|_* \leq \int_X \|\Phi(f(x)) \otimes \psi(x)\|_* |\mu(x)| dx = \int_X \|\Phi(f(x))\|_{\cal F} \|\psi(x)\|_\hh |\mu(x)| dx =: J < \infty.$$
 Then $F_\mu$ is trace class.
-The same reasoning hold for $G$, considering that $\int_X \|\Phi(f(x))\|_{\cal F} \|\psi(x)\|_{H} \dd x < \infty$, since $X$ is compact.
+The same reasoning hold for $G$, considering that $$\int_X \|\Phi(f(x))\|_{\cal F} \|\psi(x)\|_{H} \dd x < \infty$$ since $X$ is compact.
 \end{proof}
 
 \subsection{Proof of \cref{theorem:closed-form}}\label{sec:proof-closed-form}
@@ -538,7 +541,7 @@ We use the following Imagenet statistics to normalize \emph{all} images:
 $$ \mu = [0.485, 0.456, 0.406]$$
 $$ \sigma =[0.229, 0.224, 0.225]$$
 
-\clearpage
+%\clearpage
 \section{\Diffy in action (supplementary experiments)} \label{app:additional-experiments}
 
 We propose a collection of experiments with \Diffy on the \texttt{peppers} (see \cref{fig:peppers}) image (with random square patches). We show the values \Diffy takes and the shapes of the optimal $h$ and $q$ for a choice of $\lambda$.
@@ -547,7 +550,7 @@ We propose a collection of experiments with \Diffy on the \texttt{peppers} (see 
 \begin{figure}[!h]
     \centering
     \includegraphics[width=0.5\textwidth]{ch1-diffy/figures/peppers.pdf}
-    \caption{Peppers image from Matlab software.}
+    \caption[Sample image for Diffy experiments.]{Peppers image from Matlab software.}
     \label{fig:peppers}
 \end{figure}
 

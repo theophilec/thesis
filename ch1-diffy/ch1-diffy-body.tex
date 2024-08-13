@@ -56,7 +56,7 @@ A key aspect is that \Diffy has very few ``hyper-parameters'' which can easily b
 \caption{$g_3$ (peppers among vegetables)}
 \label{fig:flowersq}
     \end{subfigure}
-\caption{\emph{Illustration of $\widehat D_\lambda$ on images.} We compute $\widehat D_\lambda(f_i, g_i)$ and materialize the optimal $h_i$ and $q_i$ selected by \Diffy (with thresholding for visualisation purposes), for $f_i$ and $g_i$ images taken with a smartphone. The mask $\mu$ is illustrated by the dashed circle (in light blue), see \cref{sec:details} for details. The images are taken from different views so as to provide different angles and lighting. \cref{fig:sceneh,fig:sceneq} show a scene of \texttt{objects} and a close-up on one of them (bottle opener). \cref{fig:raccoonh,fig:raccoonq} are taken from images of a raccoon (\texttt{raccoon}). \cref{fig:flowersh,fig:flowersq} are sub-patches from \texttt{peppers}, a scene with vegetables. Notice that $q_i$ visually matches the area highlighted by $h_i$, despite the perspective and scale changes. Additional details are gathered in \cref{sec:illustration}.}
+\caption[Illustration of Diffy on images.]{\emph{Illustration of $\widehat D_\lambda$ on images.} We compute $\widehat D_\lambda(f_i, g_i)$ and materialize the optimal $h_i$ and $q_i$ selected by \Diffy (with thresholding for visualisation purposes), for $f_i$ and $g_i$ images taken with a smartphone. The mask $\mu$ is illustrated by the dashed circle (in light blue), see \cref{sec:details} for details. The images are taken from different views so as to provide different angles and lighting. \cref{fig:sceneh,fig:sceneq} show a scene of \texttt{objects} and a close-up on one of them (bottle opener). \cref{fig:raccoonh,fig:raccoonq} are taken from images of a raccoon (\texttt{raccoon}). \cref{fig:flowersh,fig:flowersq} are sub-patches from \texttt{peppers}, a scene with vegetables. Notice that $q_i$ visually matches the area highlighted by $h_i$, despite the perspective and scale changes. Additional details are gathered in \cref{sec:illustration}.}
 \label{fig:example}
     \end{figure*}
 
@@ -83,7 +83,7 @@ As $|\nabla Q|$ (the determinant of the Jacobian of $Q$) is unknown, we can appr
 
 Indeed, when $g = f\circ Q$ for some diffeomorphism $Q$, choosing $q = \vert\nabla Q\vert$ minimizes \eqref{eq:prob}. However, this solution is not unique. Indeed there exist trivial solutions as $q = f / g$, that are irrespective of the existence of a $Q$ such that $g=f\circ Q$ or not.
 
-\textbf{Range of statistics.} One way of reducing the class of solutions to ones that are relevant to our original question is to study not only how well the weighted integral of $g$ can approximate the integral of $f$, but also require that the same weight approximate a wide class of transformations of $f$. A natural example with inspiration in probability theory is to be able to approximate all moments of $f$, \emph{i.e.}, the integrals of the moments $v_1(f) = f, v_2(f) = f^2, \dots$, or more general statistics. The function $q = f / g$ may match the integral of $v_1(g)$ with that of $v_1(f)$, but cannot work for $v_2$. However, if $g = f\circ Q$, $q = |\nabla Q(x)|$ (the solution we are seeking), satisfies that for any continuous function $v: \R^p \to \R$,
+\paragraph{Range of statistics.} One way of reducing the class of solutions to ones that are relevant to our original question is to study not only how well the weighted integral of $g$ can approximate the integral of $f$, but also require that the same weight approximate a wide class of transformations of $f$. A natural example with inspiration in probability theory is to be able to approximate all moments of $f$, \emph{i.e.}, the integrals of the moments $v_1(f) = f, v_2(f) = f^2, \dots$, or more general statistics. The function $q = f / g$ may match the integral of $v_1(g)$ with that of $v_1(f)$, but cannot work for $v_2$. However, if $g = f\circ Q$, $q = |\nabla Q(x)|$ (the solution we are seeking), satisfies that for any continuous function $v: \R^p \to \R$,
 \eqals{
 \int v(f(Q(x))) |\nabla Q(x)| \dd x = \int v(f(x)) \dd x.
 }
@@ -100,7 +100,7 @@ Problem \eqref{eq:prob} is thus replaced by the following one, which also has $q
 % %\end{figure}
 
 
-\textbf{Uniformity over regions.} Problem \eqref{eq:prob2} averages the statistics uniformly over the whole space irrespectively of the fact that a witness of $g \neq f \circ Q$ could live in a lower dimensional region. For instance $g$ and $f$ might be non-zero only on a small region of the space, consequently yielding to a relatively small value for \cref{eq:prob2}. To enhance such regions, we choose to integrate with respect to a smooth function $h$, that is chosen adversarially to maximize the dissimilarity between $f$ and $g$.  %We require that for any region of the domain of $f$ and $g$ (encoded by $h$), there exists an equally smooth function $q$ whose induced transformation on $v(g)$ matches that of $h$ on $\phi(f)$.
+\paragraph{Uniformity over regions.} Problem \eqref{eq:prob2} averages the statistics uniformly over the whole space irrespectively of the fact that a witness of $g \neq f \circ Q$ could live in a lower dimensional region. For instance $g$ and $f$ might be non-zero only on a small region of the space, consequently yielding to a relatively small value for \cref{eq:prob2}. To enhance such regions, we choose to integrate with respect to a smooth function $h$, that is chosen adversarially to maximize the dissimilarity between $f$ and $g$.  %We require that for any region of the domain of $f$ and $g$ (encoded by $h$), there exists an equally smooth function $q$ whose induced transformation on $v(g)$ matches that of $h$ on $\phi(f)$.
 In other words, we arrive at the following optimization problem:
 \eqals{
 \max_{h \in \hh_1} \min_{q} \max_{v \in V} \left|\int v(g(x)) q(x) \dd x - \int v(f(x)) h(x) \dd x\right|,
@@ -150,7 +150,7 @@ where $\Delta_{f, g}(h, q)$ is defined as follows,
 \end{align*}
 \end{definition}
 
-When clear from context, we write $D$ instead of $D_\la$ for the sake of conciseness.
+\noindent When clear from context, we write $D$ instead of $D_\la$ for the sake of conciseness.
 
 %The reader should easily recognize the construction described in \cref{sec:informal}. We have made the space in which we search for $q$ and $h$ precise: $\hh$, the RHKS of $k_X$. Regularity of $h$ is enforced by searching in the unit ball, while regularity of $q$ is enforced with Tikhonov regularization. This choice allows at the same time to compute the dissimilarity in closed form (see \cref{sec:computing}), while not sacrificing its expressivity (see \cref{sec:approximation}). In particular, to allow a very rich set of statistics that is also manageable from a computational viewpoint, we choose $V$ to be the unit ball of ${\mathcal F}$. For example, if $Y$ is a bounded subset of $\R^p$ and $k_Y$ is chosen as the Laplace kernel $k_Y(y,y') = \exp(-\|y-y'\|)$, then a rescaled version of any infinitely smooth function belongs to $V$ (including in particular all polynomials, smooth probabilities, Fourier basis -- see \cref{app:background} for more details). For the same reason we choose $\hh_1$ to be the unit ball of $\hh$ and we choose also $q \in \hh$.
 \cref{fig:example} shows a few examples of the role played by the $h$ and $q$ optimizing the problem in \cref{eq:def-D}.
@@ -167,7 +167,7 @@ When clear from context, we write $D$ instead of $D_\la$ for the sake of concise
         \includegraphics[width=\textwidth]{ch1-diffy/figures/fig_warping/warping_right.pdf}
         \caption{\emph{$\textrm{RMSE}(f, \textrm{warp}(f, T))$ against $\widehat D_\lambda(f, \textrm{warp}(f, T))$ for various values of $T$ and images $f$.} $1000$ images are each warped once for each value of $T$. We represent the random regime for each metric.}
     \end{subfigure}
-    \caption{\emph{Invariance to general diffeomorphisms (warping).} Warping is randomly generated, its intensity controlled by a temperature parameter $T$ (higher $T$ produces, on average, warps with higher displacement norm). In (a): $\widehat D_\la$ stays constant (i.e. invariant to the warps) as long as their norm is not too strong (small T), while RMSE increases exponentially. When $T$ becomes large the transformations become intense (indeed they are non-diffeomorphic) and $\widehat D_\la$ grows to reflect this fact.  In (b): we see that $\widehat D_\la$ stays invariant to warps as long as $T \leq 0.1$ (far from the random regime interval), while the Euclidean distance increases exponentially with $T$, even for small $T$. See \cref{sec:invariance-warping} for more details.}
+    \caption[Invariance of Diffy to general diffeomorphisms (warping).]{\emph{Invariance to general diffeomorphisms (warping).} Warping is randomly generated, its intensity controlled by a temperature parameter $T$ (higher $T$ produces, on average, warps with higher displacement norm). In (a): $\widehat D_\la$ stays constant (i.e. invariant to the warps) as long as their norm is not too strong (small T), while RMSE increases exponentially. When $T$ becomes large the transformations become intense (indeed they are non-diffeomorphic) and $\widehat D_\la$ grows to reflect this fact.  In (b): we see that $\widehat D_\la$ stays invariant to warps as long as $T \leq 0.1$ (far from the random regime interval), while the Euclidean distance increases exponentially with $T$, even for small $T$. See \cref{sec:invariance-warping} for more details.}
     \label{fig:warping}
 \end{figure*}
 
@@ -261,7 +261,7 @@ The proof of \cref{theorem:closed-form} comes from identifying the inner optimiz
 \begin{figure}[t]
     \centering
     \includegraphics[width=0.8\textwidth]{ch1-diffy/figures/fig_rotation/rotation}
-    \caption{\emph{Invariance to rotation.} We consider a patch $f$ (size $100\times 100$) of a larger scene (\texttt{peppers.jpeg}) and compare it to its rotated versions $\text{rotate}(f, \alpha)$, where $\alpha$ is an angle. $D(f, \text{rotate}(f, \alpha))$ is represented with $+$ symbols and $\textrm{RMSE}(f, \text{rotate}(f, \alpha))$ with $\times$ symbols. Random regimes are represented by shaded areas (see text). Both $\widehat D_\la$ and the RMSE seem constant as a function of $\alpha$ (although with $\alpha=0$ or $\alpha=180$ a smaller value is achieved). However, the RMSE of the rotated patches falls in (or close to) the confidence interval, making them indistinguishable from random patches from the same image. $\widehat D_\la$ takes values that are over $10 \times$ smaller for rotated patches that for random patches. Hence, \Diffy is invariant to rotation, whereas RMSE is constant (for $\alpha > 0$). Here $\la = 10^{-6}$. See \cref{sec:invariance-rotation} for more details.}
+    \caption[Invariance of Diffy to rotation.]{\emph{Invariance to rotation.} We consider a patch $f$ (size $100\times 100$) of a larger scene (\texttt{peppers.jpeg}) and compare it to its rotated versions $\text{rotate}(f, \alpha)$, where $\alpha$ is an angle. $D(f, \text{rotate}(f, \alpha))$ is represented with $+$ symbols and $\textrm{RMSE}(f, \text{rotate}(f, \alpha))$ with $\times$ symbols. Random regimes are represented by shaded areas (see text). Both $\widehat D_\la$ and the RMSE seem constant as a function of $\alpha$ (although with $\alpha=0$ or $\alpha=180$ a smaller value is achieved). However, the RMSE of the rotated patches falls in (or close to) the confidence interval, making them indistinguishable from random patches from the same image. $\widehat D_\la$ takes values that are over $10 \times$ smaller for rotated patches that for random patches. Hence, \Diffy is invariant to rotation, whereas RMSE is constant (for $\alpha > 0$). Here $\la = 10^{-6}$. See \cref{sec:invariance-rotation} for more details.}
     \label{fig:rotation}
 \end{figure}
 
@@ -357,7 +357,7 @@ Finally, the method introduced is empirically quite robust to the choice of para
 \begin{figure}[t]
     \centering
     \includegraphics[width=0.8\textwidth]{ch1-diffy/figures/fig_regularization/regularization.pdf}
-    \caption{\emph{Effect of regularization.} We consider the same image and setting as in \cref{fig:warping} and vary $T$ and $\lambda$ (shaded areas are std deviation over $50$ warps). Observe: (1) $\widehat D_\la$ increases as a function of $T$ (as the norm of the diffeomorphism increases); (2) $\widehat D_\la$ is  proportional to $\lambda$. Both of these phenomena are predicted by \cref{theorem:main-theorem}. See \cref{sec:regularization} for more details.}
+    \caption[Effect of regularization on Diffy.]{\emph{Effect of regularization.} We consider the same image and setting as in \cref{fig:warping} and vary $T$ and $\lambda$ (shaded areas are std deviation over $50$ warps). Observe: (1) $\widehat D_\la$ increases as a function of $T$ (as the norm of the diffeomorphism increases); (2) $\widehat D_\la$ is  proportional to $\lambda$. Both of these phenomena are predicted by \cref{theorem:main-theorem}. See \cref{sec:regularization} for more details.}
     \label{fig:regularization}
 \end{figure}
 
@@ -386,20 +386,21 @@ This section investigates the empirical performance of \Diffy. We observe that, 
 
 We implemented $\widehat{D}_\la$ as in \cref{eq:widehatD-finite-dimensional} as described in the end of \cref{sec:approximation} using standard linear algebra routines such as matrix and matrix-vector products, matrix inversions, and eigendecompositions. The Python source code used for the experiments presented here is freely available at \href{https://github.com/theophilec/diffy}{https://github.com/theophilec/diffy}, depends on Numpy and Pytorch and supports using GPUs.
 
-\textbf{Normalization.}
+\paragraph{Normalization.}
 In practice we normalize $\widehat A$ and $\widehat B$ by their operator norms $\norop{\widehat A}$ and $\norop{\widehat B}$. This normalizes $D_\lambda$ between $0$ and $1$ and makes interpretation easier.
 
-\textbf{Choice of mask.}
+\paragraph{Choice of mask.}
 We choose $\mu$ to be a Blackman window, a standard windowing function in image processing. In 1-D, the Blackman window is defined for any $0 \leq t \leq 1$ as:
 $\mu(t) = 0.42 - 0.5\cos(2\pi t) + 0.08 \cos(4\pi t)$ \cite{oppenheim99}.
 We generalize it to higher-dimension by considering its tensor-product over dimensions.
 
-\textbf{Choice of kernel.}
+\paragraph{Choice of kernel.}
 Because we work with images in the experiments we present, $X = \R^2$ (coordinate space) and $Y = \R^3$ (color space). We consider the Gaussian kernel defined as $k(x, x^\prime) = \exp(- \|x - x^\prime\|^2/(2\sigma^2))$ on $X$ and the Laplace kernel defined as $k(y, y^\prime) = \exp(-a \| y - y^\prime \|)$ on $Y$. For the experiments presented in this paper, unless otherwise stated, \Diffy has parameters: $M_X = 100$, $M_Y = 16^3$, $\sigma = 1/6$ and $a=5$.
-\textbf{Datasets.}
+
+\paragraph{Datasets.}
 We rely on images from Imagenet (more precisely from the \texttt{Imagenette} subset), example images from the Matlab software (\texttt{peppers}), and finally images taken with our personal devices for illustrations (\texttt{raccon, flowers, objects}). All images are made available with the source code.
 
-\textbf{Diffeomorphism generation.} Diffeomorphism are obtained either by affine transformations or by generating warpings. In particular, for warpings, we use the code from \cite{wyartdiffeo}. We generate random transformations of images by displacing each of its coordinates independently (while enforcing zero displacement at the edge of the grid) then interpolating the colors.  We choose the standard deviation of the displacements of each pixel so as to obtain a transformation of given (average) displacement norm. This can be controlled by two parameters $T$ (a temperature, between $10^{-4}$ and $10$) and $c$ (a cut-off parameter, taking $c=2$). We denote $\text{warp}(f, T)$ such a (random) warp. Examples of warps for various $T$ parameters (and samples) are provided in \cref{sec:appendix-warping}.
+\paragraph{Diffeomorphism generation.} Diffeomorphism are obtained either by affine transformations or by generating warpings. In particular, for warpings, we use the code from \cite{wyartdiffeo}. We generate random transformations of images by displacing each of its coordinates independently (while enforcing zero displacement at the edge of the grid) then interpolating the colors.  We choose the standard deviation of the displacements of each pixel so as to obtain a transformation of given (average) displacement norm. This can be controlled by two parameters $T$ (a temperature, between $10^{-4}$ and $10$) and $c$ (a cut-off parameter, taking $c=2$). We denote $\text{warp}(f, T)$ such a (random) warp. Examples of warps for various $T$ parameters (and samples) are provided in \cref{sec:appendix-warping}.
 
 \subsection{Illustrative examples}\label{sec:illustration}
 

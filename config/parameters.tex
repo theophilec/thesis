@@ -46,7 +46,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%  Graphics / Table / List %%%%%%%%%%%
 \usepackage{graphicx,array,tikz,multirow}
-\usepackage{caption,subcaption} % permet de faire des subfigures (remplace le package subfig)
+\usepackage[listformat=empty]{caption} % permet de faire des subfigures (remplace le package subfig)
+\usepackage{subcaption}
 \usepackage{svg,float}
 \usepackage{booktabs,paralist}
 \newcolumntype{x}[1]{>{\centering\arraybackslash\hspace{0pt}}p{#1}}
@@ -99,7 +100,7 @@
 
 % Pour la table des matières
 \usepackage[nohints,tight]{minitoc}		% Mini table des matières, en français
-\setcounter{minitocdepth}{3} % Mini-toc détaillées (sections/sous-sections)
+\setcounter{minitocdepth}{2} % Mini-toc détaillées (sections/sous-sections)
 \setlength{\mtcindent}{-1em} % décalage des minitoc à gauche
 \dominitoc
 
@@ -166,7 +167,7 @@
 \Crefname{figure}{Figure}{Figures} % traduction des références aux figures/tables/équations
 \crefname{figure}{Figure}{Figures}
 \Crefname{equation}{Equation}{Equations}
-\crefname{equation}{eq.}{eqs.}
+\crefname{equation}{}{eqs.}
 \Crefname{table}{Table}{Tables}
 \crefname{table}{Table}{Tables}
 

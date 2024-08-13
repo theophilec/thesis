@@ -200,42 +200,42 @@ These inequalities are proven in \cite{cohen}.
 
 \subsection{Proof of \cref{theorem:kalman}}\label{sec:proof_kalman}
 \begin{proof}
-Let $P = L^T\Sigma^{-1}L$ where $L = (F ~-I)$ and $P_\lambda = P + \lambda I$.
+Let $P = L^\top\Sigma^{-1}L$ where $L = (F ~-I)$ and $P_\lambda = P + \lambda I$.
 
 We have
 
 \begin{align}
     -\log p(y|x) &= -C_\Sigma + \Vert \Sigma^{-1/2}(Fx + b -y)\Vert^2 = -C_\Sigma + \Vert \Sigma^{-1/2}(Lu + b)\Vert^2\\
-                 &= -C_\Sigma + uL^T\Sigma^{-1}Lu - 2b^T\Sigma^{-1}Lu + b^T\Sigma^{-1}b
+                 &= -C_\Sigma + uL^\top \Sigma^{-1}Lu - 2b^\top \Sigma^{-1}Lu + b^\top \Sigma^{-1}b
 \end{align}
 
-If we define $\mu = P_{\lambda}^{-1}\beta$ where $\beta = L^T\Sigma^{-1}b$ then,
+If we define $\mu = P_{\lambda}^{-1}\beta$ where $\beta = L^\top \Sigma^{-1}b$ then,
 \begin{align}
     -\log p(y|x) & = -C + \Vert P_\lambda^{1/2}\left(u - \mu\right)\Vert^2\\
-                 & = -C + u^T P_\lambda u - 2 \mu^T P_\lambda u + \mu^T P_\lambda \mu\\
-                 & = -C + u^TPu + \lambda \Vert u \Vert^2 -2 \beta^Tu + \beta^TP_\lambda^{-1}P_\lambda P_\lambda^{-1}\beta\\
-                 & = -C + u^TPu + \lambda \Vert u \Vert^2 -2 \beta^Tu + \beta^TP_\lambda^{-1}\beta\\
+                 & = -C + u^\top  P_\lambda u - 2 \mu^\top  P_\lambda u + \mu^\top  P_\lambda \mu\\
+                 & = -C + u^\top Pu + \lambda \Vert u \Vert^2 -2 \beta^\top u + \beta^\top P_\lambda^{-1}P_\lambda P_\lambda^{-1}\beta\\
+                 & = -C + u^\top Pu + \lambda \Vert u \Vert^2 -2 \beta^\top u + \beta^\top P_\lambda^{-1}\beta\\
 \end{align}
 
 And so,
 \begin{align}
-    - \log(p(y|x)/\hat p(y/x)) &= -C_\Sigma + uPu - 2\beta^Tu + b^T\Sigma^{-1}b + C - u^TPu - \lambda \Vert u \Vert^2 +2 \beta^Tu - \beta^TP_\lambda^{-1}\beta\\
-   &= C -C_\Sigma+ b^T\Sigma^{-1}b - \lambda \Vert u \Vert^2 - \beta^TP_\lambda^{-1}\beta
+    - \log(p(y|x)/\hat p(y/x)) &= -C_\Sigma + uPu - 2\beta^\top u + b^\top \Sigma^{-1}b + C - u^\top Pu - \lambda \Vert u \Vert^2 +2 \beta^\top u - \beta^\top P_\lambda^{-1}\beta\\
+   &= C -C_\Sigma+ b^\top \Sigma^{-1}b - \lambda \Vert u \Vert^2 - \beta^\top P_\lambda^{-1}\beta
 \end{align}
 
 Using Woodbury,
 \begin{align}
-    b^T \Sigma^{-1}b - \beta^TP_\lambda^{-1}\beta &= b^T\left(\Sigma^{-1} - \Sigma^{-1}L\left[ L^T\Sigma^{-1}L + \lambda I\right]^{-1}L^T-\Sigma^{-1}\right)b\\
-    &=\lambda b^T\left( \lambda \Sigma + LL^T\right)^{-1}b
+    b^\top  \Sigma^{-1}b - \beta^\top P_\lambda^{-1}\beta &= b^\top \left(\Sigma^{-1} - \Sigma^{-1}L\left[ L^\top \Sigma^{-1}L + \lambda I\right]^{-1}L^\top -\Sigma^{-1}\right)b\\
+    &=\lambda b^\top \left( \lambda \Sigma + LL^\top \right)^{-1}b
 \end{align}
 
 and
 
 \begin{align}
-    - \log(p(y|x)/\hat p(y/x)) &= C -C_\Sigma + \lambda b^T\left( \lambda \Sigma + LL^T\right)^{-1}b- \lambda \Vert u \Vert^2
+    - \log(p(y|x)/\hat p(y/x)) &= C -C_\Sigma + \lambda b^\top \left( \lambda \Sigma + LL^\top \right)^{-1}b- \lambda \Vert u \Vert^2
 \end{align}
 
-With $C = C_\Sigma - \lambda b^T\left( \lambda \Sigma + LL^T\right)^{-1}b$, $\frac{p(y|x)}{\hat p(x, y)} = e^{\lambda \Vert u \Vert^2}$ and the result follows.
+With $C = C_\Sigma - \lambda b^\top \left( \lambda \Sigma + LL^\top \right)^{-1}b$, $\frac{p(y|x)}{\hat p(x, y)} = e^{\lambda \Vert u \Vert^2}$ and the result follows.
 \end{proof}
 
 \subsection{Learning Generalized Gaussian PSD Models}\label{sec:learning-general}

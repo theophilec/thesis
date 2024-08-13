@@ -28,16 +28,16 @@ Because of the need to compute the determinant of $P_{ij}$ the computational com
 where \begin{equation}
 P = \left(\begin{array}{c c}
     P_{xx} & P_{xy}  \\
-    P_{xy}^T & P_{yy}
+    P_{xy}^\top  & P_{yy}
 \end{array} \right).
 \end{equation}
 \end{proposition}
 \begin{proof}
 We can compute $B^\prime(x)$ by expanding $C - \log(B(x, y)_{ij})$ for any $i,j$. Dropping the $i,j$ dependence:
 \begin{align}
-     \left\Vert P^{1/2}\left(\begin{bmatrix}x\\ y\end{bmatrix} - \mu \right)\right\Vert^2 =&  x^TP_{xx}x + 2y P_{xy}^Tx + yP_{yy}y - 2\mu P\begin{bmatrix}x\\ y\end{bmatrix}  + \mu P \mu\\
-    =&  x^TP_{xx}x + 2y P_{xy}^Tx + yP_{yy}y - 2\mu_x P_{xx}x -2\mu_xP_{xy}y -2\mu_yP_{xy}x -2\mu_yP_{yy}y + \mu P \mu\\
-    =&  x^TP_{xx}x -2(\underbrace{\mu_xP_{xx}+\mu_y P_{xy} -yP_{xy}^T}_\nu)x + yP_{yy}y -2\mu_xP_{xy}y -2\mu_yP_{yy}y + \mu P \mu\\
+     \left\Vert P^{1/2}\left(\begin{bmatrix}x\\ y\end{bmatrix} - \mu \right)\right\Vert^2 =&  x^\top P_{xx}x + 2y P_{xy}^\top x + yP_{yy}y - 2\mu P\begin{bmatrix}x\\ y\end{bmatrix}  + \mu P \mu\\
+    =&  x^\top P_{xx}x + 2y P_{xy}^\top x + yP_{yy}y - 2\mu_x P_{xx}x -2\mu_xP_{xy}y -2\mu_yP_{xy}x -2\mu_yP_{yy}y + \mu P \mu\\
+    =&  x^\top P_{xx}x -2(\underbrace{\mu_xP_{xx}+\mu_y P_{xy} -yP_{xy}^\top }_\nu)x + yP_{yy}y -2\mu_xP_{xy}y -2\mu_yP_{yy}y + \mu P \mu\\
     =&  \left\Vert P_{xx}^{1/2}\left(x - P_{xx}^{-1}\nu\right)\right\Vert^2 - \nu P_{xx}^{-1}\nu + yP_{yy}y -2\mu_xP_{xy}y -2\mu_yP_{yy}y + \mu P \mu.
 \end{align}
 \end{proof}
@@ -82,7 +82,7 @@ Because of the need to compute the determinant of $P$ as well as invert it, the 
     \begin{align}
     A^\prime &= A \otimes \tilde A\\
     P_{ijkl}^\prime &= \left[\begin{array}{ccc}
-    P_{ijxx} & P_{ijxy}^T & 0 \\
+    P_{ijxx} & P_{ijxy}^\top  & 0 \\
     P_{ijxy} &P_{ijyy} + \tilde P_{klyy}  & \tilde P_{klyz} \\
     0 & \tilde P_{klyz} & \tilde P_{klzz}
     \end{array}\right]\\
@@ -114,14 +114,14 @@ Notice that:
 Let us compute the following term by computing the square:
     \begin{align}
      &\left\Vert {P_{ij}}^{1/2}\left[\begin{pmatrix}x\\y\end{pmatrix}- \mu_{ij}\right]\right\Vert^2 + \left\Vert {\tilde P_{kl}}^{1/2}\left[\begin{pmatrix}y\\ z\end{pmatrix}- \tilde\mu_{kl}\right]\right\Vert^2 \\
-     &= \begin{pmatrix}x\\ y\\ z\end{pmatrix}^TP_{ijkl}\begin{pmatrix}x\\ y\\ z\end{pmatrix}- 2\hat\mu_{ijkl}^T\begin{pmatrix}x\\ y\\ z\end{pmatrix} +\mu_{ij}P_{ij}\mu_{ij} + \tilde\mu_{kl}\tilde P_{kl}\tilde\mu_{kl}\\
+     &= \begin{pmatrix}x\\ y\\ z\end{pmatrix}^\top P_{ijkl}\begin{pmatrix}x\\ y\\ z\end{pmatrix}- 2\hat\mu_{ijkl}^\top \begin{pmatrix}x\\ y\\ z\end{pmatrix} +\mu_{ij}P_{ij}\mu_{ij} + \tilde\mu_{kl}\tilde P_{kl}\tilde\mu_{kl}\\
      &= \left\Vert P_{ijkl}^{1/2}\left(\begin{pmatrix}x\\ y\\ z\end{pmatrix} - P_{ijkl}^{-1}\hat\mu_{ijkl}\right) \right\Vert^2 - \hat\mu_{ijkl}P_{ijkl}^{-1}\hat\mu_{ijkl}+\mu_{ij}P_{ij}\mu_{ij} + \tilde\mu_{kl}\tilde P_{kl}\tilde\mu_{kl}\\
     \end{align}
 
     where
     \begin{equation}
     P_{ijkl} = \left[\begin{array}{ ccc }
-    {P_{ij}}_{xx} & {P_{ij}}_{xy}^T & 0 \\
+    {P_{ij}}_{xx} & {P_{ij}}_{xy}^\top  & 0 \\
     {P_{ij}}_{xy} &P_{ijyy} + \tilde P_{klyy}  & \tilde P_{klyz} \\
     0 & \tilde P_{klyz} & \tilde P_{klzz}
     \end{array}\right],
