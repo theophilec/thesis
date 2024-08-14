@@ -10,7 +10,7 @@ This chapter aims to be self-contained. For a complete introduction to Hidden Ma
 
 Two quintessential problems in filtering are studying the stability and robustness of the optimal filter, and computing an approximation of it in practice.
 
-The stability of the optimal filter is related the robustness of the sequence $\pi_n^\nu$ with respect to the initial distribution $\nu$, which is generally unknown and estimates or priors are used in practice. The optimal filter is stable when its dependence on the initial distribution decreases as more observations are provided (also known as ``forgetting''). More formally, a filter is stable when the distance between $\pi_n^\nu$ and $\pi_n^\mu$ goes to zero as $n\to\infty$ for any two initial distributions $\nu$ and $\mu$. Filter stability has attracted considerable interest since the first contributions of \cite{ocone} and \cite{kunita}. Some references relevant to this work include \cite{oudjane,mcdonald2020,legland99,decastro2017,mitrophanov-hmm-stability-2005}.
+The stability of the optimal filter is related the robustness of the sequence $\pi_n^\nu$ with respect to the initial distribution $\nu$, which is generally unknown and estimates or priors are used in practice. The optimal filter is stable when its dependence on the initial distribution decreases as more observations are provided (also known as ``forgetting''). More formally, a filter is stable when the distance between $\pi_n^\nu$ and $\pi_n^\mu$ goes to zero as $n\to\infty$ for any two initial distributions $\nu$ and $\mu$. Filter stability has attracted considerable interest since the first contributions of \cite{ocone} and \cite{kunita}. Some references relevant to this chapter include \cite{oudjane,mcdonald2020,legland99,decastro2017,mitrophanov-hmm-stability-2005}.
 A modern review of the literature and different approaches can be found in \cite{kim2022duality}.
 
 In general, the iteration in \cref{eq:bayes-0} is intractable. Two exceptions are when the state-space in finite or when the state-space is continuous but the transition kernels are Gaussian Linear Conditional Distributions. In the former case, the algorithm is known as the \textit{forward algorithm}. In the latter, the algorithm is the well-known Kalman filter \cite{kalman-bucy}. The Kalman filter is known to compute the recursion \cref{eq:bayes-0} exactly where the Hidden Markov Model has linear dynamics and observations and independent Gaussian noise. More precisely, the Kalman filter algorithm tracks the mean and covariance of the state distribution (the law of $X_n$ given $Y_1, \ldots, Y_n$).
@@ -22,7 +22,7 @@ Gaussian PSD Models were introduced in \cite{ciliberto2021} as models for probab
 
 
 \subsection*{Approach \& Contributions}
-In this paper, we study the problem of performing the iteration in \cref{eq:bayes-0} when using approximations of the transition $Q$ and observation $G$ probabilities. Our approach is in two steps. First, we approximate $Q$ and $G$ with Gaussian PSD models $\hat Q$ and $\hat G$ using a convex algorithm with optimal learning rates. Second, we study the $\hat \pi_n(dx)$ a new estimator of $\pi_n(dx)$, which leverages the closed form application of \cref{eq:bayes-0} with $\hat Q$ and $\hat G$. The proposed estimator extends previous filtering strategies, such as the Kalman filter and offers strong theoretical guarantees on a large family of application settings.
+In this chapter, we study the problem of performing the iteration in \cref{eq:bayes-0} when using approximations of the transition $Q$ and observation $G$ probabilities. Our approach is in two steps. First, we approximate $Q$ and $G$ with Gaussian PSD models $\hat Q$ and $\hat G$ using a convex algorithm with optimal learning rates. Second, we study the $\hat \pi_n(dx)$ a new estimator of $\pi_n(dx)$, which leverages the closed form application of \cref{eq:bayes-0} with $\hat Q$ and $\hat G$. The proposed estimator extends previous filtering strategies, such as the Kalman filter and offers strong theoretical guarantees on a large family of application settings.
 
 Our main contributions are:
  \begin{enumerate}
@@ -242,7 +242,7 @@ In this section, we show that \cref{alg:fullfilter} estimates a distribution whi
 %%
 \cref{assumption:mixing} is a classical assumption for the study of filtering \citep{cappehmm}.
 
-We are ready to state the main theorem of this work. In \cref{theorem:bound-diagonal}, we denote $D = d + d^\prime$ where $d$ and $d^\prime$ are the dimensions of $E$ and $F$ respectively. For simplicity in the constants we assume that $d = d^\prime$.
+We are ready to state the main theorem of this chapter. In \cref{theorem:bound-diagonal}, we denote $D = d + d^\prime$ where $d$ and $d^\prime$ are the dimensions of $E$ and $F$ respectively. For simplicity in the constants we assume that $d = d^\prime$.
 
 \begin{theorem}[PSD filter robustness and stability]\label{theorem:bound-diagonal}
 Assume that $Q$ and $G$ verify \cref{assumption:target_function,assumption:mixing}. Let $\varepsilon > 0$.
@@ -284,7 +284,7 @@ The first source of discrepancy is the consequence of the intialization error. I
 The second source of discrepancy is the accumulation of errors committed at each step by applying the approximate iteration \cref{eq:approx-iteration} in place of \cref{eq:iteration}. A telescopic argument (see the proof of \cref{lemma:bound}) shows that the accumulation is limited because the forgetting property of the optimal kernel tends to make past errors disappear exponentially, generalizing the argument in \cite{oudjane} beyond particle filters. The use of closed-form operations with Gaussian PSD Models is underlined in \cref{prop:bound-delta-n} in \cref{sec:proof-bound}. We conclude by bounding the second term below a constant $\varepsilon$, which is chosen as small as required.
 
 \section{Extension: filtering with Generalized Gaussian PSD Models}\label{sec:generalized-psd-models}
-Throughout this work, we have focused on Gaussian PSD Models. In fact, many of the properties studied above remain valid for a more general family of models we introduce and study in this section.
+Throughout this chapter, we have focused on Gaussian PSD Models. In fact, many of the properties studied above remain valid for a more general family of models we introduce and study in this section.
 
 Seen as a mixture (with potentially negatively weighted components), Gaussian Mixture Models have components which are aligned with the axes of the space.
 \begin{figure}[ht!]

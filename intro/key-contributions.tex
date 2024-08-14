@@ -1,12 +1,31 @@
-\section{Key contributions}
+\section{Contributions}
 
+In this thesis, we design and study methods for leveraging structure in learning problems to create better algorithms.
+Each of our three contribuions is motivated, described and studied in a chapter. Each chapter is meant to be self-contained, and all necessary notations and definitions are recalled.
 
+In this section, we outline the structure of the manuscript before introducing each contribution below.
 
+\begin{itemize}
+\item In \cref{ch:diffy}, we design a dissimilarity on general data spaces that is invariant to smooth diffeomorphisms. This is motivated by the identification of stability to diffeomorphisms as a factor of performance of deep neural networks and of invariance and stability as way of reducing the difficulty of learning problems.
+
+\item In \cref{ch:diffytw}, we turn to time-series and introduce a divergence between time-series that is invariant to smooth reparametrizations. Reparametrizations can eliminate common variations in time-series such as misalignment, which is a widely studied problem.
+
+\medskip
+
+Taken together, \cref{ch:diffy,ch:diffytw} identify smooth diffeomorphisms as a rich class of transformations which induce useful invariance on data and propose solutions to leverage this prior knowledge in algorithms.
+
+\item  In \cref{ch:hmm}, we leverage the Markovian dependence structure between observations and the underlying signals in Hidden Markov models for filtering. We identify an additional form of structure: non-negativity of conditional densities. While it may seem trivial at first glance, by combining these structures we propose a non-linear filtering algorithm with strong guarantees and competitive sample complexity.
+\end{itemize}
+
+\noindent In the rest of the introduction, we present each contribution in turn.
+\pagebreak
 \subsection*{\cref{ch:diffy}: Measuring dissimilarity with diffeomorphism invariance}
-
-\emph{We focus on designing, analyzing, and implementing a divergence $D$ that remains invariant under smooth diffeomorphisms in general data spaces.}
-
-%\subparagraph{An invariant divergence for invariant distance-based ML methods}
+The contents of \cref{ch:diffy} has previously been published in the proceedings of the \emph{International Conference on Machine Learning} in 2022 in the following publication:
+\begin{mdframed}
+\Myprod{\textbf{Théophile Cantelobre}, Benjamin Guedj, Carlo Ciliberto, Alessandro Rudi}
+{Measuring dissimilarity with diffeormorphism invariance}{International Conference on Machine Learning (ICML), Baltimore, Maryland (USA), 2022}
+\end{mdframed}
+The library developed accompanying \cref{ch:diffy} is available at \url{github.com/theophilec/diffy}.
 
 \paragraph{Motivation}
 Distance-based methods -- such as k-nearest neighbors and k-means -- are widely used in practical machine learning settings. They have been studied as proxies for understanding the performance of more complex methods such as neural networks. \cite{thiry} introduces a dictionary-based model achieving comparable performance to shallow Convolutional Neural Networks (CNN). The model replaces the learnable filter in Convolution Neural Networks (CNN) with a fixed dictionary of patches taken from the dataset. The embedded features (before the linear classification layer) are computed via the Euclidean distance between each patch of the image being embedded and the patches of the dictionary, which are then discretized and pooled before a linear classification layer is applied. The main takeaway from \cite{thiry} is that a model that embeds an image according to the distance of its patches to a fixed dictionary sampled from the dataset can perform competitively on image classification tasks.
@@ -99,8 +118,13 @@ We apply Diffy to comparing images with natural and synthetic transformations an
 %We conduct extensive experiments to study the behavior of Diffy in practice. All code is released in the \texttt{diffy} library at \url{github.com/theophilec/diffy}.
 
 \subsection*{\cref{ch:diffytw}: Differentiable Dynamic Time Warping with invariance properties}
-DiffyTW is a differentiable divergence tailored for time-series that is robust to time-warping.
-
+%\emph{DiffyTW is a differentiable divergence tailored for time-series that is robust to time-warping.}
+The contents of \cref{ch:diffytw} has previously been shared online and is under review in the following pre-publication:
+\begin{mdframed}
+\Myprod{\noindent\textbf{Théophile Cantelobre}, Benjamin Guedj, Carlo Ciliberto, Alessandro Rudi}
+{Comparing time-series with smooth, time-warping invariance}{Under review (2024)}
+\end{mdframed}
+The library developed accompanying \cref{ch:diffytw} is available at \url{github.com/theophilec/diffytw}.
 \paragraph{Motivation}
 Time-series exhibit naturally occurring variations make inference challenging.
 
@@ -178,7 +202,11 @@ We apply DiffyTW time-series with synthetic reparametrizations as well as natura
 \end{itemize}
 
 \subsection*{\cref{ch:hmm}: Closed-form filtering for non-linear systems}
-
+The contents of \cref{ch:hmm} has previously been shared online and is under review in the following pre-publication:
+\begin{mdframed}
+\Myprod{\textbf{Théophile Cantelobre}, Benjamin Guedj, Carlo Ciliberto, Alessandro Rudi}
+{Closed-form filtering for non-linear systems}{Under review (2024)}
+\end{mdframed}
 \paragraph{Motivation}
 We consider the filtering problem for discrete-time, dynamical models. The goal of filtering is to compute (or approximate) the filtering distribution $\pi_t(dx) = \mathbb P(X_t\vert Y_1, \ldots, Y_{t})$. The filtering distribution is the distributions of a state variable at time $t$, conditionnally on past observations $Y_1, \ldots, Y_t$. $Y_s$ can be any random variable, but one can think of it as a noisy, perhaps indirect, observation of the state $X_s$. The filtering distribution is also known as the optimal filter.
 
