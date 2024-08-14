@@ -130,28 +130,18 @@ Time-series exhibit naturally occurring variations make inference challenging.
 
 One common issue is misalignment. Comparing two time-series of the same signal but with different sample points is not straightforward. Indeed, consider $(x_i, f(x_i))_{1\leq i\leq n}$ and $(y_j, f(y_j))_{1 \leq j \leq m}$ two time-series representing the same underlying signal but with different sampling patterns. Computing a distance between values is not a satisfying solution: indeed, it is even impossible to do so if $n\neq m$.
 
-Dynamic Time Warping (DTW) is a time-tested solution to the time-series alignement problem. It has been successfully applied to many time-series analysis and machine learning tasks. Soft Dynamic Time Warping is a differentiabile variant with similar behavior and is used in deep neural network algorithms for time-dependent processing (time-series, videos, ...).
+Dynamic Time Warping (DTW) is a time-tested solution to the time-series alignement problem. It has been successfully applied to many time-series analysis and machine learning tasks. Soft Dynamic Time Warping is variant with similar behavior. Because of its differentiability with respect to input, it has been integrated into deep neural network algorithms for time-dependent processing (time-series, videos, ...).
 
 Beyond time-series alignement, a related problem is invariance to speed differences. A common example is gait analysis. Recordings of a step of running and a step of walking have different shapes, beyond the inherent speed difference. Analyzing this requires eliminating the speed difference. We provide a simple example based on hiking in \cref{sec:diffytw-introduction}.
 
-In this continuous setting, the ultimate goal is the Fréchet distance:
-\begin{equation}
-d_{F}(f, g) = \min_{Q}\min_{R}\max_{x\in[0,1]}\vert f\circ Q(x) - g\circ R(x)\vert
-\end{equation}
-
-However, estimating the Fréchet distance is NP hard.
-
-In both cases, the goal is to eliminate the sampling or speed differences between two time-series. Despite the empirical evidence of their performance, DTW-style methods do not have theoretical guarantees.
-
-There is a fundamental difficulty in this problem. There exist pairs of diffeomorphisms $Q$ and $R$ such that at $n$ distinct points, $f\circ Q$ and $f \circ R$ coincide. For this reason, it is key to consider functions when designing a divergence that is invariant to diffeomorphisms, and check it has consistent properties when sampled.
-
-We recast the problem of time-series alignment as one of comparing functions defined on $[0,1]$.
+In both cases, the goal is to warp the time dimension to better compare time-series.
+We posit that to be robust to these discrepancies, divergences between time-series should aim to be invariant to time-warping. Despite their practical utility, DTW and its variants do not have such guarantees.
 
 \paragraph{Intuition}
-The key insight to our approach is inherited from \cref{ch:diffy} (although the methods differ from there): comparing integrals of functions instead of the functions themselves allows us to leverage the change of variable theorem and eliminate differences due to diffeomorphisms.
+The key insight to our approach is inherited from \cref{ch:diffy}: comparing integrals of functions instead of the functions themselves allows us to leverage the change of variable theorem and eliminate differences due to diffeomorphisms.
 
-Contrary to Diffy.
-One cannot infer $Q$ from $\vert \nabla Q(x)\vert$ and more generally, given a smooth, non-negative real function $q$, therethere is no guarantee that there exists a diffeomorphism $Q$ such that $q(x) = \vert \nabla Q(x) \vert$. On the other hand, DiffyTW is designed to produce a proper smooth reparametrization that aligns the two time-series. This stems from the fact that increasing diffeomorphisms on $[0,1]$ are exactly the integrals of smooth non-negative functions that integrate to $1$. In this sense, there is some familiarity between our approach and shape deformation approaches \cite{younes}.
+In \cref{ch:diffy}, one cannot infer $Q$ from $\vert \nabla Q\vert$ and more generally, given a smooth, non-negative real function $q$, therethere is no guarantee that there exists a diffeomorphism $Q$ such that $q(x) = \vert \nabla Q(x) \vert$. On the other hand, DiffyTW is designed to produce a proper smooth reparametrization that aligns the two time-series. This stems from the fact that increasing diffeomorphisms on $[0,1]$ are exactly the integrals of smooth non-negative functions that integrate to $1$.
+%In this sense, there is some proximity between our approach and shape deformation approaches \cite{younes}.
 
 As we explain below and prove in \cref{ch:diffytw}, we can define a discrete counterpart for DiffyTW for time-series that is consistent with DiffyTW. Intuitively, this consistency -- which indirectly guarantees that certain invariance properties are ``transferred'' to Discrete DiffyTW -- relies on using functions to interpolate the time-series and computing DiffyTW between them.
 

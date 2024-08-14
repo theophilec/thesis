@@ -76,38 +76,39 @@ In this manuscript, each chapter is self-contained in terms of notations, defini
 
 
 \subsection{Kernel methods}
-Kernel methods are the cornerstone to our contributions. They are an effective family of techniques that combine effectiveness and efficiency. We introduce some of the most important properties of kernel methods below. The interested reader should read \cite{kernels-intro,kernels-mva}.
+Kernel methods are an effective family of techniques that combine effectiveness and efficiency for learning and approximation. They provide a useful frame for reasoning about rich classes of models that are easy to manipulate and fit.
 
-There are three main characters to a kernel method: the positive definite kernel $k$, the embedding map $\phi$, and the Reproducting Kernel Hilbert Space (RKHS) $\mathcal H$.
+We recall some of their most important properties below. \cite{shawe-tayulor, scholkoptf,kernels-mva} are good references for going further.
 
-\paragraph{Positive definite kernel}
-The positive definite kernel is a comparaison function between data-points that verifies the following axiom: for any $(x_1, \ldots, x_n)\in\mathcal X^n$ the kernel matrix $K$ defined by $[K]_{ij} = k(x_i, x_j)$ is symmetric and positive semi-definite. Two canoncial examples of p.d. kernels on $\mathcal X = \mathbb R^d$ are the Radial-Basis function (or Gaussian) kernel $k(x, y) = \exp(-\gamma \Vert x - y \Vert_2^2)$ or the Euclidean kernel $k(x, y) = \langle x, y \rangle$. But $\mathcal X$ does not need to be a vector space. Indeed, there exist p.d. kernels for all sorts of data, including strings or graphs.
+\paragraph{Essential definitions} There are three main characters to a kernel method: the positive definite kernel $k$, the embedding map $\phi$, and the Reproducting Kernel Hilbert Space (RKHS) $\mathcal H$.
 
-\paragraph{Reproducing Kernel Hilbert Space}
-The RKHS of a p.d. kernel $k$ is a space of functions from $\mathcal X$ to $\mathbb R$ such that: $\mathcal H$ is a Hilbert space, contains all functions of the form $k_x: t\mapsto k(x, t)$ and for any $f\in\mathcal H$, $f(x) = \langle f, k_x\rangle_\mathcal H$.
+\subparagraph{Positive definite kernel}
+The positive definite kernel is a comparaison function between data-points that verifies the following axiom: for any $(x_1, \ldots, x_n)\in\mathcal X^n$ the kernel matrix $K$ defined by $[K]_{ij} = k(x_i, x_j)$ is symmetric and positive semi-definite. Two canoncial examples of p.d. kernels on $\mathcal X = \mathbb R^d$ are the Radial-Basis function (or Gaussian) kernel $k(x, y) = \exp(-\gamma \Vert x - y \Vert_2^2)$ or the Euclidean kernel $k(x, y) = \langle x, y \rangle$. Note that $\mathcal X$ does not need to be a vector space. Indeed, there exist p.d. kernels for all sorts of data, including strings or graphs.
 
-\paragraph{Kernel embedding}
-The kernel embedding $\phi(x)$ is the map $x \mapsto k_x\in\mathcal H$. The map $\phi$ lifts $x\in\mathcal X$ into $\mathcal H$. Intuitively, it does so in a way that is useful for the task at hand. If we are doing classification, then we should choose $\phi$ (i.e. $k$ and $\mathcal H$) such that it is easier to differentiate between different classes among vectors $\phi(x_1)$ and $\phi(x_2)$ then among $x_1$ and $x_2$. Generally, we never compute $\phi(x)$ nor express it explicitly. Indeed, $\mathcal H$ is often infinite dimensional. Data points are never \emph{really} embedded in $\mathcal H$. This is done implicitly through kernel evaluations, as we explain in the next paragraph.
+\subparagraph{Reproducing Kernel Hilbert Space}
+The RKHS of a p.d. kernel $k$ is a space of functions from $\mathcal X$ to $\mathbb R$ such that: $\mathcal H$ is a Hilbert space, contains all functions of the form $k_x: t\mapsto k(x, t)$ and for any $f\in\mathcal H$, $f(x) = \langle f, k_x\rangle_\mathcal H$. The second property is called the reproducing property.
+
+\subparagraph{Kernel embedding}
+The kernel embedding $\phi(x)$ is the map $x \mapsto k_x\in\mathcal H$. The map $\phi$ lifts $x\in\mathcal X$ into $\mathcal H$. Intuitively, it does so in a way that is useful for the task at hand. If we are doing classification, then we should choose $\phi$ (i.e. $k$ and $\mathcal H$) such that it is easier to differentiate between different classes among vectors $\phi(x_1)$ and $\phi(x_2)$ then among $x_1$ and $x_2$. %Generally, we never compute $\phi(x)$ nor express it explicitly. Indeed, $\mathcal H$ is often infinite dimensional. Data points are never \emph{really} embedded in $\mathcal H$. This is done implicitly through kernel evaluations, as we explain in the next paragraph.
 
 \paragraph{Evaluating a function in $\mathcal H$}
 To understand the point of kernel methods, let us consider a finite combination of functions $\phi(x_k)$ for some $x_k\in\mathcal X$, e.g. $f= \sum_{k=1}^k w_k \phi(x_k)$. Note that $f\in\mathcal H$ since $\phi(x)\in\mathcal H$ for any $x\in\mathcal X$ by hypothesis. For now, $f$ is expressed as an element in a functional space. How do we evaluate $f$?
 
-By combining the above properties, we see that:
+Using the reproducing property and linearity,
 $$f(x) = \langle f, \phi(x)\rangle = \langle \sum_{k=1}^n w_k\phi(x_k), \phi(x_k)\rangle= \sum w_k \langle \phi(x), \phi(x_k)\rangle = \sum_{k}w_k k(x, x_k)= \Phi(X)^Tw$$
-where $\Phi(X) = (k(x, x_1), \ldots, k(x, x_n))^\top\in\mathbb R^n$. So like $f$ is a linear combination of $\phi(x_k)$, $f(x)$ is a linear combination of $k(x, x_k)$.
+where $\Phi(X) = (k(x, x_1), \ldots, k(x, x_n))^\top\in\mathbb R^n$. So like $f$ is a linear combination of $\phi(x_k)$, $f(x)$ is a linear combination of $k(x, x_k)$. Importantly, $f$ is not a linear function in $x$ since $k(\cdot, x_k)$ is not.
 
 \paragraph{Kernel trick}
-When evaluating $f$, we were able to replace inner-functions in $\mathcal H$ of the form $\langle \phi(x), \phi(y)\rangle$ by kernel evaluations $k(x, y)$.
-
-The kernel trick generalizes this. It states that if an expression depends on finite-dimensional vectors only through pair-wise inner-products, then it can be generalized to (possibly) infinite-dimensional vectors in an RKHS by replacing the inner product with the kernel evaluation. This means we can apply many algorithms to non-vectorial data such as strings or graphs.
+When evaluating $f$, we were able to replace inner-functions in $\mathcal H$ of the form $\langle \phi(x), \phi(y)\rangle$ by kernel evaluations $k(x, y)$. The kernel trick generalizes this and states that if an expression depends on finite-dimensional vectors only through pair-wise inner-products, then it can be generalized to (possibly) infinite-dimensional vectors in an RKHS by replacing the inner product with the kernel evaluation. This means we can apply many algorithms to non-vectorial data such as strings or graphs.
 
 \paragraph{Representer theorem} The representer theorem is key to machine learning with kernel methods. We present it in Empirical Risk Minimization context for conciseness. Consider a dataset $(x_k, y_k)_{1\leq k\leq n}$ such that $x_k\in\mathcal X$ (the features) and $y_k\in\mathbb R$ (the label). Let $\ell: \mathbb R \times\mathbb R\to\mathbb R$ be the loss function we are using to learn a model $f$. We consider the regression setting with $\ell(y, z) = (y - z) ^2$, the squared loss. In the ERM setting, we learn $f$ by minimizing the loss incurred by $f$ on the dataset and adding a regularization term, for instance Tikhonov regularization. More formally we minimize:
 \begin{equation}
     L(f) = \sum_{k=1}^n \ell(f(x_k), y_k) + \lambda \Vert f \Vert_\mathcal H^2.
 \end{equation}
-The representer theorem states that $\min_{f\in\mathcal H}L(f)$ has a solution of the form $f(x)= \sum_{k=1}^n \alpha_k k(x, x_k)$.
-
-This fact transforms an infinite dimensional problem over $\mathcal H$ into one over $\mathbb R^m$. Indeed, the repesenter implies that $\min_{f\in\mathcal H}L(f)$ is equivalent to $\min_{\alpha\in\mathbb R^n}\tilde L(\alpha)$ where $\tilde L(\alpha) = \sum_{k=1}^n \ell(\Phi(x_k)^\top\alpha, y_k) + \lambda \alpha^\top K \alpha$ where $\Phi(x)$ is defined as above and $K$ is the kernel matrix over $x_1, \ldots, x_n$. We used the fact that the squared $\mathcal H$ norm of a function of the form $x \mapsto \sum_{k=1}^n \alpha_k k(x, x_k)$ is equal to $\alpha^\top K \alpha$.
+The representer theorem states that $\min_{f\in\mathcal H}L(f)$ has a solution of the form $f= \sum_{k=1}^n \alpha_k \phi(x_k)$, which transforms an infinite dimensional problem over $\mathcal H$ into one over $\mathbb R^m$. Indeed, the repesenter implies that $\min_{f\in\mathcal H}L(f)$ is equivalent to $\min_{\alpha\in\mathbb R^n}\tilde L(\alpha)$ where
+\begin{equation}
+\tilde L(\alpha) = \sum_{k=1}^n \ell(\Phi(x_k)^\top\alpha, y_k) + \lambda \alpha^\top K \alpha
+\end{equation} where $\Phi(x)$ is defined as above and $K$ is the kernel matrix over $x_1, \ldots, x_n$. We used the fact that the squared $\mathcal H$ norm of a function of the form $x \mapsto \sum_{k=1}^n \alpha_k k(x, x_k)$ is equal to $\alpha^\top K \alpha$.
 
 \paragraph{Kernel Ridge Regression \& Regularization} The learning problem above is an example of a regression task that we can solve with kernel methods. We call this formulation Kernel Ridge Regression. We now take the time to express $\tilde L$ in terms of function evaluations:
 \begin{align}
