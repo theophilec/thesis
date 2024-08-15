@@ -178,7 +178,7 @@ d_M(f, g) = \hat d_M(\hat f, \hat g)
 where $d_M(f, g)$ is defined in \cref{eq:hat-d_M} and $\hat d_M(\hat f, \hat g)$ is defined in \cref{def:discrete-diffytw}.
 \end{theorem}
 
-The proof of \cref{thm:prob-qp} stems from the development at the beginning of \cref{sec:computing-diffytw} and can be found in \cref{proof:prob-qp}. A consequence of \cref{thm:prob-qp} is that some of the invariance properties of DiffyTW transfer to Discrete DiffyTW. For instance:
+The proof of \cref{thm:prob-qp} stems from the development at the beginning of \cref{sec:computing-diffytw} and is presented in \cref{proof:prob-qp}. A consequence of \cref{thm:prob-qp} is that some of the invariance properties of DiffyTW transfer to Discrete DiffyTW. For instance:
 
 \begin{corollary}\label{corollary:discrete-invariance}
 Let $h: [0, 1] \to \mathbb R^d$ be a piece-wise constant function adapted to the sampling pattern $0 \leq x_1 < \ldots < x_n \leq 1$. Let $Q$ be a reparametrization such that $Q^\prime \in \mathcal F_{0,1}^M$. Consider $\hat f = (Q(x_i), h(x_i))$ and $\hat g = (x_i, h(x_i))$. Then,
@@ -186,7 +186,7 @@ Let $h: [0, 1] \to \mathbb R^d$ be a piece-wise constant function adapted to the
     \hat d_M(\hat f, \hat g) = 0.
 \end{equation}
 \end{corollary}
-The proof of \cref{corollary:discrete-invariance} can be found in \cref{proof:discrete-invariance}.
+The proof of \cref{corollary:discrete-invariance} is presented in \cref{proof:discrete-invariance}.
 
 \subsection{Computing Discrete DiffyTW}\label{sec:solving-qp}
 
@@ -208,32 +208,37 @@ If $K$ is the RBF kernel with $\gamma > 0$,
 
 In particular, if $(x_i)$ and $(y_j)$ are evenly spaced in $[0,1]$, then:
 \begin{equation}
-    \left\vert \sqrt{d_M(f, g)} - \sqrt{\hat d_M(\hat f_n, \hat g_m)}\right\vert \leq \sqrt{2\gamma L}\left(\frac{1}{\sqrt{n}} - \frac{1}{\sqrt{m}}\right)
+    \left\vert \sqrt{d_M(f, g)} - \sqrt{\hat d_M(\hat f_n, \hat g_m)}\right\vert \leq \sqrt{2\gamma L}\left(\frac{1}{\sqrt{n}} + \frac{1}{\sqrt{m}}\right)
 \end{equation}
 \end{theorem}
 
 The proof on \cref{thm:rectangle-approx} is included in \cref{sec:proof-rectangle-approx}.
 
-\todo[inline]{Using $a^2- b^2 = (a-b)(a+b)$, restate on $d_m$ and $\hat d_M$}
-\todo[inline]{Optimal rates ? This is with direct naïve proof.}
+\paragraph{}
 
-\subsection{Parameter choice}
-Discrete DiffyTW has several hyper-parameters in particular the choice of $\mathcal F_{0,1}^M$ -- i.e. the basis function kernel $k(\cdot, \tilde x)$ and the anchor points $(\tilde x_k)_{1\leq j\leq M}$ -- and of $K$ the kernel on time-series features. When Discrete DiffyTW is integrated into a machine learning algorithm, a solution is to typical hyperparameter tuning strategies such as cross-validation. Below, we give intuition into the impact of the different hyperparameters.
+In particular, if $f = g \circ Q$ where $Q^\prime \in\mathcal F_{0, 1}^M$ then $d_M(f, g)=0$ and $n=m$, then \cref{thm:rectangle-approx} implies that
+\begin{equation}
+\hat d_M(\hat f_n, \hat g_n) = O\left(\frac{1}{n}\right).
+\end{equation}
 
-The choice of basis function and the number and positions of the anchor points control the richness of the set of transformations that can be identified in data. The parameters of $k$ as well as $M$ should be chosen as a function of prior knowledge about the transformations present. For $k$ the RBF or Laplce kernel of parameter $\eta>0$, smaller values of $\eta$ and larger values of $M$ lead to richer function spaces. In addition, choosing the Laplace kernel makes for a much richer space than choosing the RBF kernel. Generally, $M$ is chosen to be much smaller than $n$ and $m$. Note that a richer space is not necessarily the goal as ``simple'' reparametrizations may make the most sense for an application.
+\paragraph{Parameter choice}
+Discrete DiffyTW has several hyper-parameters in particular the choice of $\mathcal F_{0,1}^M$, i.e. the basis function kernel $k(\cdot, \tilde x)$ and the anchor points $(\tilde x_k)_{1\leq j\leq M}$, and of $K$ the kernel on time-series features. When Discrete DiffyTW is integrated into a machine learning algorithm, typical hyperparameter tuning strategies such as cross-validation can be applied. Below, we give intuition into the impact of the different hyperparameters.
 
-The choice of kernel on time-series features has no impact on invariance for DiffyTW. However, empirically, we observe that it plays a role with Discrete DiffyTW. This is confirmed in \cref{thm:rectangle-approx} as $\gamma$, the RBF kernel parameter intervenes controls the value of the bound. Large values of $\gamma$ lead to larger values of the bound. Intuitively, this is explained by the fact that large values of $\gamma$ lead to a very discriminative kernel $K$. Loosely, any two distinct points seem very different. This implies having a large number of samples, in order to have sufficient overlap between the time-series (in $d$ this overlap is built-in as the functions are defined over $[0,1]$). On the other hand, a smaller $\gamma$ leads to a smaller bound, which means that $d$ and $\hat d_M$ are close. A small value for $\gamma$ means that $K$ is not very discriminative and any two values seem close. This applies to both $d$ and $\hat d_M$. In other words, $d$ (and $\hat d_M$) will be small for both pairs of diffeomorphic time-series and non-diffeomorphic time-series.
+\subparagraph{Choosing $\mathcal F_{0,1}^M$} The choice of basis function and the number and positions of the anchor points control the richness of the set of transformations that can be identified in data. The parameters of $k$ as well as $M$ should be chosen as a function of prior knowledge about the transformations present. For $k$ the RBF or Laplace kernel of parameter $\eta>0$, smaller values of $\eta$ and larger values of $M$ lead to richer function spaces. In addition, choosing the Laplace kernel makes for a much richer space than choosing the RBF kernel\cite{ref}. Generally, $M$ is chosen to be much smaller than $n$ and $m$. Note that a richer space is not necessarily the goal as ``simple'' reparametrizations may make the most sense for an application.
+
+\subparagraph{Choosing $\phi$} The choice of kernel on time-series features has no impact on invariance for DiffyTW in \cref{thm:diffytw-invariant}. However, empirically, we observe that it plays a role with Discrete DiffyTW. This is confirmed in \cref{thm:rectangle-approx} as $\gamma$, the RBF kernel parameter intervenes controls the value of the bound. Large values of $\gamma$ lead to larger values of the bound. Intuitively, this is explained by the fact that large values of $\gamma$ lead to a very discriminative kernel $K$. Loosely, any two distinct points seem very different. This implies having a large number of samples, in order to have sufficient overlap between the time-series. On the other hand, a smaller $\gamma$ leads to a smaller bound, which means that $d$ and $\hat d_M$ are close. A small value for $\gamma$ means that $K$ is not very discriminative and any two values seem close. This applies to both $d$ and $\hat d_M$. In other words, $d$ (and $\hat d_M$) will be small for both pairs of diffeomorphic time-series and non-diffeomorphic time-series.
 
 \section{Differentiability}
 Differentiability makes Discrete DiffyTW effective as a building block inside of machine learning algorithms, for example as a loss function for training time-series generation algorithms.
 
 We consider differentiability of $V(\theta) = \hat d_M(\hat f, \theta)$ and our goal is to compute $\nabla V(\theta)$, the gradient of $V$ with respect to $\theta$. Here, $\theta$ takes the place of $\hat g$ but we consider its sample pattern fixed. Additionally, $\nabla V(\theta)$ can be chained to extend to the (more common) case where we wish to compare $\hat f$ to $\hat g(\theta)$, a time-series generated by a model.
 
+\paragraph{}
 In this section, we denote:
 \begin{equation}\label{prob:fullqp}
     V(\theta) = \min_{q\in\mathcal C} \ell(q, \theta)
 \end{equation}
-where $\ell(q, \theta) = \frac{1}{2} q^\top Pq - v(\theta)^\top q + C(\theta)$ and $\mathcal C = \left\lbrace q\in\mathbb R^N ~\vert~ h^\top q=1, q \geq 0\right\rbrace$.
+where $\ell(q, \theta) = \frac{1}{2} q^\top Pq - v(\theta)^\top q + C(\theta)$ and $\mathcal C = \left\lbrace q\in\mathbb R^N ~\vert~ h^\top q=1, q \geq 0\right\rbrace$ and $P$, $v$, $C$ and $h$ are defined as in \cref{def:discrete-diffytw}.
 
 The difficulty is differentiating through the $\min$ operator since the optimal $q^*$ depends on $\theta$. $V$ is differentiable and its gradient can be computed from the optimal solution $q^*$. Our proof is direct and does not rely on the Implicit Function Theorem (see below for a comparaison with other approaches).
 
@@ -244,52 +249,39 @@ The difficulty is differentiating through the $\min$ operator since the optimal 
     \end{equation} where $q^*(\theta)$ is the unique solution to \cref{prob:fullqp}.
 \end{theorem}
 
-In particular, so long as $P$ is positive definite, $V$ is differentiable. This is ensured in all practical situations by definition of the Discrete DiffyTW. In practice, regularization is added to $P$ under the form $P + \lambda I$ to make the Quadratic program solver more stable.
+In particular, so long as $P$ is positive definite, $V$ is differentiable. For differentiability, having a unique solution is not necessary, but multiple solutions make the expression of the gradient less straightforward and may cause non-differentiability. Following \cref{sec:computing-qp}, since $P$ is positive definite in practice, assume that $\ell(\cdot, \theta)$ is strictly convex.
 
 Our proof of \cref{thm:diffytw-grad} builds on a result from \cite{shapiro} and \cite{lee}, which give sufficient conditions for differentiability of quadratic programs. See \cref{sec:proof-diffytw-grad} for the proof. Note that a similar argument is used in \cite{tavenard-dtw-diff} for the differentiability of DTW.
 
 \paragraph{Other methods for differentiability of QPs}
-There is a growing body of work on differentiating through convex programs, with three major approaches: analytical differentiation (when a closed-form solution to the convex problem is known, \emph{e.g.\ } unconstrained QPs), unrolling (differentiating through the operations in the algorithm used to solve the convex problem), implicit differentiation (applying the implicit function theorem).
+Differentiating through convex problems is a subject of interest in the machine learning and optimization communities. We recall the three main approaches to this question: analytical differentiation (when a closed-form solution to the convex problem is known, \emph{e.g.\ } unconstrained QPs), unrolling (differentiating through the operations in the algorithm used to solve the convex problem), implicit differentiation (applying the implicit function theorem).
 
-\begin{remark}[Relation to implicit differentiation for QPs]
-    \cite{bambade,optnet,...} study differentiation of Quadratic programs where the constraints also depend on $\theta$. They rely on implicit differentiation of the KKT conditions for the Quadratic Program and handle a more general setting, including Extended Conservative Jacobians when the QPs are not feasible. As a sanity check, we verify that we recover our result using their method for our setting in \cref{sec:lagrangian}.
-\end{remark}
+The latter method is used in the deep learning and robotics communities to integrate QPs as layers in neural networks\citep{QP-layers,optnet}. These works study differentiation the optimal solution of a Quadratic Program for which the constraints also depend on $\theta$. To handle this, the KKT conditions can be expressed as an implicit function problem, and the implicit function theorem applied to differentiate with repect to all parameters implicitly. Handling constraints can make differentiation impossible since when using QPs in a iterative optimization method while training a neural network the constraints may become infeasible \citep{QP-Layers}. In this case, Extended Conservative Jacobians of the closest feasible QP can be computed instead \citep{QP-layers}. As a sanity check, we verify that we recover our result using their method for our setting in \cref{sec:lagrangian}.
 
 \section{Experiments}
-DiffyTW is implemented in the \texttt{difftw} library, open-sourced at \url{github.com/theophilec/diffytw}. This library implements the computation of DiffyTW, the gradient computation using the \texttt{jax} library. It can be used with different QP solvers.
+DiffyTW is implemented in the \texttt{difftw} library, open-sourced at \url{github.com/theophilec/diffytw}. This library implements the computation of DiffyTW, the gradient computation using the \texttt{jax} library. It can be used with different QP solvers. When computing DiffyTW, the \texttt{Prox-QP} solver is used \cite{fabian}. When computing the gradient, the \texttt{optax} solver is used \cite{optax}.
 
-In this section, we demonstrate and study DiffyTW's behavior on the UCR dataset. Some takeaways of these experiments are:
+%In this section, we demonstrate and study DiffyTW's behavior on the UCR dataset. Some takeaways of these experiments are:
 
-\begin{itemize}
-    \item DiffyTW captures synthetic reparametrizations.
-    \item DiffyTW is sensitive to the choice of $\gamma$ (and more generally to the choice of $\phi$), including with synthetic warpings. Making DiffyTW more robust to this choice is key to making it useful for applied settings (such as averaging), and this is left for future work.
-    \item Regularizing the choice of $q$ has significant effect on the robustness of DiffyTW. Regularization is not studied in the previous sections and it is incorporated in practice by padding the Hessian matrix, which is necessary for numerical reasons. Adding regularization to the definition of DiffyTW (in the spirit of Diffy in \cref{ch:diffy}) and analyzing its role is left for future work.
-\end{itemize}
+%\begin{itemize}
+%    \item DiffyTW captures synthetic reparametrizations.
+%    \item DiffyTW is sensitive to the choice of $\gamma$ (and more generally to the choice of $\phi$), including with synthetic warpings. Making DiffyTW more robust to this choice is key to making it useful for applied settings (such as averaging), and this is left for future work.
+%    \item Regularizing the choice of $q$ has significant effect on the robustness of DiffyTW. Regularization is not studied in the previous sections and it is incorporated in practice by padding the Hessian matrix, which is necessary for numerical reasons. Adding regularization to the definition of DiffyTW (in the spirit of Diffy in \cref{ch:diffy}) and analyzing its role is left for future work.
+%\end{itemize}
 
-\subsection{Introduction}
 
 \paragraph{Experiment design}
 We choose $\tilde X = (\tilde x_k)_{1\leq k \leq M}$ anchor points, $\eta >0$ and choose $\mathcal F_{0,1}^M$ to be the set of functions of the form $q(x) = \sum_{k=1}^Mq_k k_\eta(x, \tilde x_k)$ where $q\in\mathbb R^M$ verifies: $q \geq 0$, $g^\top q =1$, and $\int_0^1 q(u)du =1$.
 We consider $K$ the RBF kernel with $\gamma> 0$.
 
-\paragraph{Datasets} We rely on the UCR dataset\cite{ucr}. Specifically we use the Trace dataset. We compare elements of datasets, but also synthetic transformations of times-series from the UCR dataset. In that case, we consider the linear interpolation of $g \circ Q$. For completeness here is the Python code used for a time-series $x, g$ and a warping function $Q$: \texttt{np.interp(Q(x), x, g)}. Since these time series are well-sampled, we ignore the errors caused by interpolation.
+\paragraph{Datasets} We rely on the UCR dataset \citep{ucr}. Specifically we use the \texttt{Trace} and \texttt{50words} datasets. We compare elements of datasets and synthetic transformations of times-series from the UCR dataset. In that case, we consider the linear interpolation of $g \circ Q$. This relates to the bound in \cref{thm:rectangle-approximation}.
 
+\paragraph{Results}
 
-
-\subsection{Alignment with synthetic warpings} \emph{In this section, we illustrate the behavior of DiffyTW on a real dataset with synthetic warpings. This ensures that the warpings are attainable by DiffyTW.}
+\emph{In this section, we illustrate the behavior of DiffyTW on a real dataset with synthetic warpings. This ensures that the warpings are attainable by DiffyTW.}
 
 Here we choose $\hat g\in\mathcal S$ (for Trace), generate $q \in \mathcal F_{0, 1}^M$ and $\hat f$ the transformation of $g$ by $Q = \int q$ (according to linear interpolation). We then compute $\hat d_M(\hat f, \hat g)$ over the same space $\mathcal F_{0,1}^M$ (we call this setting ``in-domain''). The value of $\eta$ is fixed by $\mathcal F^M$ but we show results with the best value of $\gamma$. We study the dependence on $\gamma$ in \cref{sec:XP-gamma}.
 
-
-
-
-
-
-
-
-
-
-\subsection{Dependence of $\gamma$}\label{sec:XP-gamma}
 
 \begin{figure}[ht!]
 \begin{center}
@@ -310,6 +302,3 @@ Here we choose $\hat g\in\mathcal S$ (for Trace), generate $q \in \mathcal F_{0,
 \includegraphics[width=0.8\textwidth]{ch3-diffytw/figures/Figure-qnorm-qhatnorm.pdf}
 \caption{}
 \end{figure}
-
-
-\subsection{Runtime speed}
