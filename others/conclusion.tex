@@ -34,7 +34,7 @@ On the other, because the anchor points and precision matrices evolve over itera
 \begin{equation}
     f(x) = \left\Vert R\Phi(x)\right\Vert_2^2
 \end{equation}
-where $R$ is a $M \times r$ matrix such that $A = R^T R$ and $\Phi(x) = (k(x, \tilde x_1), \ldots, k(x, \tilde x_M))^\top\in\mathbb R^M$. This has been leveraged by \cite{beugnot-optim} for non-convex optimisation and \cite{squared-neural-families} for modelling probabilies. Note that this is equivalent to learning a Generalized Gaussian PSD Model using a non-convex solver as we propose in \cref{sec:generalization}.
+where $R$ is a $M \times r$ matrix such that $A = R^T R$ and $\Phi(x) = (k(x, \tilde x_1), \ldots, k(x, \tilde x_M))^\top\in\mathbb R^M$. This has been leveraged by \citet{gaspard} for non-convex optimisation and \citet{squared-neural-families} for modelling probabilies. Note that this is equivalent to learning a Generalized Gaussian PSD Model using a non-convex solver as we propose in \cref{sec:generalization}.
 
 \cite{squared-neural-families} leverage empirical feature maps akin to $\Phi(x)$, which induce probabilistic models. They consider modelling probabilities from another perspective, focusing on the interpretation as exponential families and choosing embeddings that make marginalization easy.
 

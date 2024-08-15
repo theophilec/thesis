@@ -9,7 +9,7 @@ During training and deployment of machine learning algorithms, scientists and en
 
 This is done in a variety of ways: in the selection of the datasets (\emph{e.g.\ } what is an outlier?), in the choice of the search space (\emph{e.g.\ } convolutional or fully connected neural networks?), in the design of a regularization schema (\emph{e.g.\ } should solutions have small $L_2$ or $L_1$ norms?), in the training recipe (\emph{e.g.\ } which optimizer? small learning rate? large learning rate?), to mention a few examples. Each of these choices impacts the obtained algorithm, its performance and its properties. We call these choices \emph{inductive biases}.
 
-Inductive biases are -- often, implicit -- assumptions about the learning problem or the solution to learning problem such that constrain the space of solutions or influence the choice between several solutions\footnote{See \cite{mitchell-inductive,1806.01261} for a formal definition and review of such concepts.}. They allow us to take advantage of assumptions about the task at hand to design algorithms with strong theoretical guarantees and better practical performance.
+Inductive biases are -- often, implicit -- assumptions about the learning problem or the solution to learning problem such that constrain the space of solutions or influence the choice between several solutions\footnote{See \citet{mitchell-inductive,1806.01261} for a formal definition and review of such concepts.}. They allow us to take advantage of assumptions about the task at hand to design algorithms with strong theoretical guarantees and better practical performance.
 
 \paragraph{}
 
@@ -26,56 +26,54 @@ In this section, we give some background on structure in machine learning. We qu
 
 At the time of writing this thesis, most of the world has heard of a machine learning application that strongly relies on the structure in its input and its output: text generation. Language models are designed, trained and deployed in a recurrent way, where the next word is predicted at each step. In fact, Natural Language Processing tasks such as parts-of-speech tagging drove the development of machine learning with structured objects.
 
-Beyond NLP, identifying and leveraing meaningful structure for machine learning problems has been the source of considerable interest and engineering effort. When the structure is embedded in the output and the loss function, the field is often reffered to as \emph{structured prediction}. Two seminal books on the topic include \citep{advancedStructuredPrediction2014MIT,bakir2007predicting}. Protein folding  \cite{joachims2009}, information retrieval \cite{duchi2010} are some examples of applications of using structured objects in machine learning.
+Beyond NLP, identifying and leveraing meaningful structure for machine learning problems has been the source of considerable interest and engineering effort. When the structure is embedded in the output and the loss function, the field is often reffered to as \emph{structured prediction}. Two seminal books on the topic include \citep{advancedStructuredPrediction2014MIT,bakir2007predicting}. Protein folding  \citep{alphafold}, information retrieval \citep{duchi2010} are some examples of applications of using structured objects in machine learning.
 
 Conversely, routing time prediction \citep{deepmind-traffic} and drug discovery \citep{stokes-antibiotics} are examples of applications where the input is a structured object, \emph{e.g.\ } a graph.
 
 \subsection{Dealing with intrinsic topology: invariance to Invariance and stability to diffeomorphisms}
 
-Computational anatomy is a direct application of shape analysis methods that study the deformations induced on shapes by diffeomorphisms, in particular an evolution through time with variations in 2D or 3D. For instance, these methods can help analyze datasets composed of organ shapes segmented from MRI scan. We refer the reader to \cite{younes} for an in-depth treatment of shape analysis. Their approach is different from the one we develop in \cite{ch:diffy} as their goal is reconstruction of the deformation and the shapes, rather than comparing two shapes.
+Computational anatomy is a direct application of shape analysis methods that study the deformations induced on shapes by diffeomorphisms, in particular an evolution through time with variations in 2D or 3D. For instance, these methods can help analyze datasets composed of organ shapes segmented from MRI scan. We refer the reader to \citet{younes} for an in-depth treatment of shape analysis. Their approach is different from the one we develop in \cref{ch:diffy} as their goal is reconstruction of the deformation and the shapes, rather than comparing two shapes.
 
 \paragraph{}
-\cite{bronstein-geometric-deep-learning} propose a complete survey of geometric methods in deep-learning on a wide variety of structures and settings. In the rest of this section, we focus on three instances of prior work which are related to our approach in \cref{ch:diffy}.
+\citet{bronstein} propose a complete survey of geometric methods in deep-learning on a wide variety of structures and settings. In the rest of this section, we focus on three instances of prior work which are related to our approach in \cref{ch:diffy}.
 
 \paragraph{}
-Bietti et al study learning rates for Kernel Ridge Regression in the presence of an invariant target function. Their underlying hypotheseses are the invariance to a group action and geometric stability of the target function. They show that these hypotheses both improve learning bounds by replacing the number of samples by an \emph{effective number of samples}. Roughly, this gain is related to the size of the group or to size of the allowed set. The gain also relies on using a kernel tailored to the invariance or geometric stability property of the target function, which is computationally costly since it is based on the Haar-measure over the set of transformations considered. Their approach is based on seeing data as points, while a key insight to our approach is to consider them as functions over a continuous domain.
+\citet{bietti} study learning rates for Kernel Ridge Regression in the presence of an invariant target function. Their underlying hypotheseses are the invariance to a group action and geometric stability of the target function. They show that these hypotheses both improve learning bounds by replacing the number of samples by an \emph{effective number of samples}. Roughly, this gain is related to the size of the group or to size of the allowed set. The gain also relies on using a kernel tailored to the invariance or geometric stability property of the target function, which is computationally costly since it is based on the Haar-measure over the set of transformations considered. Their approach is based on seeing data as points, while a key insight to our approach is to consider them as functions over a continuous domain.
 
 \paragraph{}
-Mallat et al introduced the scattering transform in 2012. See Joan PhD for an in-depth review of the foundations. The scattering transform generate multi-scale features for images that are locally translation invariant and Lipschitz continuous to transformation by diffeomorphisms. This method has been applied to a variety of settings including images classificartion, audio analysis, astrophysics...
+\citet{mallat-scattering} introduced the scattering transform in 2012. The scattering transform generates multi-scale features for images that are locally translation invariant and Lipschitz continuous to transformation by diffeomorphisms. This method has been applied to a variety of settings including images classificartion, audio analysis, astrophysics... \citet{bruna-book} reviews the foundations of the scattering transform and applications to machine learning.
 
 \paragraph{}
-Wyart et al empirically study stability to diffeomorphisms of neural networks to whether this quality correlates to performance. This work is part of a larger line of work that studies how internal representations of neural networks learn the invariances present in the data to effectively lower their dimension. Note that it is not clear the gain in \cite{bietti} is akin to an effective reduction in dimension. They define stability to diffeomorphisms as the relative effect of random diffeomorphisms to the feature layer of a deep neural network against that of additive noise of comparable magnitude. They highlight that performance is correlated with relative stability, and that larger, more modern networks tend to become more stable during training. This motivates our approach to enforcing invariance to diffeomorphisms in a dissimilarity that can be integrated into algorithms.
+\citet{wyartdiffeo} empirically study stability to diffeomorphisms of neural networks to whether this quality correlates to performance. This work is part of a larger line of work that studies how internal representations of neural networks learn the invariances present in the data to effectively lower their dimension. Note that it is not clear the gain in \cite{bietti} is akin to an effective reduction in dimension. They define stability to diffeomorphisms as the relative effect of random diffeomorphisms to the feature layer of a deep neural network against that of additive noise of comparable magnitude. They highlight that performance is correlated with relative stability, and that larger, more modern networks tend to become more stable during training. This motivates our approach to enforcing invariance to diffeomorphisms in a dissimilarity that can be integrated into algorithms.
 
 \subsection{Handling temporal structure: deformations for time-series}
 \label{background:diffytw}
 
-Developing methods that account for variations in time-series related to the underlying phenomemon or to the sensor characteristics (such as sampling positions and rates) is central to time-series analysis. Such methods are applied in clinical time-series analysis \citep{1808.06725,ortiz-ieee} or gesture recognition \citep{dtw-gesture}.
+Developing methods that account for variations in time-series related to the underlying phenomemon or to the sensor characteristics (such as sampling positions and rates) is central to time-series analysis. Such methods are applied in clinical time-series analysis \citep{oh-invariances-clinical,ortiz-ieee} or gesture recognition \citep{dtw-gesture}.
 
-\paragraph{} Dynamic Time Warping was introduced in \cite{dtw}, motivated by spoken word recognition. Dynamic Time Warping can be computed in $O(nm)$ time where the compared time-series are of length $n$ and $m$ thanks to Dynamic programming. \citep{dtw} also proposed refinements that constrain possible alignements between time-series. The performance of these refinements is analyzed in \cite{sakove-vs-ikatura}. Continuous Dynamic Time Warping in \cite{2203.04531} combines ideas from the Fréchet distance and DTW to solve DTW's sensitivity to sampling rates, which can be computed in $O(n^5)$.
+\paragraph{} Dynamic Time Warping was introduced in \cite{dtw}, motivated by spoken word recognition. Dynamic Time Warping can be computed in $O(nm)$ time where the compared time-series are of length $n$ and $m$ thanks to Dynamic programming. \citep{dtw} also proposed refinements that constrain possible alignements between time-series. The performance of these refinements is analyzed in \cite{dtw-baseline-1}. Continuous Dynamic Time Warping in \cite{cdtw} combines ideas from the Fréchet distance and DTW to solve DTW's sensitivity to sampling rates, which can be computed in $O(n^5)$.
 
-Soft-Dynamic Time Warping focuses on the averaging task of time-series, which requires eliminating misalignment (implicitly). Because DTW-based averaging lead to poor local minima, Soft-DTW is presented as a differentiable alternative to DTW, while retaining efficient computation in $O(nm)$ time.
+Soft-Dynamic Time Warping \citep{soft-dtw} focuses on the averaging task of time-series, which requires eliminating misalignment (implicitly). Because DTW-based averaging lead to poor local minima, Soft-DTW is presented as a differentiable alternative to DTW, while retaining efficient computation in $O(nm)$ time.
 
 \paragraph{}
-The functional data analysis litterature tackles a more general problem of aligning (open or closed curves) in space. \cite{srvf} the Square-Root Velocity representation defines a tolopology between shapes that can be used to align and average them. Another approach is decribed in \cite{0712.1425}, which considers matching 1-D curves with so-called moments and landmarks in the curve. They embed the values of the functions with a handcrafed transformation based on first and high-order derivatives. The existence of high-order derivatives is not practical for time-series data.
+The functional data analysis litterature tackles a more general problem of aligning (open or closed curves) in space. In \cite{srvf}, the Square-Root Velocity representation defines a tolopology between shapes that can be used to align and average them. Another approach is decribed in \cite{curve-moments}, which considers matching 1-D curves with so-called moments and landmarks in the curve. They embed the values of the functions with a handcrafed transformation based on first and high-order derivatives. The existence of high-order derivatives is not practical for time-series data.
 
-The shape analysis litterature also studies this question, but time-series are not handled except as the representation of the evolution of shapes through time \citep{2108.05634,hal-00813825}.
+The shape analysis litterature also studies this question, but time-series are not handled except as the representation of the evolution of shapes through time \citep{2108.05634,Durrleman2013}.
 
-\paragraph{} Using neural networks for time-series is also an important direction of research. An example is \cite{2106.11911,dtan} and references therein. This line of work learns representations of time-series based on \cite{pavf} that allow alignment without solving the LDDMM style problems at inference time. Refinements in the computation of transformations are proposed in \cite{2206.08107}. These methods learn the invariances from data (with a difeomorphic constraint), while we are interested in specifying the set of transformations \emph{a priori}.
+\paragraph{} Using neural networks for time-series is also an important direction of research. An example is \cite{2106.11911,dtan} and references therein. This line of work learns representations of time-series based on \cite{pavf} that allow alignment without solving the LDDMM style problems at inference time. Refinements in the computation of transformations are proposed in \cite{martinez22a}. These methods learn the invariances from data (with a difeomorphic constraint), while we are interested in specifying the set of transformations \emph{a priori}.
 
 \subsection{Structure in dynamical models}
-Hidden Markov Models are useful models for dynamical systems, which can be used to solve many scientific or engineering problems. Inference on HMMs has been widely studied with the development of many algorithms for finance, robotics, weather, ... \cite{ref} The goal of filtering is estimating $\pi_T$, the conditional distribution of $X_T$ given $Y_1, \ldots, Y_T$. In HMMs, $\pi_T$ can be computed iteratively through the filtering iteration \cref{eq:intro-hmm-iteration}. For background on Hidden Markov Models we refer the reader to \cite{cappe2005}.
-
-Three questions arise when computing the filtering distributions $\pi_T$.
+Hidden Markov Models are useful models for dynamical systems, which can be used to solve many scientific or engineering problems. Inference on HMMs has been widely studied with the development of many algorithms for finance, robotics or weather.\citep{cappehmm} The goal of filtering is estimating $\pi_T$, the conditional distribution of $X_T$ given $Y_1, \ldots, Y_T$. In HMMs, $\pi_T$ can be computed iteratively through the filtering iteration \cref{eq:intro-hmm-iteration}. For background on Hidden Markov Models we refer the reader to \cite{cappehmm}. Three questions arise when computing the filtering distributions $\pi_T$.
 
 \paragraph{} The first relates to the initialization of the sequence $\pi_k$. Assume two filters are initialized at $\mu$ and $\nu$ respectively. \emph{Stability} quantifies the behavior of $\Vert \pi_t^\mu - \pi_t^\nu \Vert_{TV}$ as $t$ grows. A stable filter sees this distance go to zero as $t$ grows, i.e. the filter forgets its initial condition. In the litterature there are different definitions of stability and forgetting.
 
-\cite{ocone} studied the asymptotic stability of the filtering distribution. They rely on an ergodicity of the chain and that the conditional observation density is positive (strictly). The takeaway here is that assumptions on the state distribution and minimal assumptions about the observation distribution can be enough to obtain stability, i.e. that almost surely, $\Vert \pi_T^\mu - \pi^\nu_T\Vert_{TV} \to 0$ as $T\to\infty$. Other relevant references are \cite{atar,chigansky,mcdonald}.
+\cite{ocone} studied the asymptotic stability of the filtering distribution. They rely on an ergodicity of the chain and that the conditional observation density is positive (strictly). The takeaway here is that assumptions on the state distribution and minimal assumptions about the observation distribution can be enough to obtain stability, i.e. that almost surely, $\Vert \pi_T^\mu - \pi^\nu_T\Vert_{TV} \to 0$ as $T\to\infty$. Other relevant references are \citet{atar1,chigansky,legland99,mcdonald2020}.
 
-A modern review of the stability litterature can be found in \cite{kimphd}, in particular concerning the rich history of the field.
+A modern review of the stability litterature can be found in \cite{kim2022duality}, in particular concerning the rich history of the field.
 
-\paragraph{} The second is \emph{robustness} to model error, which quantifies the behavior of $\Vert \hat\pi_t - \pi_t\Vert_{TV}$ where $\hat \pi$ is obtained by applying the filtering iteration approximately. A robust filter will have a constant error bound over a finite time horizon. Indeed, beyond the finite state-space and Kalman filter settings, computing an exact filtering distribution is intractable so approimating is necessary. Variants of the Kalman filter like the Extended or Unscented Kalman Filters \cite{ekf,ukf} linearize the transition and observation functions (and not the kernels) and assume the conditional distribution is Gaussian\cite{sarkka}. Particle filter methods approximate the filtering iteration with Monte Carlo sampling\cite{pf,smc}. \cite{oudjane,legland} show that such models are robust, and that the bound can be reduced as needed with richer approximations (more pseudo samples).
+\paragraph{} The second is \emph{robustness} to model error, which quantifies the behavior of $\Vert \hat\pi_t - \pi_t\Vert_{TV}$ where $\hat \pi$ is obtained by applying the filtering iteration approximately. A robust filter will have a constant error bound over a finite time horizon. Indeed, beyond the finite state-space and Kalman filter settings, computing an exact filtering distribution is intractable so approimating is necessary. Variants of the Kalman filter like the Extended or Unscented Kalman Filters \citep{ukf,sarkka} linearize the transition and observation functions (and not the kernels) and assume the conditional distribution is Gaussian \citep{sarkka}. Particle filter methods approximate the filtering iteration with Monte Carlo sampling\citep{gordon-pf}. \citet{oudjane} show that such models are robust, and that the bound can be reduced as needed with richer approximations (more pseudo samples).
 We use their arguments to study the robustness of the filter we propose in \cref{ch:hmm}.
-\cite{castro,mitrophanov} study the propagation of error from estimating models to filter error in finite state-spaces and continuous emission densities.
+\cite{decastro2017,mitrophanov-hmm-stability-2005} study the propagation of error from estimating models to filter error in finite state-spaces and continuous emission densities.
 
 
 
@@ -89,14 +87,15 @@ In this manuscript, each chapter is self-contained in terms of notations, defini
 \subsection{Kernel methods}
 Kernel methods are a widely applied family of methods for machine learning, inverse problems, approximation and applied mathematics, in general. They express classes of functions that combine expressivity and applicability. In particular, they can be integrated into optimization methods and can be learned from data efficiently.
 
-We recall some of their most important properties below. \cite{shawe-tayulor, scholkoptf,kernels-mva} are good references for going further. A historical reference is \cite{aronjzan1950}, which contains most of what is presented here. A historical reference is \cite{aronjzan1950}, which contains most of what is presented here. A historical reference is \cite{aronjzan1950}, which contains most of what is presented here. A historical reference is \cite{aronjzan1950}, which contains most of what is presented here.
+We recall some of their most important properties below, many of where already present in Aronszajn's seminal work \citep{aronszajn1950theory}. \cite{shawe-taylor,scholkopf-kernels} are good references for going further.
 
-\paragraph{}Kernel methods have three main characters: the positive definite kernel $k$, the embedding map $\phi$, and the Reproducting Kernel Hilbert Space (RKHS) $\mathcal H$.
+\paragraph{}
+Kernel methods have three main characters: the positive definite kernel $k$, the embedding map $\phi$, and the Reproducting Kernel Hilbert Space (RKHS) $\mathcal H$.
 
 
 \paragraph{Positive definite kernel} A positive definite kernel is a comparaison function between data-points that verifies a positive semi-definite constraint, as described in:
 \begin{mdframed}
-\begin{definition}[from \cite{}]
+\begin{definition}
 A positive definite kernel on $\mathcal X$ is any function $k: \mathcal X \times \mathcal X \to \mathbb R$ such that: for any $(x_1, \ldots, x_n)\in\mathcal X^n$ the kernel matrix $K$ defined by $[K]_{ij} = k(x_i, x_j)$ is symmetric and positive semi-definite.
 \end{definition}
 \end{mdframed}
@@ -105,7 +104,7 @@ Two canoncial examples of p.d. kernels on $\mathcal X = \mathbb R^d$ are the Rad
 \paragraph{Reproducing Kernel Hilbert Space}
 The Reproducing Kernel Hilbert Space is the set of functions defined by a p.d. kernel.
 \begin{mdframed}
-\begin{definition}[from \cite{aronjzan1950}]
+\begin{definition}[from \cite{aronszajn1950theory}]
 A Reproducing Kernel Hilbert Space of a p.d. kernel $k$ is a space of functions from $\mathcal X$ to $\mathbb R$ such that:
 \begin{itemize}
 \item $\mathcal H$ is a Hilbert space,
@@ -114,12 +113,12 @@ A Reproducing Kernel Hilbert Space of a p.d. kernel $k$ is a space of functions 
 \end{itemize}
 \end{definition}
 \end{mdframed}
-In fact, each p.d. kernel has a unique RKHS, and vice versa any RKHS has a unique p.d. kernel.\citep{aronjxan1950}
+In fact, each p.d. kernel has a unique RKHS, and vice versa any RKHS has a unique p.d. kernel.\citep{aronszajn1950theory}
 
 \paragraph{Kernel embedding}
 The kernel embedding explicitly links $\mathcal X$ and $\mathcal H$.
 \begin{mdframed}
-\begin{definition}[from \cite{}]
+\begin{definition}
 We call kernel embedding the map $\phi: \mathcal X \to \mathbb \mathcal H$ defined by for any $x\in\mathcal X$,
 $$ \phi(x) = k_x.$$
 \end{definition}
