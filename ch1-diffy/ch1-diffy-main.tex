@@ -2,7 +2,7 @@
 \chaptermark{Measuring dissimilarity with diffeomorphism invariance}
 \objectif{\begin{itemize}
     \item Diffy is a divergence defined over functions between general spaces.
-    \item Diffy is efficient to compute and is useful for comparing a wide range of data types, including images, videos, and point clouds. Specifically, we demonstrate that Diffy is computable in $O(N^{3/2})$ time with a guaranteed bound on the error of order $O(N^{-1/4})$ (see \cref{theorem:main-theorem}) where $N$ is the number of sample points (e.g. pixels for images) in each image, leveraging Nyström approximation methods.
+    \item Diffy is efficient to compute and is useful for comparing a wide range of data types, including images, videos, and point clouds. Specifically, we demonstrate that Diffy is computable in $O(N^{3/2})$ time with a guaranteed bound on the error of order $O(N^{-1/4})$ (see \cref{theorem:main-theorem}) where $N$ is the number of sample points (\emph{e.g.\ } pixels for images) in each image, leveraging Nyström approximation methods.
     \item Diffy is approximately invariant to smooth diffeomorphisms, with level of invariance precisely controlled by a regularization parameter and the parameters of the kernels.
     \item We conduct comprehensive experiments to rigorously analyze the behavior of Diffy in practical applications. All code is made publicly available in the \texttt{diffy} library.
     \end{itemize}}

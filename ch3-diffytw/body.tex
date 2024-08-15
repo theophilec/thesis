@@ -8,33 +8,40 @@ Dynamic Time Warping (DTW) was introduced by \cite{dtw-sakoe} to compare time se
 
 Soft Dynamic Time Warping (Soft-DTW) was proposed in \cite{sdtw} as a smooth replacement for DTW. Empirically, Soft-DTW behaves similarly to DTW, has equivalent computational complexity, is differentiable, and works better than DTW-based DBA for averaging based methods like clustering.
 
-With DTW and Soft-DTW are the most widely used elastic distances on time-series, we mention some extensions and other examples: the Fréchet distance\cite{frechet-clustering}, the Continuous-DTW distance\cite{cdtw}, extensions of (soft)DTW to comparing the feature space as well\cite{dtw-incomparable,vayer2022time}.
+\paragraph{Related work}
+While DTW and Soft-DTW are the most widely used elastic distances on time-series, other distances include: Fréchet distance \citep{frechet-clustering}, the Continuous-DTW distance\citep{cdtw}, extensions of (soft)DTW to comparing the feature space as well \citep{dtw-incomparable,vayer2022time}.
 
+Functional data analysis methods have also been proposed, especiallly around the seminal contribution of the Square-Root Velocity representation\citep{srvf}. Another approach is to use the moments of a functions, depending on its higher-order derivatives\citep{0712.1425}. Shape analysis methods have also been applied to time-series of shapes\citep{2108.05634,hal-00813825}. Neural network methods including with neural networks that learn an alignment function from the dataset\citep{2106.11911,dtan,2206.08107}. These methods focus on the alignement task and do not develop dissimilarities between time-series.
 
 \paragraph{Approach \& Contributions}
 DiffyTW is divergence between functions on $[0,1]$ representing time-series. It is provably invariant to subset of smooth reparametrizations. The set of transformations it is invariant to can be tuned. It can be robustly and efficiently used to compare time-series, by solving a quadratic program. DiffyTW produces a dissimilarity score and a reparametrization that aligns the time series. DiffyTW is differentiable with respect to its input and can be integrated in wider machine learning workflows. We illustrate and study DiffyTW's behavior on time series empirically.
 
-\paragraph{Notation} In this chapter, a time series is represented by a sample pattern $(t_i)_{1 \leq i \leq n}$ such that $0 \leq t_1 < \ldots < t_n \leq 1$ (not necessarily random) and values $(f_i)_{1\leq i\leq n}$ where $f_i \in\mathbb R^d$. $k$ is a positive definite kernel on $\mathbb R$ with reproducing kernel Hilbert space $\mathcal F$. $K$ is a positive definite kernel with reproducing kernel Hilbert space $\mathcal H$. Functions $f,g:[0,1] \to \mathcal X$, where $\mathcal X$ is a metric space, generally $\mathcal R^d$.
+\paragraph{Notation} In this chapter, a time series is represented by a sample pattern $(t_i)_{1 \leq i \leq n}$ such that $0 = t_1 < \ldots < t_n = 1$ (not necessarily random) and values $(f_i)_{1\leq i\leq n}$ where $f_i \in\mathbb R^d$. $k$ is a positive definite kernel on $\mathbb R$ with reproducing kernel Hilbert space $\mathcal F$. $K$ is a positive definite kernel with reproducing kernel Hilbert space $\mathcal H$. Functions $f,g:[0,1] \to \mathcal X$, where $\mathcal X$ is a metric space, generally $\mathcal R^d$.
 
 \section{DiffyTW}
-\emph{In this section, we introduce \texttt{DiffyTW}, a dissimilarity between functions $[0,1] \to \mathcal X$ which is invariant to a chosen class of diffeomorphic reparametrizations of $[0,1]$.}
+In this section, we introduce DiffyTW, a divergence between functions $[0,1] \to \mathcal X$ which is invariant to a chosen class of diffeomorphic reparametrizations of $[0,1]$.
 
 \subsection{Intuition}
 We call \emph{reparametrization} any increasing, diffeomorphic function $Q:[0,1] \to [0,1]$. Let $\mathcal Q$ be a set of such functions. Our goal is to concieve a divergence such that $d(f\circ Q, f) = 0$ for any $Q\in\mathcal Q$ and any $f:[0,1] \to \mathbb R^d$.
 
-A key idea is to compare the integrals of $f\circ Q$ and $f$. Indeed, this allows one to apply the change of variable theorem:
+A key idea is to compare the integrals of $f\circ Q$ and $f$. Indeed, this allows one to apply the change of variable theorem \citep{change-variable-ref}:
 \begin{equation}
-\int_0^1 f\circ Q(x)Q^\prime(x)dx = \int_0^1 f(x)dx.
+    \int_0^1 f\circ Q(x)Q^\prime(x)dx = \int_0^1 f(x)dx.
 \end{equation}
-Then,
-%\begin{equation}
-$q \mapsto \left\vert\int_0^1 f\circ Q(x)q(x) dx - \int_0^1 f(x)dx\right\vert$
-%\end{equation}
-is minimized by $q=Q^\prime$
+The intuition is then that finding $q(x) = Q^\prime(x)$ makes the integrals match, and makes the difference between both integrals small. This was also proposed in \cref{ch:diffy} for handling invariances on general data spaces. We highlight differences with \ciref{ch:diffy} in \cref{sec:diffytw-vs-diffy}.
 
-However, $q=Q^\prime$ is not necessarily the only minimizer. Indeed, if $f:[0,1] \to \mathbb R$, then $q(x) = f(x) / f\circ Q(x)$ also minimizes this quantity.
+If $q = Q^\prime$ is contained in the space we optimized over,
+\begin{equation}
+    q \mapsto \left\vert\int_0^1 f\circ Q(x)q(x) dx - \int_0^1 f(x)dx\right\vert
+\end{equation}
+is minimized by $q=Q^\prime$. However, in general, we cannot exhaustively specify the set of transformations the problem is invariant to, and $q=Q^\prime$ may not be the only minimizer in the space. Indeed, if $f:[0,1] \to \mathbb R^+$, then $q(x) = f(x) / f\circ Q(x)$ also minimizes this quantity.
 
-To avoid these minimizers, consider two refinements: first, embed $f$ using an embedding map $\phi$ such that $\int \phi(f(x))dx$ is close to characterizing $f$ ; second, restrict the search space to the derivatives of reparametrizations.
+\paragraph{}
+Such spurious minimizers can be avoided with two refinements.
+
+First, to ensure matchings work for all features of the time series, we embed their values with $\phi$, chosen as a high-dimensional embedding. This avoids the minimizer above, but also handles the case where $f(x)\in\mathbb R^d$. Indeed, if the match is not perfect, then $f$ and $g$ can be made close by favoring the coordinates with the highest magnitude. This is avoided when embedding with $\phi$.
+
+Second, we enforce the search space to contain only derivatives of reparametrizations, i.e. we restrict functions $q$ to verify the two following constraints: $q(x) \geq 0, \forall x\in[0,1]$ and $\int_0^1 q(u)du=1$. As a byproduct, retieving $q$ allows us to reconstruct a reparametrization $Q$ and align the time series.
 
 \subsection{Definition of DiffyTW}
 
@@ -270,7 +277,7 @@ In particular, so long as $P$ is positive definite, $V$ is differentiable. This 
 Our proof of \cref{thm:diffytw-grad} builds on a result from \cite{shapiro} and \cite{lee}, which give sufficient conditions for differentiability of quadratic programs. See \cref{sec:proof-diffytw-grad} for the proof. Note that a similar argument is used in \cite{tavenard-dtw-diff} for the differentiability of DTW.
 
 \paragraph{Other methods for differentiability of QPs}
-There is a growing body of work on differentiating through convex programs, with three major approaches: analytical differentiation (when a closed-form solution to the convex problem is known, e.g. unconstrained QPs), unrolling (differentiating through the operations in the algorithm used to solve the convex problem), implicit differentiation (applying the implicit function theorem).
+There is a growing body of work on differentiating through convex programs, with three major approaches: analytical differentiation (when a closed-form solution to the convex problem is known, \emph{e.g.\ } unconstrained QPs), unrolling (differentiating through the operations in the algorithm used to solve the convex problem), implicit differentiation (applying the implicit function theorem).
 
 \begin{remark}[Relation to implicit differentiation for QPs]
     \cite{bambade,optnet,...} study differentiation of Quadratic programs where the constraints also depend on $\theta$. They rely on implicit differentiation of the KKT conditions for the Quadratic Program and handle a more general setting, including Extended Conservative Jacobians when the QPs are not feasible. As a sanity check, we verify that we recover our result using their method for our setting in \cref{sec:lagrangian}.

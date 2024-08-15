@@ -86,7 +86,7 @@ where $C_\mu$ and $C_Q$ are independent of $f$.
 \end{mdframed}
 \noindent In the limit of vanishing regularizsation, Diffy is invariant to smooth differomorphisms. Indeed, as $\la \to 0$, the set of admissible solutions become larger and contains all diffeomorphisms determinant jacobian functions and $D_\la(f, f\circ Q)\to 0$.
 
-In practice, Diffy can be computed on discrete objects using domain samples and values. For images, this means the natural pixel locations and values. Plug-in estimators incorporating Nyström techniques achieve convergence of the approximate $\hat D_\lambda(f, g)$ to $D_\lambda(f, g)$ as the number of samples (e.g. of pixels) grows. This is proven in the informal result below:
+In practice, Diffy can be computed on discrete objects using domain samples and values. For images, this means the natural pixel locations and values. Plug-in estimators incorporating Nyström techniques achieve convergence of the approximate $\hat D_\lambda(f, g)$ to $D_\lambda(f, g)$ as the number of samples (\emph{e.g.\ } of pixels) grows. This is proven in the informal result below:
 \begin{mdframed}
 \begin{informaltheorem}[based on \cref{thm:appr-error-widehatD}]
 With rich enough Nyström approximations, with high probability over the draw of $N$ sample locations for each of $f$ and $g$,
@@ -104,7 +104,7 @@ We apply Diffy to comparing images with natural and synthetic transformations an
 
 \begin{itemize}
     \item Diffy is a divergence defined over functions between general spaces, defined as an optimization problem matching the integrals of embeddings of functions in Reproducing kernel Hilbert spaces.
-    \item Diffy is efficient to compute and is useful for comparing a wide range of data types, including images, videos, and point clouds. Specifically, we demonstrate that Diffy is computable in $O(N^{3/2})$ time with a guaranteed bound on the error of order $O(N^{-1/4})$ (see \cref{sec:approximation}) where $N$ is the number of sample points (e.g. pixels for images) in each image, leveraging Nyström approximation methods.
+    \item Diffy is efficient to compute and is useful for comparing a wide range of data types, including images, videos, and point clouds. Specifically, we demonstrate that Diffy is computable in $O(N^{3/2})$ time with a guaranteed bound on the error of order $O(N^{-1/4})$ (see \cref{sec:approximation}) where $N$ is the number of sample points (\emph{e.g.\ } pixels for images) in each image, leveraging Nyström approximation methods.
     \item Diffy is approximately invariant to smooth diffeomorphisms, with level of invariance precisely controlled by a regularization parameter and the parameters of the kernels (see \cref{theorem:main-theorem}).
     \item We conduct comprehensive experiments to rigorously analyze the behavior of Diffy in practical applications. All code is made publicly available in the \texttt{diffy} library\footnote{Available at \url{github.com/theophilec/diffy}.}.
 \end{itemize}
@@ -129,7 +129,7 @@ Beyond time-series alignement, a related problem is invariance to time-warping. 
 We posit that to be robust to these discrepancies, divergences between time-series should aim to be invariant to time-warping. Despite their practical utility, DTW \citep{sakoe} and its variants such as Soft-DTW \citep{s-dtw} do not have such guarantees. Other methods focus exclusively on aligning the time-series, as outlined in \ref{background:diffytw}.
 
 \paragraph{Intuition}
-The key insight to our approach is that a smooth reparametrization over $[0,1]$ is an inscreasing, smooth diffeomorphism over $[0,1]$. Since these are 1D functions, they can be potentially very efficiently estimated. We combine this with the intuition from \cref{sec:contributions-ch2}. Indeed, a repametrization $Q$ will match the statistics of the times series over time.
+The key insight to our approach is that a smooth reparametrization over $[0,1]$ is an inscreasing, smooth diffeomorphism over $[0,1]$. Since these are 1D functions, they can be potentially very efficiently estimated using function approximation. We combine this with the intuition from \cref{sec:contributions-ch2}. Indeed, a repametrization $Q$ will match the statistics of the times series over time.
 
 DiffyTW is designed to produce a proper smooth reparametrization that aligns the two time-series, in contrast to \cref{ch:diffy}. Indeed, one cannot infer $Q$ from $\vert \nabla Q\vert$ and more generally, given a smooth, non-negative real function $q$, therethere is no guarantee that there exists a diffeomorphism $Q$ such that $q(x) = \vert \nabla Q(x) \vert$.
 
@@ -198,7 +198,7 @@ We consider the filtering problem for discrete-time Hidden Markov Models on gene
 \pi_k(dx) = \frac{\int \pi_{k-1}(du)Q(u, dx)G(x, y_k)}{\int \int \pi_{k-1}(du)Q(u, dx)G(x, y_k)}
 \end{equation}
 
-In general state-spaces, computing \cref{eq:intro-hmm-iteration} implies either making strong assumptions on the model (e.g. Kalman filter), approximating the iteration while assuming a functional form for $\pi_T$ (e.g. variants of the Kalman filter) or approximation \cref{eq:intro-hmm-iteration} using Monte Carlo sampling (e.g. the particle filter). The particle filter can be made stable and robust, but does not produce a closed-form distribution.
+In general state-spaces, computing \cref{eq:intro-hmm-iteration} implies either making strong assumptions on the model (\emph{e.g.\ } Kalman filter), approximating the iteration while assuming a functional form for $\pi_T$ (\emph{e.g.\ } variants of the Kalman filter) or approximation \cref{eq:intro-hmm-iteration} using Monte Carlo sampling (\emph{e.g.\ } the particle filter). The particle filter can be made stable and robust, but does not produce a closed-form distribution.
 
 Beyond the Markovian structure, we aim to leverage a second source of structure in filtering, that (conditional) probability distributions are non-negative functions. This can seem trivial at first glance but the idea has recently attracted interest with the development of Positive Semi-Definite Models (PSD models). PSD models are a class of non-negative functions based on the kernel sum-of-squares framework which optimally approximate smooth, non-negative functions such as (conditional) densities. These approximations are solutions to convex problems. When the RBF kernel is used, this family is useful for approximating probability densities. Indeed, products and marginals of PSD models are PSD models, which can be computed efficiently. For a primer see \citep{ciliberto2021,ulysse-sampling}.
 

@@ -5,7 +5,7 @@
 \section{Introduction}
 One of the overarching goals of most machine learning algorithms is to generalize to unseen data. Ensuring and quantifying generalization is of course challenging, especially in the high-dimensional setting. One way of reducing the hardness of a learning problem is to study the invariances that may exist with respect to the distribution of data, effectively reducing its dimension. Handling invariances in data has attracted considerable attention over time in machine learning and applied mathematics more broadly. Two notable examples are image registration \citep{registration1,registration2} and time series alignment \citep{dtw,soft-dtw,vayer,diff-dtw,align-incomparable}.
 
-In practice, data augmentation is a central tool in the machine learning practitioner's toolbox. In computer vision for instance, images are randomly cropped, color spaces are changed, and artifacts are added. Such heuristics enforce some form of invariance to transformations that are chosen by hand, often parametrically, and comes at the cost of a more demanding learning step (\emph{e.g.}, more data to store and process, more epochs, to name but a few).
+In practice, data augmentation is a central tool in the machine learning practitioner's toolbox. In computer vision for instance, images are randomly cropped, color spaces are changed, and artifacts are added. Such heuristics enforce some form of invariance to transformations that are chosen by hand, often parametrically, and comes at the cost of a more demanding learning step (\emph{e.g.\ }, more data to store and process, more epochs, to name but a few).
 %%
 \paragraph{Prior work.}
 Learning under invariances has also spurred significant theoretical interest.
@@ -14,7 +14,7 @@ Learning under invariances has also spurred significant theoretical interest.
 \paragraph{Contributions.}
 We introduce a dissimilarity called \Diffy (standing for Diffeomorphism Invariant Dissimilarity) which is invariant to smooth diffeomorphisms present between data points. Although \Diffy is somewhat less sophisticated than most of the models presented above, it is considerably more generic and can be seen as a building block for devising practical machine learning algorithms in the presence of invariances.
 
-In order to exploit the internal structure of a data point (\emph{e.g.} of an image), we cast them as functions between two spaces (\emph{e.g.} coordinate and color spaces). This unlocks the potential of using the change of variable formula to eliminate diffeomorphisms between functions (\emph{i.e.} transformations between data points) when they exist. \Diffy is based on a generic method for identifying if a function $g$ is of the form $f\circ Q$, without any parametric model over $Q$, founded on the change of variable formula. This makes \Diffy a promising and flexible tool for image processing (\emph{e.g.}, image registration), time-series analysis (\emph{e.g.}, dynamic time warping) and machine learning (\emph{e.g.}, nearest neighbors).
+In order to exploit the internal structure of a data point (\emph{e.g.\ } of an image), we cast them as functions between two spaces (\emph{e.g.\ } coordinate and color spaces). This unlocks the potential of using the change of variable formula to eliminate diffeomorphisms between functions (\emph{i.e.} transformations between data points) when they exist. \Diffy is based on a generic method for identifying if a function $g$ is of the form $f\circ Q$, without any parametric model over $Q$, founded on the change of variable formula. This makes \Diffy a promising and flexible tool for image processing (\emph{e.g.\ }, image registration), time-series analysis (\emph{e.g.\ }, dynamic time warping) and machine learning (\emph{e.g.\ }, nearest neighbors).
 
 \Diffy is defined as an optimisation problem in a Reproducing Kernel Hilbert Space (RKHS), of which we present a closed form solution
 (\cref{theorem:closed-form}).
@@ -89,7 +89,7 @@ Indeed, when $g = f\circ Q$ for some diffeomorphism $Q$, choosing $q = \vert\nab
 Problem \eqref{eq:prob} is thus replaced by the following one, which also has $q$ as a solution when $g = f \circ Q$:
 \eqal{\label{eq:prob2}
 \min_q \max_{v \in V} \left|\int v(g(x)) q(x) \dd x - \int v(f(x)) \dd x\right|,
-} where $V$ is a rich set of statistics, \emph{e.g.}, continuous integrable functions on $\R^p$.
+} where $V$ is a rich set of statistics, \emph{e.g.\ }, continuous integrable functions on $\R^p$.
 
 % %\begin{figure}[t]
 % %    \centering
@@ -266,7 +266,7 @@ The proof of \cref{theorem:closed-form} comes from identifying the inner optimiz
 
 \section{Approximate computation}\label{sec:approximation}
 
-Although \cref{theorem:closed-form} gives a closed-form expression of $D_\lambda(f,g)$, $F_\mu$ and $G$ are defined as integral operators between infinite dimensional Hilbert spaces. In practice, we only have access to a discretization of $f$ and $g$ (e.g. an image is a discretized spatial signal represented by $N$ pixels). A first natural approximation is thus to replace the integral with an empirical counterpart. This estimate is then a sum of rank-one operators between $\mathcal H$ and $\mathcal F$. To reduce the computational cost, while keeping good accuracy, we can then further approximate it using Nyström methods for kernels. The resulting estimator is $\widehat{D}_\la$ presented in \cref{eq:widehatD-finite-dimensional}, its convergence to $D_\la$ is studied in \cref{thm:appr-error-widehatD}.
+Although \cref{theorem:closed-form} gives a closed-form expression of $D_\lambda(f,g)$, $F_\mu$ and $G$ are defined as integral operators between infinite dimensional Hilbert spaces. In practice, we only have access to a discretization of $f$ and $g$ (\emph{e.g.\ } an image is a discretized spatial signal represented by $N$ pixels). A first natural approximation is thus to replace the integral with an empirical counterpart. This estimate is then a sum of rank-one operators between $\mathcal H$ and $\mathcal F$. To reduce the computational cost, while keeping good accuracy, we can then further approximate it using Nyström methods for kernels. The resulting estimator is $\widehat{D}_\la$ presented in \cref{eq:widehatD-finite-dimensional}, its convergence to $D_\la$ is studied in \cref{thm:appr-error-widehatD}.
 
 
 \paragraph{Quadrature approximation.}
@@ -287,7 +287,7 @@ Let $M_X, M_Y \in \N$ and choose the set of points $\widetilde{X} = \lbrace \wid
 
 
 \paragraph{Combining the two approximations.}
-Assume in this section, that the kernels of choice are universal (as, e.g., the Laplacian or the Gaussian kernel).
+Assume in this section, that the kernels of choice are universal (as, \emph{e.g.\ }, the Laplacian or the Gaussian kernel).
 Let $P_{\tilde{X}}:\hh \to \hh$ be the projection operator associated to the Nystr\"om points on $X$ and $P_{\tilde{Y}}$ the one associated to the Nystr\"om point on $Y$. Combining the two approximations, we define the following estimator for $D_\la$,
 \eqals{
 \widehat{D}_\la(f,g) := \la \|(P_{\tilde{Y}} G_N P_{\tilde{X}} G_N^*P_{\tilde{Y}} + \la)^{-\frac{1}{2}} P_{\tilde{Y}} F_{\mu, N} P_{\tilde{X}} \|^2_{\mathrm{op}}.
@@ -309,7 +309,7 @@ With the notation above,
 }
 \end{lemma}
 
-Note that, in practice, $\widetilde X$ and $\widetilde Y$ can be chosen either deterministically, e.g. on a grid, or randomly. Now, we provide a bound on the approximation error associated to $\widehat{D}_\la(f,g)$. We assume that the $N$ points in $x_1,\dots, x_N$ are sampled independently and uniformly at random in $X$ and, moreover, that the $M_X$ points in $\widetilde{X}$ and the $M_Y$ points in $\widetilde{Y}$ are sampled independently and uniformly at random in, respectively, $X, Y$ (similar result can be derived for a grid).
+Note that, in practice, $\widetilde X$ and $\widetilde Y$ can be chosen either deterministically, \emph{e.g.\ } on a grid, or randomly. Now, we provide a bound on the approximation error associated to $\widehat{D}_\la(f,g)$. We assume that the $N$ points in $x_1,\dots, x_N$ are sampled independently and uniformly at random in $X$ and, moreover, that the $M_X$ points in $\widetilde{X}$ and the $M_Y$ points in $\widetilde{Y}$ are sampled independently and uniformly at random in, respectively, $X, Y$ (similar result can be derived for a grid).
 \begin{theorem}\label{thm:appr-error-widehatD}
 Let $\delta \in (0,1)$. Let $X \subset \R^d, Y \subset \R^p$ be bounded sets and $k_X, k_Y$ be Sobolev kernels with smoothness, respectively, $s + d/2$ and $z+p/2$, for some $s,z > 0$. There exists two constants $c_1, c_2$ s. t., when $M_X \geq c_1$ and $M_Y \geq c_2$, then the following holds with probability $1-\delta$,
 $$|\widehat{D}_\la(f,g) - D_\la(f,g)| \leq c\left(\tfrac{\log\frac{1}{\delta}}{\la\sqrt{N}} + \tfrac{\left(\log \frac{M_X}{\delta}\right)^{\alpha}}{\la M_X^{s/d}} + \tfrac{\left(\log\frac{M_Y}{\delta}\right)^{\beta}}{\la M_Y^{z/p}}\right),$$
@@ -323,7 +323,7 @@ $$ |\widehat{D}_\la(f,g) - D_\la(f,g)| = O\left(\frac{1}{\la \sqrt{N}}\right).$$
 To conclude, a choice of $\la$ as $\la = N^{-1/4}$ guarantees a final convergence rate of $\widehat{D}_\la$ to $D_\la$ in the order of $N^{-1/4}$ and, together with \cref{theorem:main-theorem} a level of invariance to diffeomorphism for $\widehat{D}_\la$ of the order
 $$\widehat{D}_\la(f, f \circ Q) = O(N^{-1/4} C_\mu^2 C_Q^2),$$
 which can become a statistically significant threshold to decide if, in practice $f \approx g$ up to diffeomorphism.
-Clearly the choice of $r,s$ while reducing the number of Nystr\"om points required in the approximation (with important computational implications that we see below) increases the constant $C_Q$ as shown, e.g., in \cref{ex:diffeo}, where $m = s + d/2$.
+Clearly the choice of $r,s$ while reducing the number of Nystr\"om points required in the approximation (with important computational implications that we see below) increases the constant $C_Q$ as shown, \emph{e.g.\ }, in \cref{ex:diffeo}, where $m = s + d/2$.
 
 
 %%%%%{\color{red}\bf[Algorithm?]}
@@ -345,7 +345,7 @@ In the theoretical analysis above, the rates in $N$ hold for any parameter of th
 
 Finally, the method introduced is empirically quite robust to the choice of parameters.
 
- %Here we study an efficient strategy to compute it and its computational complexity. Denote $T(d)$ the cost of one kernel evaluation between two points in $\R^d$ (e.g. for the Laplace kernel $T(d) = O(d)$).
+ %Here we study an efficient strategy to compute it and its computational complexity. Denote $T(d)$ the cost of one kernel evaluation between two points in $\R^d$ (\emph{e.g.\ } for the Laplace kernel $T(d) = O(d)$).
 
  %\textbf{Offline pre-computation~}
 

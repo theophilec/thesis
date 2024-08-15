@@ -7,7 +7,7 @@ This data can be used to solve longstanding challenges encoutered when solving t
 \paragraph{}
 During training and deployment of machine learning algorithms, scientists and engineers instill their knowledge to make the algorithms as performant as possible. They tailor their choice of algorithm to match the problem they solve.
 
-This is done in a variety of ways: in the selection of the datasets (e.g. what is an outlier?), in the choice of the search space (e.g. convolutional or fully connected neural networks?), in the design of a regularization schema (e.g. should solutions have small $L_2$ or $L_1$ norms?), in the training recipe (e.g. which optimizer? small learning rate? large learning rate?), to mention a few examples. Each of these choices impacts the obtained algorithm, its performance and its properties. We call these choices \emph{inductive biases}.
+This is done in a variety of ways: in the selection of the datasets (\emph{e.g.\ } what is an outlier?), in the choice of the search space (\emph{e.g.\ } convolutional or fully connected neural networks?), in the design of a regularization schema (\emph{e.g.\ } should solutions have small $L_2$ or $L_1$ norms?), in the training recipe (\emph{e.g.\ } which optimizer? small learning rate? large learning rate?), to mention a few examples. Each of these choices impacts the obtained algorithm, its performance and its properties. We call these choices \emph{inductive biases}.
 
 Inductive biases are -- often, implicit -- assumptions about the learning problem or the solution to learning problem such that constrain the space of solutions or influence the choice between several solutions\footnote{See \cite{mitchell-inductive,1806.01261} for a formal definition and review of such concepts.}. They allow us to take advantage of assumptions about the task at hand to design algorithms with strong theoretical guarantees and better practical performance.
 
@@ -28,7 +28,7 @@ At the time of writing this thesis, most of the world has heard of a machine lea
 
 Beyond NLP, identifying and leveraing meaningful structure for machine learning problems has been the source of considerable interest and engineering effort. When the structure is embedded in the output and the loss function, the field is often reffered to as \emph{structured prediction}. Two seminal books on the topic include \citep{advancedStructuredPrediction2014MIT,bakir2007predicting}. Protein folding  \cite{joachims2009}, information retrieval \cite{duchi2010} are some examples of applications of using structured objects in machine learning.
 
-Conversely, routing time prediction \citep{deepmind-traffic} and drug discovery \citep{stokes-antibiotics} are examples of applications where the input is a structured object, e.g. a graph.
+Conversely, routing time prediction \citep{deepmind-traffic} and drug discovery \citep{stokes-antibiotics} are examples of applications where the input is a structured object, \emph{e.g.\ } a graph.
 
 \subsection{Invariance and stability to diffeomorphisms}
 
@@ -128,7 +128,7 @@ $$ \phi(x) = k_x.$$
 The map $\phi$ lifts $x\in\mathcal X$ into $\mathcal H$. Intuitively, it does so in a way that is useful for the task at hand. If we are doing classification, then we should choose $\phi$ (i.e. $k$ and $\mathcal H$) such that it is easier to differentiate between different classes among vectors $\phi(x_1)$ and $\phi(x_2)$ then among $x_1$ and $x_2$. %Generally, we never compute $\phi(x)$ nor express it explicitly. Indeed, $\mathcal H$ is often infinite dimensional. Data points are never \emph{really} embedded in $\mathcal H$. This is done implicitly through kernel evaluations, as we explain in the next paragraph.
 
 \paragraph{Evaluating a function in $\mathcal H$}
-To understand the point of kernel methods, let us consider a finite combination of functions $\phi(x_k)$ for some $x_k\in\mathcal X$, e.g. $f= \sum_{k=1}^k w_k \phi(x_k)$. Note that $f\in\mathcal H$ since $\phi(x)\in\mathcal H$ for any $x\in\mathcal X$ by hypothesis. For now, $f$ is expressed as an element in a functional space. In order to evaluate $f$ at $x\in\mathcal X$, using the reproducing property and linearity, we see that:
+To understand the point of kernel methods, let us consider a finite combination of functions $\phi(x_k)$ for some $x_k\in\mathcal X$, \emph{e.g.\ } $f= \sum_{k=1}^k w_k \phi(x_k)$. Note that $f\in\mathcal H$ since $\phi(x)\in\mathcal H$ for any $x\in\mathcal X$ by hypothesis. For now, $f$ is expressed as an element in a functional space. In order to evaluate $f$ at $x\in\mathcal X$, using the reproducing property and linearity, we see that:
 $$f(x) = \langle f, \phi(x)\rangle = \langle \sum_{k=1}^n w_k\phi(x_k), \phi(x_k)\rangle= \sum w_k \langle \phi(x), \phi(x_k)\rangle = \sum_{k}w_k k(x, x_k)= \Phi(X)^Tw,$$
 where $\Phi(X) = (k(x, x_1), \ldots, k(x, x_n))^\top\in\mathbb R^n$. So, like $f$ is a linear combination of $\phi(x_k)$, $f(x)$ is a linear combination of $k(x, x_k)$. Importantly, $f$ is not a linear function in $x$ since $k(\cdot, x_k)$ is not.
 

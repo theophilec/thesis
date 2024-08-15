@@ -28,7 +28,7 @@ Our main contributions are:
  \begin{enumerate}
      \item A novel algorithm to tackle Sequential Bayesian Filtering, which recovers previously proposed estimators and can be applied to any filtering problem where the transition kernels admit a smooth density.
      \item We show that the proposed estimator is both stable and robust with respect to a large family of application settings. These theoretical properties are adaptive to the regularity properties of the Hidden Markov Model.
-     \item The computational and space complexity of the proposed algorithm depends on the regularity of the transition kernels. For very regular kernels (e.g. infinitely differentiable) the algorithm has a computational complexity that is smaller than, for example, particle filtering.
+     \item The computational and space complexity of the proposed algorithm depends on the regularity of the transition kernels. For very regular kernels (\emph{e.g.\ } infinitely differentiable) the algorithm has a computational complexity that is smaller than, for example, particle filtering.
  \end{enumerate}
 
 
@@ -117,7 +117,7 @@ In \cref{sec:optimization}, we introduce the optimization problem we solve to le
 \subsection{Learning algorithm}\label{sec:optimization}
 The intuition behind our algorithm is to approximate $g=\sqrt{f}$ using $\hat g$ a Gaussian Linear Model. Then, $\hat f = \hat g^2$ should approximate $f=g^2$ well. Indeed, we showed in \cref{ex:sq:linear-model} that the square of any Gaussian Linear Model is a Gaussian PSD Model and its weight matrix is of rank $1$ and given by $A =aa^\top $ where $a$ is the weight vector of the Gaussian Linear Model.
 
-\paragraph{What about $A$?} In \cref{def:psd-model}, we defined as Gaussian PSD Model as parametrized by a positive semi-definite matrix $A$, not necessarily of rank $1$. $A$ A full-rank estimator $\hat f$ can be also learned, by solving a Semi-Definite Programming problem using e.g. Newton's method. This does not improve the learning rate, indeed it is minimax optimal, however can improve the constants \todo{ref -> Ale/Ulysse?}. Algorithmically, solving as SDP problem is harder and costs $O(M^4)$.
+\paragraph{What about $A$?} In \cref{def:psd-model}, we defined as Gaussian PSD Model as parametrized by a positive semi-definite matrix $A$, not necessarily of rank $1$. $A$ A full-rank estimator $\hat f$ can be also learned, by solving a Semi-Definite Programming problem using \emph{e.g.\ } Newton's method. This does not improve the learning rate, indeed it is minimax optimal, however can improve the constants \todo{ref -> Ale/Ulysse?}. Algorithmically, solving as SDP problem is harder and costs $O(M^4)$.
 
 We use this insight to efficiently approximate a smooth sum-of-squares function $f$ with a Gaussian PSD Model $\hat f$. This approach was first published by \cite{sampling-ulysse} for desity estimation from samples. In \cref{theorem:learning}, we show that this approach attains minimax optimal learning rates for learning smooth non-negative functions from samples.
 

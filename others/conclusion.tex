@@ -2,9 +2,11 @@
 
 In this thesis, we developed and studied methods for leveraging structure in machine learning and statistical inference problems. First, we focused on invariance to smooth transformations on general spaces, developing a divergence between data points that is invariant to smooth diffeomorphisms. This made the case for casting data points as functions, unlocking a richer topology with better tools for analysis. Second, we developed a divergence to compare time-series that accounts for misalignment and time-warping. It should be seen as a principled alternative to Dynamic Time Warping, with strong theoretical properties such as invariance and differentiability. Finally, we combined Markovian structure with the non-negativity constraint of probability densities to develop a non-linear filter with stability and robustness guarantees.
 
-\paragraph{} Taken as a whole, our work underscores the importance of embedding structure into algorithm design. By enforcing invariances and using all intrinsic model characteristics, we pave the way for more effective methods. Our three contributions are supported by theoretical guarantees and empirical evidence.
+\paragraph{}
+Taken as a whole, our work underscores the importance of embedding structure into algorithm design. By enforcing invariances and using all intrinsic model characteristics, we pave the way for more effective methods. Our three contributions are supported by theoretical guarantees and empirical evidence.
 
-\paragraph{}\noindent We briefly summarize each contribution:
+\paragraph{}
+\noindent We briefly summarize each contribution:
 
 \subparagraph{} Firstly, we introduced Diffy, a novel divergence tailored for functions, which is inherently invariant to smooth diffeomorphisms. By embedding data within reproducing kernel Hilbert spaces and formulating the divergence as an optimization problem, Diffy offers a closed-form solution that is both computationally efficient and theoretically grounded. Its applicability spans various data types, including images and point clouds, and it serves as a robust alternative in distance-based machine learning methods, ensuring resilience against naturally occurring transformations.
 

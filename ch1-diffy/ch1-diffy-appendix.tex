@@ -1,7 +1,7 @@
 \section{Background} \label{app:background}
 
 
-We recall here the classical version of change of variable theorem for $\R^d$, see e.g. Thm. 40.7 of \citet{aliprantis1998principles}.
+We recall here the classical version of change of variable theorem for $\R^d$, see \emph{e.g.\ } Thm. 40.7 of \citet{aliprantis1998principles}.
 \begin{theorem}[Change of Variables]\label{thm:change-of-variable}
 Let $V$ be an open set in $\R^d$ and $Q:\R^d \to \R^d$ be an injective continuosly differentiable map. Let $f \in L^1(V)$. Denote by $\nabla Q(x) \in \R^{d\times d}$ the gradient of $Q$ for any $x \in \R^d$. Then, we have
 $$\int_{Q^{-1}(V)} f(Q(x)) |\nabla Q(x)| dx = \int_{V} f(y) dy. $$
@@ -38,7 +38,7 @@ The second point is a classical result on Sobolev space and is derived in \citet
 In the next subsection we introduce some preliminary results that will be necessary to prove the more general version of Theorem~\ref{theorem:main-theorem}, which is in the subsection \cref{sec:general-theorem}.
 
 \subsection{Preliminary result on composition of Sobolev functions}\label{sec:functions}
-The following theorem quantifies the fact that a Sobolev space with $m > d/2$ is closed with respect to composition with diffeomorphisms. There exists many abstract results about the closure of composition in Sobolev space in the literature  \citep[see \emph{e.g.}][]{bruveris2017regularity}. Here, however, we want a quantitative bound. We base our result on the explicit bound in \citet{bourdaud2011composition}. To obtain a final readable form we have to do a bit of slalom between restriction and extension between $Z$ and $\R^d$. Indeed, we need functions that are equivalent to the functions of interest on $Z$, but whose norm does not diverge when going to $\R^d$. For example, constant functions don't belong to $H^m(\R^d)$, but for us it is enough to have a function that is equal to a constant on $Z$ and that goes to zero at infinity fast enough to have finite $H^m(Z)$ norm.
+The following theorem quantifies the fact that a Sobolev space with $m > d/2$ is closed with respect to composition with diffeomorphisms. There exists many abstract results about the closure of composition in Sobolev space in the literature  \citep[see \emph{e.g.\ }][]{bruveris2017regularity}. Here, however, we want a quantitative bound. We base our result on the explicit bound in \citet{bourdaud2011composition}. To obtain a final readable form we have to do a bit of slalom between restriction and extension between $Z$ and $\R^d$. Indeed, we need functions that are equivalent to the functions of interest on $Z$, but whose norm does not diverge when going to $\R^d$. For example, constant functions don't belong to $H^m(\R^d)$, but for us it is enough to have a function that is equal to a constant on $Z$ and that goes to zero at infinity fast enough to have finite $H^m(Z)$ norm.
 
 
 \begin{theorem}[Smooth composition]\label{thm:sobolev-smooth-composition}
@@ -84,7 +84,7 @@ Now to conclude, note that
 $$\|\tilde{u}\|_{H^m(\R^d)} = \|E_{Z}[h|_Z - s|_Z]\|_{H^m(\R^d)} \leq c_2 \|h|_Z - s|_Z\|_{H^m(Z)} \leq c_2 \|h\|_{H^m(Z)} + c_2 h(0) \textrm{vol}(Z)^{1/2},$$
 moreover
 $$\|\tilde{Q}\|_{H^m(\R^d,\R^d)} = \|E_Z(Q|_Z)\|_{H^m(\R^d, \R^d)} \leq c_2 \|Q|_Z\|_{H^m(Z, \R^d)}.$$
-Note also that for the Sobolev space $W^1_\infty$ there exists the same type of result as \cref{thm:sobolev-restriction-extension} and for the same extension operator defined in \cref{thm:sobolev-restriction-extension} (which is a {\em total extension operator}, see e.g. the Stein extension theorem, Thm 5.4 page 154 of \citealp{adams2003sobolev}), so, as above, we have
+Note also that for the Sobolev space $W^1_\infty$ there exists the same type of result as \cref{thm:sobolev-restriction-extension} and for the same extension operator defined in \cref{thm:sobolev-restriction-extension} (which is a {\em total extension operator}, see \emph{e.g.\ } the Stein extension theorem, Thm 5.4 page 154 of \citealp{adams2003sobolev}), so, as above, we have
 $$\|\tilde{u}\|_{W^1_\infty(\R^d)} \leq c_2 \|h\|_{W^1_\infty(Z)} + c_2 h(0),$$
 and also
 \eqals{
@@ -101,7 +101,7 @@ The final result is obtained considering that $x A + d (B + y A) R \leq (1+ d + 
 
 \paragraph{Step 3. The norm of $\rho$}.  Let $A_{t}$ be the set $A_{t} = \{x ~|~ \min_{y \in Q^{-1}(\Omega)} \|x-y\| \leq t\}$. Let $\eta = d_H(Q^{-1}(\Omega), \overline{U})$, i.e., the Haussdorff distance between the sets $Q^{-1}(\Omega)$ and $\overline{U}$, corresponding to the largest $\eta$ for which $A_\eta \subseteq U$. Note that $\eta > 0$ since $Q^{-1}(\Omega)$ is compact, while $U$ is open and $Q^{-1}(\Omega) \subset U$. The fact that $\eta > 0$ implies that for any $\eta^\prime < \eta$ it holds that $A_{\eta^\prime} \subset U$.
 
-The function $\rho$ is obtained by the convolution of the indicator function $1_{A_{\eta/2}}$ with the bump function $\psi_{\eta/2}(x) =  (\eta/2)^{-d} \psi(x/(\eta/2))/S$ where $S = \int_{\R^d} \psi(x) dx$ and $\psi$ is an infinitely smooth non-zero non-negative function that is $0$ on $\|x\| \geq 1$ as for example $\psi(x) = \exp(-1/(1-\|x\|^2)_+)$ for any $x \in \R^d$, where $(z)_+ = \max(0,z)$. In particular, since (a) $\|f(y-\cdot)\|_{H^m(\R^d)} = \|f\|_{H^m(\R^d)}$ for any $y \in \R^d$, by construction of the norm $H^m(\R^d)$, and (b) $\|t^{-d} f(\cdot/t)\|_{H^m(\R^d)} \leq c_6 t^{-d/2} \max(1,t^{-m}) \|f\|_{H^m(\R^d)}$ (see, e.g., Proposition 3 of \citealp{runst2011sobolev}) we have
+The function $\rho$ is obtained by the convolution of the indicator function $1_{A_{\eta/2}}$ with the bump function $\psi_{\eta/2}(x) =  (\eta/2)^{-d} \psi(x/(\eta/2))/S$ where $S = \int_{\R^d} \psi(x) dx$ and $\psi$ is an infinitely smooth non-zero non-negative function that is $0$ on $\|x\| \geq 1$ as for example $\psi(x) = \exp(-1/(1-\|x\|^2)_+)$ for any $x \in \R^d$, where $(z)_+ = \max(0,z)$. In particular, since (a) $\|f(y-\cdot)\|_{H^m(\R^d)} = \|f\|_{H^m(\R^d)}$ for any $y \in \R^d$, by construction of the norm $H^m(\R^d)$, and (b) $\|t^{-d} f(\cdot/t)\|_{H^m(\R^d)} \leq c_6 t^{-d/2} \max(1,t^{-m}) \|f\|_{H^m(\R^d)}$ (see, \emph{e.g.\ }, Proposition 3 of \citealp{runst2011sobolev}) we have
 \eqals{
 \|\rho\|_{H^m(\R^d)} &\leq \int_{A_{\eta/2}} \|\psi_\eta(y-\cdot)\|_{H^m(\R^d)} dy  \leq \textrm{vol}(A_{\eta/2}) \|\psi_\eta\|_{H^m(\R^d)} \\
 & \leq c_6 \|\psi\|_{H^m(\R^d)} ~ \textrm{vol}(A_{\eta/2}) ~ (\eta/2)^{-d/2} \max(1,(\eta/2)^{-m}).
@@ -385,7 +385,7 @@ $$F_{\mu, N} = \frac{1}{N} \sum_{i=1}^n \zeta_i, \quad F_\mu = \mathbb{E} \zeta_
 Note moreover that
 $$\|\zeta_i\| ~\leq~ v_X \kappa_X \kappa_Y \|\mu\|_{L^\infty} ~=:~ L.$$
 Denote by $\scal{A}{B}_{HS}$ the Hilbert-Schmidt inner product defined as $\scal{A}{B}_{HS} = \tr(A^*B)$. We recall that the space of $HS(\hh,{\cal F})$ with finite $HS$ norm, is a separable Hilbert space. We recall also that $\|\cdot\|_{\mathrm{op}} \leq \|\cdot\|_{HS} \leq \|\cdot\|_*$ where the last is the trace norm and that $F_{\mu, N}$ has finite trace norm.
-By applying the Bernstein inequality for random vectors (see, e.g. Prop. 11 of \citet{rudi2015less} and references therein), we have that the following holds with probability $1-\rho$
+By applying the Bernstein inequality for random vectors (see, \emph{e.g.\ } Prop. 11 of \citet{rudi2015less} and references therein), we have that the following holds with probability $1-\rho$
 \eqal{\label{eq:bound-Fmu-FmuN}
 \|F_{\mu, N} - F_{\mu}\|_{HS} \leq \frac{4 L}{\sqrt{N}} \log \frac{2}{\rho}.
 }
