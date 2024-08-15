@@ -1,7 +1,7 @@
 
 \section{Introduction}
-Industrial processes, hospitals, and social networks create large quantities of data.
-This data can be used to solve longstanding challenges encoutered when solving the underlying problems. For instance, preventative maintenance can reduce operating costs due to untimely machine failures in a factory ; personalized medecine can recommend treatment to to a doctor based on all the patients detailed medical history, accounting for similarities with other patients ; and, posts from different groups can be used to detect and hinder fake news propagation online. These applications rely on machine learning methods to make inferences and recommand (or take) decisions based on data.
+%Industrial processes, hospitals, and social networks create large quantities of data.
+%This data can be used to solve longstanding challenges encoutered when solving the underlying problems. For instance, preventative maintenance can reduce operating costs due to untimely machine failures in a factory ; personalized medecine can recommend treatment to to a doctor based on all the patients detailed medical history, accounting for similarities with other patients ; and, posts from different groups can be used to detect and hinder fake news propagation online. These applications rely on machine learning methods to make inferences and recommand (or take) decisions based on data.
 
 
 \paragraph{}
@@ -30,7 +30,7 @@ Beyond NLP, identifying and leveraing meaningful structure for machine learning 
 
 Conversely, routing time prediction \citep{deepmind-traffic} and drug discovery \citep{stokes-antibiotics} are examples of applications where the input is a structured object, \emph{e.g.\ } a graph.
 
-\subsection{Invariance and stability to diffeomorphisms}
+\subsection{Dealing with intrinsic topology: invariance to Invariance and stability to diffeomorphisms}
 
 Computational anatomy is a direct application of shape analysis methods that study the deformations induced on shapes by diffeomorphisms, in particular an evolution through time with variations in 2D or 3D. For instance, these methods can help analyze datasets composed of organ shapes segmented from MRI scan. We refer the reader to \cite{younes} for an in-depth treatment of shape analysis. Their approach is different from the one we develop in \cite{ch:diffy} as their goal is reconstruction of the deformation and the shapes, rather than comparing two shapes.
 
@@ -46,7 +46,7 @@ Mallat et al introduced the scattering transform in 2012. See Joan PhD for an in
 \paragraph{}
 Wyart et al empirically study stability to diffeomorphisms of neural networks to whether this quality correlates to performance. This work is part of a larger line of work that studies how internal representations of neural networks learn the invariances present in the data to effectively lower their dimension. Note that it is not clear the gain in \cite{bietti} is akin to an effective reduction in dimension. They define stability to diffeomorphisms as the relative effect of random diffeomorphisms to the feature layer of a deep neural network against that of additive noise of comparable magnitude. They highlight that performance is correlated with relative stability, and that larger, more modern networks tend to become more stable during training. This motivates our approach to enforcing invariance to diffeomorphisms in a dissimilarity that can be integrated into algorithms.
 
-\subsection{Deformations for time-series}
+\subsection{Handling temporal structure: deformations for time-series}
 \label{background:diffytw}
 
 Developing methods that account for variations in time-series related to the underlying phenomemon or to the sensor characteristics (such as sampling positions and rates) is central to time-series analysis. Such methods are applied in clinical time-series analysis \citep{1808.06725,ortiz-ieee} or gesture recognition \citep{dtw-gesture}.
@@ -62,7 +62,7 @@ The shape analysis litterature also studies this question, but time-series are n
 
 \paragraph{} Using neural networks for time-series is also an important direction of research. An example is \cite{2106.11911,dtan} and references therein. This line of work learns representations of time-series based on \cite{pavf} that allow alignment without solving the LDDMM style problems at inference time. Refinements in the computation of transformations are proposed in \cite{2206.08107}. These methods learn the invariances from data (with a difeomorphic constraint), while we are interested in specifying the set of transformations \emph{a priori}.
 
-\subsection{Markovian structure in dynamical models}
+\subsection{Structure in dynamical models}
 Hidden Markov Models are useful models for dynamical systems, which can be used to solve many scientific or engineering problems. Inference on HMMs has been widely studied with the development of many algorithms for finance, robotics, weather, ... \cite{ref} The goal of filtering is estimating $\pi_T$, the conditional distribution of $X_T$ given $Y_1, \ldots, Y_T$. In HMMs, $\pi_T$ can be computed iteratively through the filtering iteration \cref{eq:intro-hmm-iteration}. For background on Hidden Markov Models we refer the reader to \cite{cappe2005}.
 
 Three questions arise when computing the filtering distributions $\pi_T$.
@@ -83,7 +83,7 @@ We use their arguments to study the robustness of the filter we propose in \cref
 
 
 
-\section{Toolbox: kernel methods \& Nyströme approximations}\label{sec:tools}
+\section{Toolbox: kernel methods \& Nyström approximations}\label{sec:tools}
 In this manuscript, each chapter is self-contained in terms of notations, definitions and results. However, the reader may remark some reccuring tooling. In particular, two tools are general to all chapters: (a) kernel methods; and, (b) Nyström approximations. We present these methods below.
 
 \subsection{Kernel methods}
@@ -167,54 +167,17 @@ However, $\lambda$ plays a role beyond making $K+n\lambda I$ invertible. For lar
 
 \subsection{Nyström approximations}
 
-Thanks to the representation theorem, we can represent functions in a RKHS using a finite number of kernel evaluations between the points that intervene in the optimization problem to learn the function.
-
-In the case of Kernel Ridge Regression, as in other cases, inverting a (regularized) kernel matrix is necessary, incurring a high computational cost $O(n^3)$ and memory cost $O(n^2)$. Reducing this cost without sacrifying on accuracy of the solution to the learning problem is a rich field \citep{refs}. When needed, we introduce these results in the chapters.
-
-However, we use a compression result several times. In a nutshell, this result guarantees that a function $f=\sum_{i=1}^n\alpha_i\phi(x_i)$ can be approximated by $f_M(x) = \sum_{k=1}^M \beta_k \phi(\tilde x_k)$ where $\tilde x_k$ are i.i.d. uniform samples on $\mathcal X $ and $f_M$ is the projection of $f$ on $\mathrm{Span}\left(\phi(\tilde x_1, \ldots, \tilde x_M\right)$.
+Thanks to the representation theorem, we can represent functions in a RKHS using a finite number of kernel evaluations between the points that intervene in the optimization problem to learn the function. In the case of Kernel Ridge Regression, inverting a (regularized) kernel matrix incurs a high computational cost $O(n^3)$ and memory cost $O(n^2)$. Reducing this cost without sacrifying on accuracy of the solution to the learning problem is a rich field \citep{refs}. When needed, we introduce these results in the chapters. However, we use a compression result several times. In a nutshell, this result guarantees that a function $f=\sum_{i=1}^n\alpha_i\phi(x_i)$ can be approximated by $f_M(x) = \sum_{k=1}^M \beta_k \phi(\tilde x_k)$ where $M \ll n$, with $\tilde x_k$ are subsambled from $\lbrace x_1, \ldots, x_n\rbrace$ and $f_M$ is the projection of $f$ on $\mathrm{Span}\left(\phi(\tilde x_1), \ldots, \phi(\tilde x_M)\right)$.
 
 \begin{mdframed}
-\begin{proposition}[from \cite{ref}]
-Let $\mathcal X$ be a bounded, compact subset of $\mathbb R^d$ with Lipschitz boundary.
-Let $k$ be a Sobolev kernel $\mathcal X$ with smoothness at least $m > d / 2$. Let $\mathcal H$ be its RKHS and $\phi$ the embedding map. Let $f = \sum_{k=1}^n\alpha_k \phi(x_k) \in\mathcal H$. Let $M > 0$. If $\tilde x_1, \ldots, \tilde x_M \in \mathcal X^M$, we denote $\tilde P$ the projection on $\mathrm{Span}\left(\phi(\tilde x_1), \ldots, \phi(\tilde x_M)\right)$. Then, for any $\delta > 0$, with probability at least $1-\delta$, if $\tilde x_1, \ldots, \tilde x_M$ are sampled uniformly and independetly from $\mathcal X$,
+\begin{proposition}
+Let $\mathcal H$ be its RKHS and $\phi$ the embedding map. Let $f = \sum_{k=1}^n\alpha_k \phi(x_k) \in\mathcal H$
+If $\tilde x_1, \ldots, \tilde x_M \in \mathcal X^M$, we denote $\tilde P$ the projection on $\mathrm{Span}\left(\phi(\tilde x_1), \ldots, \phi(\tilde x_M)\right)$. Let $\varepsilon > 0$ and $\delta > 0$, there exists a constant $C > 0$ such that with probability at least $1-\delta$, if $\tilde x_1, \ldots, \tilde x_M$ are sampled uniformly and independently from $\lbrace x_1, \ldots, x_n\rbrace$ with $M > C / \varepsilon^2 $, then
 \begin{equation}
-    \Vert v - \tilde Pv \Vert_\mathcal H \leq \frac{C}{\sqrt{M}},
+    \Vert f - \tilde Pf \Vert_\mathcal H \leq \varepsilon
 \end{equation}
-where $C$ depends on $v$, $M$ (at most logarithmically), $k$ and $\delta$ but not $\tilde x_1, \ldots, \tilde x_M$.
+where $C$ depends on $f$, $k$ and $\delta$ but not $\tilde x_1, \ldots, \tilde x_M$.
 \end{proposition}
 \end{mdframed}
 
-We use this kernel to justify the existence of concise approximate representations of functions in $\mathcal H$, in particular in \cref{ch:diffy,ch:hmm}. As we have a expressed it, to obtain a concise approximation of $f$, we first need to compute $f$. In fact, the Nyström projection can be integrated into learning algorithms.
-
-\todo[inline]{Ale}
-%\subsection{PSD models for non-negative functions}
-%Positive semi-definite models were first introduced by \cite{marteaupsd}, as model for non-negative functions.
-
-%\paragraph{Definitions} Let $k$ be a p.d. kernel on $\mathcal X$ with RKHS $\mathcal H$ and kernel embedding $\phi$. The function $f:\mathcal X \to \mathbb R$ is a PSD model if there exists $A$ a positive semi-definite operator on $\mathcal H$ such that
-%\begin{equation}
-%    f(x) = \langle \phi(x), A\phi(x)\rangle_\mathcal H.
-%\end{equation}
-
-%\paragraph{Main properties}
-%There exist several methods for non-negative function approximation: Generalized Linear Models (GLM), linear models with discrete constraints or Non-negative Linear Models (often known as Nadaraya Watson) with constrained weights. None of them combines the following three properties: (a) has optimal sample complexity, (b) is non-negative everywhere, (c) is convex in its parameters.
-
-
-
-%\paragraph{Learning PSD models} \cite{ulysse-psd} proves a representer theorem for PSD models. As for linear kernel methods, this implies that we can search for functions of the form
-%\begin{equation}\label{eq:finite-order-psd}
-%    f(x) = \sum_{i=1}^n \sum_{j=1}^n A_{ij} k(x, x_i)k(x, x_j) = \Phi(x)^\top A \Phi(x)
-%\end{equation} where $A$ is a $M\times M$ positive semi-definite matrix.
-
-%Using a PSD model for approximation or learning boils down to solving a Semi-Definite Program (SDP).
-
-%\paragraph{Rank-one PSD models} An important concept is rank-one PSD model, with is the square of a linear model. To approximate a non-negative function $f$, this approach is to approximate $g = \sqrt{f}$ with $\hat g$ using a linear model and set $\hat f = \hat g ^2$. When the linear model can be learned with Kernel Ridge Regression, and under certain hypotheses, the same optimal
-
-%In particular, if the target function is smooth enough and does not touch zero, the rank-one strategy reaches the same optimal learning rates as with \cref{eq:finite-order-psd}, but with better computational guarantees. Indeed,
-
-
-%\paragraph{PSD models for probability densities}
-%\cite{ciliberto2021} and \cite{sampling-ulysse} study using PSD models to model probability distributions.
-
-%\cite{sampling-ulysse} shows that it is possible to sample independent draws from a smooth target probability distribution thanks to PSD models. They first use evaluations of the target density (potentially un-normalized) to approximate it using PSD models. They show that this approximation attains optimal rates. Then, a sampling scheme is devised for PSD models, based on bisection of the support. We adapt the proofs in from \cite{sampling-ulysse} in \cref{ch:hmm} to obtain optimal rates in $L_\infty$.
-
-%\cite{ciliberto2021} studies Gaussian PSD models of the form \cref{eq:finite-order-psd} as models for probability densities. Gaussian PSD Models are closed with respect to all probabilistic operations: product, marginalization and integration. Furthermore, they can be efficiently learned from samples of a smooth target density.
+This result can be found for instance in \cite{less-is-more}.

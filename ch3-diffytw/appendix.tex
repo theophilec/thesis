@@ -1,31 +1,31 @@
-\section{Hiking and time-warping}\label{sec:appendix-hiking}
-\todo[inline]{write}
-Consider two hikers (Felix and Gabrielle) who each go on an hour-long hike round-trip from Nice. They each record their altitude on their machine-learning enabled smart watches. From both recordings, can we determine if they took the same route (in altitude at least)? Suppose they have different speeds through time. For instance, Felix may have constant speed, while Gabrielle oscillates between going slower then catching up (and vice versa). This situation is illustrated in \cref{fig:hiking} and we go into more detail in \cref{sec:appendix-hiking}.
+%\section{Hiking and time-warping}\label{sec:appendix-hiking}
+%\todo[inline]{write}
+%Consider two hikers (Felix and Gabrielle) who each go on an hour-long hike round-trip from Nice. They each record their altitude on their machine-learning enabled smart watches. From both recordings, can we determine if they took the same route (in altitude at least)? Suppose they have different speeds through time. For instance, Felix may have constant speed, while Gabrielle oscillates between going slower then catching up (and vice versa). This situation is illustrated in \cref{fig:hiking} and we go into more detail in \cref{sec:appendix-hiking}.
 
-\begin{figure}[!h]
-    \centering
-    \includegraphics[width=0.5\textwidth]{ch3-diffytw/figures/hiking-1.pdf}
-    \includegraphics[width=0.4\textwidth]{ch3-diffytw/figures/hiking-3.pdf}
-    \caption[Hiking example for DiffyTW.]{Motivating example for DiffyTW: time-warping from hiking.}\label{fig:hiking}
-\end{figure}
+%\begin{figure}[!h]
+%    \centering
+%    \includegraphics[width=0.5\textwidth]{ch3-diffytw/figures/hiking-1.pdf}
+%    \includegraphics[width=0.4\textwidth]{ch3-diffytw/figures/hiking-3.pdf}
+%    \caption[Hiking example for DiffyTW.]{Motivating example for DiffyTW: time-warping from hiking.}\label{fig:hiking}
+%\end{figure}
 
-From their elevation recordings, can we determine whether they did indeed follow the same path (in elevation at least)?
+%From their elevation recordings, can we determine whether they did indeed follow the same path (in elevation at least)?
 
-We can model their profiles by two functions $f:[0,1] \to [0, \infty[$ and $g:[0, 1] \to [0, \infty[$. We can model the time-warp caused by their differences in speed by a \emph{reparametrization} of time, i.e. the existence of a repramaetrization $[0,1]$, such that $g$ is equal to $f$ composed with the reparametrization. More formally, we would have $g = f \circ Q$ where $Q$ is the reparametrization. Our goal in this chapter is to develop a divergence $d$ that compares $f$ and $g$ with a divergence $d$ such that $d(f, g)=0$ if there exists $Q$ such that $g = f \circ Q$.\begin{figure}[!h]
-    \centering
-    \includegraphics[width=0.5\textwidth]{ch3-diffytw/figures/hiking-1.pdf}
-    \caption[Sample image for Diffy experiments.]{Peppers image from Matlab software.}
-\end{figure}
-\begin{figure}[!h]
-    \centering
-    \includegraphics[width=0.5\textwidth]{ch3-diffytw/figures/hiking-2.pdf}
-    \caption[Sample image for Diffy experiments.]{Peppers image from Matlab software.}
-\end{figure}
-\begin{figure}[!h]
-    \centering
-    \includegraphics[width=0.5\textwidth]{ch3-diffytw/figures/hiking-3.pdf}
-    \caption[Sample image for Diffy experiments.]{Peppers image from Matlab software.}
-\end{figure}
+%We can model their profiles by two functions $f:[0,1] \to [0, \infty[$ and $g:[0, 1] \to [0, \infty[$. We can model the time-warp caused by their differences in speed by a \emph{reparametrization} of time, i.e. the existence of a repramaetrization $[0,1]$, such that $g$ is equal to $f$ composed with the reparametrization. More formally, we would have $g = f \circ Q$ where $Q$ is the reparametrization. Our goal in this chapter is to develop a divergence $d$ that compares $f$ and $g$ with a divergence $d$ such that $d(f, g)=0$ if there exists $Q$ such that $g = f \circ Q$.\begin{figure}[!h]
+%    \centering
+%    \includegraphics[width=0.5\textwidth]{ch3-diffytw/figures/hiking-1.pdf}
+%    \caption[Sample image for Diffy experiments.]{Peppers image from Matlab software.}
+%\end{figure}
+%\begin{figure}[!h]
+%    \centering
+%    \includegraphics[width=0.5\textwidth]{ch3-diffytw/figures/hiking-2.pdf}
+%    \caption[Sample image for Diffy experiments.]{Peppers image from Matlab software.}
+%\end{figure}
+%\begin{figure}[!h]
+%    \centering
+%    \includegraphics[width=0.5\textwidth]{ch3-diffytw/figures/hiking-3.pdf}
+%    \caption[Sample image for Diffy experiments.]{Peppers image from Matlab software.}
+%\end{figure}
 
 \section{Quadrature of non-negative linear models}\label{app:diffytw-quadrature}
 
@@ -58,7 +58,11 @@ We derive the exact expressions in three cases in the following examples.
 \end{align}
 where $\varphi(u) = (2 - e^u)/\gamma$ if $u \geq 0$ and $\varphi(u) = e^{-u} / \gamma$ else.
 \end{example}
-\section{Proof of \cref{thm:prob-qp}}\label{proof:prob-qp}
+
+
+
+
+\section{Proof of consistency}\label{proof:prob-qp}
 \begin{proof}
 Our goal is to prove that our definition of $\hat d_M(\hat f, \hat g)$ coincides with that of DiffyTW when applied to piece-wise constant functions that interpolate $\hat f$ and $\hat g$.
 
@@ -87,18 +91,10 @@ Thus by developing the squared-norm in the definition of $d_M(f, g)$,
 \begin{equation}
 d_M(f, g) = \min_{\substack{q\in\mathbb R^M \\ h^\top q = 1 \\ q \geq 0}} \frac{1}{2} q^\top P q - v^\top q + C
 \end{equation}
-where $P = 2 H^\top K_{ff}H$, $C = \delta^\top K_{gg}\delta$ and $v = 2\delta^\top K_{gf}H$,
+where $P = 2 H^\top K_{ff}H$, $C = \delta^\top K_{gg}\delta$ and $v = 2\delta^\top K_{gf}H$, and we recover the definition of $\hat d_M(\hat f, \hat g)$.
+\end{proof}
 
-and we recover the definition of $\hat d_M(\hat f, \hat g)$.
-\end{proof}
-\section{Proof of \cref{corollary:discrete-invariance}}\label{proof:discrete-invariance}
-\begin{proof}
-$h \circ Q$ is adapted to $\hat f$ and $h$ is adapted to $\hat g$, so from \cref{thm:prob-qp}:
-\begin{equation}
-    \hat d_M(\hat f, \hat g) = d_M(h\circ Q, h) = 0
-\end{equation}
-\end{proof}
-\section{Proof of \cref{thm:rectangle-approx}}\label{sec:proof-rectangle-approx}
+\section{Proof of the approximation theorem}\label{sec:proof-rectangle-approx}
 \begin{lemma}\label{lemma:rectangle-approx}
 Consider $f, g:[0, 1] \to \mathbb R^d$ and $s, r:[0,1] \to[0,1]$ two piece-wise constant functions such that $s(0)=r(0)=0$ and $s(1)=r(1)=1$. Then,
 \begin{equation}
@@ -163,70 +159,80 @@ Then, for any $\vert x - u \vert \leq \Delta$,
 \end{proof}
 
 \section{On the differentiability of DiffyTW}
-\subsection{Proof of \cref{thm:diffytw-grad}}\label{sec:proof-diffytw-grad}
+
+
+\subsection{Proof of differentiality for DiffyTW}\label{sec:proof-diffytw-grad}
 \begin{proof}
-\todo[inline]{Make clean}
-    $X$ is $\mathbb R^M$ which is a Haussdorf topological space. The set of admissible solutions $\mathcal C$ is non empty and is closed. Indeed, $\mathcal C$ is the intersection of a hyperplane ($h^\top q=1$) and of the non-negative quadrant ($q \geq 0$) ; both are closed so $\mathcal C$ is too.
 
-    Denote $\ell(q, \theta) = \frac{1}{2}q^\top P(\theta) q - v(\theta)^\top q + C(\theta)$ where $\theta \mapsto P(\theta), \theta \mapsto v(\theta), \theta \mapsto C(\theta)$ are $\mathcal C^\infty$.
+The set of admissible solutions $\mathcal C$ is non empty and is closed. Indeed, $\mathcal C$ is the intersection of a hyperplane ($h^\top q=1$) and of the non-negative quadrant ($q \geq 0$) ; both are closed so $\mathcal C$ is too.
 
-   Our goal is to show that for any $u_0\in U$, if $\bar x$ is the (unique) solution to quadratic program $\mathcal P(u_0)$, then
+Recall that $\ell(q, \theta) = \frac{1}{2}q^\top P(\theta) q - v(\theta)^\top q + C(\theta)$ where $\theta \mapsto P(\theta), \theta \mapsto v(\theta), \theta \mapsto C(\theta)$ are $\mathcal C^\infty$.
+
+Our goal is to show that for any $\theta_0\in U :=\mathbb R^{n \times d}$, if $\bar q$ is the (unique) solution to quadratic program $\min_{q\in\mathcal C}\ell(q, \theta)$, which we denote as $\mathcal P(\theta_0)$ , then
    \begin{equation}\label{eq:goal}
-       v(u_0 + d) - v(u_0) = D_u \ell(\bar x, u)d + o\left(\Vert d\Vert\right)
+       V(\theta_0 + d) - V(\theta_0) = D_\theta \ell(\bar q, \theta)d + o\left(\Vert d\Vert\right)
    \end{equation}
-   Let $u_0 \in U$, and let $\bar x$ the solution to $\mathcal P(u_0)$. Let $d$ such that $u_0 + d \in U$. Since $v(u_0) = \ell(\bar x, u_0)$, we have $v(u_0+d) \leq \ell(\bar x, u_0 + d)$. Thus,
+   where $D_q \ell$ is the differential of $\ell$ with respect to its first argument.
+
+   \subparagraph{Upper bound}
+   Let $\theta_0 \in U$, and let $\bar q$ the solution to $\mathcal P(\theta_0)$. Let $d$ such that $\theta_0 + d \in U$. Since $V(\theta_0) = \ell(\bar q, \theta_0)$, we have $V(\theta_0+d) \leq \ell(\bar q, \theta_0 + d)$. Thus,
    \begin{equation}
-       v(u_0 + d) - v(u_0) - D_u\ell(\bar x, u_0)d \leq \ell(\bar x, u_0 + d) - \ell(\bar x, u_0) - D_u \ell(\bar x, u_0)d
+       V(\theta_0 + d) - V(\theta_0) - D_q\ell(\bar q, \theta_0)d \leq \ell(\bar q, \theta_0 + d) - \ell(\bar q, \theta_0) - D_\theta \ell(\bar q, \theta_0)d
    \end{equation}
 
-    By the Mean Value Theorem, $\ell(\bar x, u_0 + d) - \ell(\bar x, u_0) = \int_0^1 D_u\ell(\bar x, u_0 + td)ddt$ and we can upper bound the previous equation by:
+By the Mean Value Theorem, $\ell(\bar q, \theta_0 + d) - \ell(\bar q, \theta_0) = \int_0^1 D_\theta\ell(\bar q, \theta_0 + td)ddt$ and we can upper bound the previous equation by:
    \begin{align}
-       v(u_0 + d) - v(u_0) - D_u\ell(\bar x, u_0)d&\leq \ell(\bar x, u_0 + d) - \ell(\bar x, u_0) - D_u \ell(\bar x, u_0)d\\
-        &\leq \Vert d\Vert \int_0^1 \Vert D_u\ell(\bar x, u_0 +td) - D_u\ell(\bar x, u_0)\Vert dt
+       V(\theta_0 + d) - V(\theta_0) - D_\theta\ell(\bar q, \theta_0)d&\leq \ell(\bar q, \theta_0 + d) - \ell(\bar q, \theta_0) - D_\theta \ell(\bar q, \theta_0)d\\
+       &\leq \int_0^1 D_\theta\ell(\bar q, \theta_0 + td)ddt  - D_\theta \ell(\bar q, \theta_0)d\\
+        &\leq \Vert d\Vert \int_0^1 \Vert D_\theta\ell(\bar q, \theta_0 +td) - D_\theta\ell(\bar q, \theta_0)\Vert dt
    \end{align}
 
-   We denote $\varepsilon(d)= \int_0^1 \Vert D_u\ell(\bar x, u_0 +td) - D_u\ell(\bar x, u_0)\Vert dt$. By regularity of $x, u \mapsto D_u\ell(x, u)$, $u \mapsto D_u\ell(\bar x, u)$ is continuous at $u_0$ and so $ \delta \mapsto \Vert D_u\ell(\bar x, u_0 + \delta) -D_u\ell(\bar x, u_0)\Vert$ is continuous and equal to $0$ at $\delta=0$. By consequence, $\varepsilon$ is continuous and $\varepsilon(0)=0$.
+We denote $\varepsilon(d)= \int_0^1 \Vert D_\theta\ell(\bar q, \theta_0 +td) - D_\theta\ell(\bar q, \theta_0)\Vert dt$.
 
-   So,
+With the output kernel equal to the RBF, notice that $q, \theta \mapsto D_\theta\ell(q, \theta)$ is continuous. Indeed, $D_\theta \ell(q, \theta) = -q^\top D v(\theta) + D_\theta C(\theta)$ and $D v(\theta)$ and $DC(\theta)$ on $\theta$ through the kernel matrices $K(\theta, \theta)$ and $K(f, \theta)$. The differential of the kernel matrix for the RBF kernel is still $C^\infty$ since the gradient of $\theta \mapsto \Vert f_i - \theta_i\Vert_2^2$ is $2(f_i - \theta_i)$.
+
+In the end, $\theta \mapsto D_\theta\ell(\bar q, \theta)$ is continuous at $\theta_0$ and so is $ \delta \mapsto \Vert D_\theta\ell(\bar q, \theta_0 + \delta) -D_\theta\ell(\bar q, \theta_0)\Vert$ is continuous. In particular, it is equal to $0$ at $\delta=0$.
+
+Finally,
    \begin{equation}
-       v(u_0+d) - v(u_0) - D_u\ell(\bar x, u)d \leq \Vert d\Vert \varepsilon(d)
+       V(\theta_0+d) - V(\theta_0) - D_\theta\ell(\bar q, u)d \leq \Vert d\Vert \varepsilon(d)
    \end{equation}
+where $\varepsilon$ is continuous and $\varepsilon(0)=0$.
 
-    Now, we assume corresponding lower bound is false, i.e. for any $\varepsilon>0$ and any $\eta >0$, there exists $d$ such that $u_0 + d\in U$ and
+
+\subparagraph{Lower bound}
+Assume corresponding lower bound is false, i.e. for any $\varepsilon>0$ and any $\eta >0$, there exists $d$ such that $\theta_0 + d\in U$ and
    \begin{equation}
-       v(u_0+d) - v(u_0) - D_u\ell(\bar x, u)d < -\varepsilon\Vert d\Vert
+       V(\theta_0+d) - V(\theta_0) - D_\theta\ell(\bar q, u)d < -\varepsilon\Vert d\Vert
    \end{equation}
     Let $d_n$ a sequence such that $d_n \to 0$ and
    \begin{equation}\label{eq:proof_hyp}
-       v(u_0+d_n) - v(u_0) - D_u\ell(\bar x, u_0)d_n < -\varepsilon\Vert d_n\Vert
+       V(\theta_0+d_n) - V(\theta_0) - D_\theta\ell(\bar q, \theta_0)d_n < -\varepsilon\Vert d_n\Vert
    \end{equation}
 
-   We have a sequence $x_n\in \mathcal C$ such that $v(u_0+ d_n) = \ell(\bar x_n, u_0 + d_n)$. By Lemma 14.4 (Lee et al), there is subsequence of $(x_n)$ that converges towards $\bar x$ solution to $\mathcal P(u_0)$. By abuse of notation, we denote it $(x_n)$ as well.
+   We have a sequence $q_n\in \mathcal C$ such that $V(\theta_0+ d_n) = \ell(\bar q_n, \theta_0 + d_n)$. Because $P$ is positive definite and $q > 0$ is admissible, there is subsequence of $(q_n)$ that converges towards $\bar q$ solution to $\mathcal P(\theta_0)$ \citep[Lemma 14.4]{lee}. By abuse of notation, we denote this subsequence $(q_n)$ as well.
 
    Then, by the Mean Value Theorem,
    \begin{align}
-       \Vert \ell(x_n, u_0 + d_n) - \ell(x_n, u_0) - D_u \ell(x_n, u_0)d_n\Vert \leq \Vert d_n\Vert \int \Vert D_u \ell(x_n, u_0 + td_n) - D_u \ell(x_n, u_0)\Vert dt
+       \vert \ell(q_n, \theta_0 + d_n) - \ell(q_n, \theta_0) - D_\theta \ell(q_n, \theta_0)d_n\vert \leq \Vert d_n\Vert \int \Vert D_\theta \ell(q_n, \theta_0 + td_n) - D_\theta \ell(q_n, \theta_0)\Vert dt
    \end{align}
 
-   For $n$ large enough, $u_0 + d_n$ is close to $u_0$ and $x_n$ is close to $\bar x$. By continuity of $x, u \mapsto D_u\ell(x, u)$,
+   For $n$ large enough, $\theta_0 + d_n$ is close to $\theta_0$ and $q_n$ is close to $\bar q$. By continuity of $q, u \mapsto D_\theta\ell(q, u)$ (again, because kernel matrices are smooth for the RBF kernel), wer have the three following bounds:
 
-   \begin{equation}
-       \Vert \ell(x_n, u_0 + d_n) - \ell(x_n, u_0) - D_u \ell(x_n, u_0)d_n\Vert \leq \frac{1}{10} \varepsilon \Vert d_n \Vert
-   \end{equation}
-
-    and
-    \begin{equation}
-        \Vert D_u \ell(\bar x, u_0)d_n - D_u \ell(x_n, u_0)d_n\Vert \leq \frac{1}{4}\varepsilon \Vert d_n \Vert
-    \end{equation}
+   \begin{align}
+       \vert \ell(q_n, \theta_0 + d_n) - \ell(q_n, \theta_0) - D_\theta \ell(q_n, \theta_0)d_n\vert &\leq \frac{1}{10} \varepsilon \Vert d_n \Vert\\
+        \vert D_\theta \ell(\bar q, \theta_0)d_n - D_\theta \ell(q_n, \theta_0)d_n\vert &\leq \frac{1}{4}\varepsilon \Vert d_n \Vert\\
+        \vert \ell(q_n, \theta_0) - \ell(\bar q, \theta_0) \vert \leq \frac{1}{10}
+    \end{align}
 
     So, by the triangle inequality,
 
     \begin{equation}
-       \Vert \ell(x_n, u_0 + d_n) - \ell(x_n, u_0) - D_u \ell(\bar x, u_0)d_n\Vert \leq \frac{1}{2} \varepsilon \Vert d_n \Vert
+       \vert \ell(q_n, \theta_0 + d_n) - \ell(q_n, \theta_0) - D_\theta \ell(\bar q, \theta_0)d_n\vert \leq \frac{1}{2} \varepsilon \Vert d_n \Vert
     \end{equation}
-    Finally,
+    Finally, since $V(\theta + d_n) - V(\theta) \geq \ell(q_n, \theta_n) - \ell(q_n, \theta)$,
     \begin{align}
-        v(u_0 + d_n) - v(u_0) - D_u \ell(x_n, u_0)&\geq\frac{1}{2}\varepsilon\Vert d_n\Vert
+        V(\theta_0 + d_n) - V(\theta_0) - D_\theta \ell(q_n, \theta_0)&\geq-\frac{1}{2}\varepsilon\Vert d_n\Vert
     \end{align}
     This contradicts \cref{eq:proof_hyp}.
 \end{proof}

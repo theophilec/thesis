@@ -186,7 +186,13 @@ Let $h: [0, 1] \to \mathbb R^d$ be a piece-wise constant function adapted to the
     \hat d_M(\hat f, \hat g) = 0.
 \end{equation}
 \end{corollary}
-The proof of \cref{corollary:discrete-invariance} is presented in \cref{proof:discrete-invariance}.
+\begin{proof}
+$h \circ Q$ interpolates $\hat f$ and $h$ interpolates $\hat g$, so from \cref{thm:prob-qp}:
+\begin{equation}
+    \hat d_M(\hat f, \hat g) = d_M(h\circ Q, h) = 0
+\end{equation}
+\end{proof}
+
 
 \subsection{Computing Discrete DiffyTW}\label{sec:solving-qp}
 
@@ -243,15 +249,15 @@ where $\ell(q, \theta) = \frac{1}{2} q^\top Pq - v(\theta)^\top q + C(\theta)$ a
 The difficulty is differentiating through the $\min$ operator since the optimal $q^*$ depends on $\theta$. $V$ is differentiable and its gradient can be computed from the optimal solution $q^*$. Our proof is direct and does not rely on the Implicit Function Theorem (see below for a comparaison with other approaches).
 
 \begin{theorem}\label{thm:diffytw-grad}
-    If $\ell(\cdot, \theta)$ is strictly convex, then $V(\theta)$ is differentiable and
+    If $K$ is the RBF kernel and $\ell(\cdot, \theta)$ is strictly convex, then $V(\theta)$ is differentiable and
     \begin{equation}
-        \nabla V(\theta) = J_\theta \ell(q^*(\theta), \theta) + \nabla C(\theta),
+         JV(\theta) = J_\theta \ell(q^*(\theta), \theta) + \nabla C(\theta),
     \end{equation} where $q^*(\theta)$ is the unique solution to \cref{prob:fullqp}.
 \end{theorem}
 
 In particular, so long as $P$ is positive definite, $V$ is differentiable. For differentiability, having a unique solution is not necessary, but multiple solutions make the expression of the gradient less straightforward and may cause non-differentiability. Following \cref{sec:computing-qp}, since $P$ is positive definite in practice, assume that $\ell(\cdot, \theta)$ is strictly convex.
 
-Our proof of \cref{thm:diffytw-grad} builds on a result from \cite{shapiro} and \cite{lee}, which give sufficient conditions for differentiability of quadratic programs. See \cref{sec:proof-diffytw-grad} for the proof. Note that a similar argument is used in \cite{tavenard-dtw-diff} for the differentiability of DTW.
+We prove \cref{thm:diffytw-grad} directly, as a special case of the proof from \cite{shapiro} and \cite{lee}, which give sufficient conditions for differentiability of quadratic programs (see \cref{sec:proof-diffytw-grad}). Note the same result from \citep{shapiro} is used in \cite{tavenard-dtw-diff} for the differentiability of DTW.
 
 \paragraph{Other methods for differentiability of QPs}
 Differentiating through convex problems is a subject of interest in the machine learning and optimization communities. We recall the three main approaches to this question: analytical differentiation (when a closed-form solution to the convex problem is known, \emph{e.g.\ } unconstrained QPs), unrolling (differentiating through the operations in the algorithm used to solve the convex problem), implicit differentiation (applying the implicit function theorem).
@@ -271,34 +277,32 @@ DiffyTW is implemented in the \texttt{difftw} library, open-sourced at \url{gith
 
 
 \paragraph{Experiment design}
-We choose $\tilde X = (\tilde x_k)_{1\leq k \leq M}$ anchor points, $\eta >0$ and choose $\mathcal F_{0,1}^M$ to be the set of functions of the form $q(x) = \sum_{k=1}^Mq_k k_\eta(x, \tilde x_k)$ where $q\in\mathbb R^M$ verifies: $q \geq 0$, $g^\top q =1$, and $\int_0^1 q(u)du =1$.
-We consider $K$ the RBF kernel with $\gamma> 0$.
+In the experiments below, $\tilde X = (\tilde x_k)_{1\leq k \leq M}$ are chosen regularly spaced in $[0,1]$. The RBF and Laplace kernels are considered on $[0,1]$ with parameter $\eta >0$. We choose $\mathcal F_{0,1}^M$ to be the set of functions of the form $q(x) = \sum_{k=1}^Mq_k k_\eta(x, \tilde x_k)$ where $q\in\mathbb R^M$ verifies: $q \geq 0$, $g^\top q =1$, and $\int_0^1 q(u)du =1$.
+We consider $K$ the kernel on time-series features, either the RBF or Laplace kernel with parameter $\gamma> 0$ (this corresponds to $\phi$). We only consider unidimensional time series in this thesis, but DiffyTW can readily be applied to multidimensional time series.
 
 \paragraph{Datasets} We rely on the UCR dataset \citep{ucr}. Specifically we use the \texttt{Trace} and \texttt{50words} datasets. We compare elements of datasets and synthetic transformations of times-series from the UCR dataset. In that case, we consider the linear interpolation of $g \circ Q$. This relates to the bound in \cref{thm:rectangle-approximation}.
 
-\paragraph{Results}
+\paragraph{Aligning distinct time-series instances}
+\todo[inline]{Write}
 
-\emph{In this section, we illustrate the behavior of DiffyTW on a real dataset with synthetic warpings. This ensures that the warpings are attainable by DiffyTW.}
+\paragraph{Aligning time-series instances with synthetic reparametrizations}
+Consider $g$ an instance from either \texttt{Trace} and \texttt{50words}. We generate a reparametrization $Q$ from a space of the form $\mathcal F_{0,1}^{N}$ where $N = 100$, and compute $\hat d_M$ on $f$ and $g$ with $\mathcal F_{0,1}^M$.
+\todo[inline]{Write}
 
-Here we choose $\hat g\in\mathcal S$ (for Trace), generate $q \in \mathcal F_{0, 1}^M$ and $\hat f$ the transformation of $g$ by $Q = \int q$ (according to linear interpolation). We then compute $\hat d_M(\hat f, \hat g)$ over the same space $\mathcal F_{0,1}^M$ (we call this setting ``in-domain''). The value of $\eta$ is fixed by $\mathcal F^M$ but we show results with the best value of $\gamma$. We study the dependence on $\gamma$ in \cref{sec:XP-gamma}.
+\paragraph{Sensitivity to $\gamma$}
 
+\todo[inline]{Write}
+See \cref{fig:gamma-sensitivity-50words}.
 
 \begin{figure}[ht!]
+\label{fig:gamma-sensitivty-50words}
 \begin{center}
 \includegraphics[width=\textwidth]{ch3-diffytw/figures/Figure-50words-rbf-30_rbf-100-laplace-10000.0-100-1.0e-05.pdf}
 \end{center}
-\caption[itopto]{Sensitivity to choice of $\gamma$}
-\small\textsuperscript{*} Details: For computing DiffyTW between the original and transformed time-series, the RBF kernel with parameter $\eta=100.0$ and $M=100$ anchor points is used for the time space, and the Laplace kernel with varying parameter $\gamma$.
-\end{figure}
-
-\begin{figure}[ht!]
-\centering
-\includegraphics[width=0.8\textwidth]{ch3-diffytw/figures/Figure-outkernel-parameters.pdf}
-\caption[Sensitivity of DiffyTW to the choice of $\gamma$.]{\textbf{Sensitivity to the choice of $\gamma$.} This graph shows the residual Euclidean error after alignment by DiffyTW: $\Vert f\circ Q - f\Vert_2\circ \hat Q$ where $Q(x) = \int_0^x q(u)du$ where $q$ is drawn from $\mathcal F_{0,1}^M$ and $\hat Q(x) = \int_0^x \hat q(u)du$ where $\hat q$ is the solution to Discrete DiffyTW over $\mathcal F_{0,1}^M$.}
-\end{figure}
-
-\begin{figure}[ht!]
-\centering
-\includegraphics[width=0.8\textwidth]{ch3-diffytw/figures/Figure-qnorm-qhatnorm.pdf}
-\caption{}
+\caption[Sensitivity to choice of $\gamma$]{Sensitivity to choice of $\gamma$. The quality of alignment by DiffyTW is variable with the choice of $\gamma$. There is an optimal choice of $\gamma$ that minimizes the relative error in $\mathcal F$ (bottom right).}
+\small Details: $g$ is an instance of the 50words dataset.
+$Q$ is sampled 200 times using the RBF kernel with parameter $\eta=100.0$ and $M_w=30$ anchor points.
+For each $Q$, DiffyTW is computed between $g\circ Q$ and $g$.
+$\mathcal F_{0,1}^M$ is defined with $M=100$ anchor points and the RBF kernel with parameter $\eta=100.0$ on $[0,1]$.
+The Laplace kernel is chosen on the with varying parameter $\gamma$ between $10^{-4}$ and $10^{4}$.
 \end{figure}
