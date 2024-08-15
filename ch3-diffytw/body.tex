@@ -306,3 +306,9 @@ For each $Q$, DiffyTW is computed between $g\circ Q$ and $g$.
 $\mathcal F_{0,1}^M$ is defined with $M=100$ anchor points and the RBF kernel with parameter $\eta=100.0$ on $[0,1]$.
 The Laplace kernel is chosen on the with varying parameter $\gamma$ between $10^{-4}$ and $10^{4}$.
 \end{figure}
+
+\section{Discussion \& Future work}
+
+In this chapter, motivated by the importance of Dynamic Time Warping and its variants for time-series analysis, we develop a divergence between time-series that handles misalignment and time-warping, called DiffyTW. DiffyTW is invariant to smooth reparametrizations of time and robust to misalignment and sampling differences between time series. It can be efficiently computed as the solution to a Quadratic Program and aligns time-series as a byproduct of the optimization problem. Differentiability of such dissimilarities has become important to their effectiveness in machine learning methods \citep{soft-dtw}. We show DiffyTW is differentiable with respect to its input. Our experiments suggest DiffyTW is a good candidate for machine learning with time-series.
+
+An avenue of future work is bridging the gap with the functional data analysis litterature. Indeed, the problem of time-series alignement is similar to that of curve registration \cite{curve-moments}. DiffyTW is a convex problem, which is generally not the case of registration algorithms. Applying DiffyTW to this kind of problem could prove worthwhile.

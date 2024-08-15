@@ -283,6 +283,7 @@ The first source of discrepancy is the consequence of the intialization error. I
 
 The second source of discrepancy is the accumulation of errors committed at each step by applying the approximate iteration \cref{eq:approx-iteration} in place of \cref{eq:iteration}. A telescopic argument (see the proof of \cref{lemma:bound}) shows that the accumulation is limited because the forgetting property of the optimal kernel tends to make past errors disappear exponentially, generalizing the argument in \cite{oudjane} beyond particle filters. The use of closed-form operations with Gaussian PSD Models is underlined in \cref{prop:bound-delta-n} in \cref{sec:proof-bound}. We conclude by bounding the second term below a constant $\varepsilon$, which is chosen as small as required.
 
+
 \section{Extension: filtering with Generalized Gaussian PSD Models}\label{sec:generalized-psd-models}
 Throughout this chapter, we have focused on Gaussian PSD Models. In fact, many of the properties studied above remain valid for a more general family of models we introduce and study in this section.
 
@@ -349,9 +350,6 @@ Let $\mu(x; \theta_\mu)$, $q(x, x^\prime; \theta_q)$ and $g(x, y; \theta_g)$ be 
 
 Applying \cref{proposition:psdfilterstep} recursively as in \cref{alg:fullfilter} to compute an approximate filter $\hat \pi_n$, the order of $\hat\pi_n$ increases exponentially with $n$. A constant number of anchor points can be used by compression $\hat\pi_n$ at each step, for example by learning a Gaussian PSD Model with a given number of anchor points (indeed $\hat\pi_n$ is a smooth sum-of-squares), which is justified by \cref{theorem:learning}.
 
-
-\todo{Explain the Generalized Gaussian PSD Models are the largest stable family?}
-
 \subsection{Generalized Gaussian PSD Models generalize Kalman filters}
 
 Conditional Gaussian Linear Distributions are widely used in filtering and dynamical modeling since they cover transition or observation state-space equations such as $X_{t+1} = FX_t + b + \Sigma^{1/2} U_t$ where $U_t$ is Gaussian noise considered in the Kalman filter and extensions.
@@ -365,3 +363,12 @@ This shows that a Generalized Gaussian PSD Model of order $1$ can approximate a 
 We prove \cref{theorem:kalman} in \cref{sec:proof_kalman}.
 
 Generalized Gaussian PSD Models can be used to learn general transition kernels using non-convex optimization. We discuss this in \cref{sec:learning-general}.
+
+
+
+\section{Discussion \& Future work}
+
+In this chapter, we used PSD models to design a non-linear filtering algorithm with strong theoretical guarantees. Specifically, assuming the optimal kernel is mixing, we show that our filter exponentially forgets its intial distribution and its error with respect to the optimal filter is bounded in total variation. This bound can be made smaller if more data is available to learn the model. This guarantee relies on robustness arguments and a learning bound for PSD models in $L_\infty$, which attains optimal rates and can be reached using a convex algorithm. This makes \textsc{PSDFilter} a promising direction for future work.
+
+\paragraph{}
+A natural direction for future work is to generalize \cref{theorem:bound-diagonal} to the more expressive class of Generalized Gaussian PSD Models we introduced in \cref{sec:generalized-psd-models}. This is computationally challenging (the number of anchor points is no longer constant through iterations). The theoretical analysis is also more subtle because the precision matrices also change at each iteration, making controlling the error an open problem.

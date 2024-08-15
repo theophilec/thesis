@@ -413,3 +413,10 @@ The \texttt{peppers} image is often used to demonstrate image registration techn
 
 \subsection{Effect of regularization}\label{sec:regularization}
 In order to understand the effect of regularization, we reuse the setup from \cref{sec:invariance-warping} with a single image, with varying $\lambda$. In \cref{fig:regularization}, we observe two phenomena: (1) as $T$ increases, so does $D$; (2) as $\lambda$ decreases, so does $D$. This shows that \Diffy behaves close to what is predicted by \cref{theorem:main-theorem}. Indeed, $D$ seems proportional to $\lambda$. Also, as $T$ increases, so does the norm of the transformation between $f$ and $\text{warp}(f, T)$. This makes the upper bound of \cref{theorem:main-theorem} increase in turn.
+
+\section{Discussion \& future work}
+
+In this chapter, we designed a dissimilarity -- called Diffy -- to compare data that accounts for smooth transformations between data points, for instance warping on images. Using Nyström approximations, Diffy is efficient to compute in practice. We show that both continuous and discrete versions have invariance guarantees. We analyze Diffy's behavior on the ImageNet dataset and show it captures a wide class of transformations in practice.
+
+\paragraph{}
+\cite{thiry} explain the performance of CNNs by showing that they can be approximated by much simpler dictionary-based models. In their method, the dictionary is composed of random patches sampled from the dataset. Their model is an embedding function with a linear classifier. The embedding function is an encoding of each patch in the image with respect to patches in the dictionary, according to the Euclidean distance. Computing the Euclidean distance between normalized patches is equivalent to computing a convolution, which makes this model comparable to a CNN with a fixed set of filters, corresponding to the dictionary. This simple model has translation invariance like a CNN. Another avenue for future investigation is to use diffy to encode patches and leverage invariances in images.
