@@ -189,7 +189,7 @@ By the Mean Value Theorem, $\ell(\bar q, \theta_0 + d) - \ell(\bar q, \theta_0) 
 
 We denote $\varepsilon(d)= \int_0^1 \Vert D_\theta\ell(\bar q, \theta_0 +td) - D_\theta\ell(\bar q, \theta_0)\Vert dt$.
 
-With the output kernel equal to the RBF, notice that $q, \theta \mapsto D_\theta\ell(q, \theta)$ is continuous. Indeed, $D_\theta \ell(q, \theta) = -q^\top D v(\theta) + D_\theta C(\theta)$ and $D v(\theta)$ and $DC(\theta)$ on $\theta$ through the kernel matrices $K(\theta, \theta)$ and $K(f, \theta)$. The differential of the kernel matrix for the RBF kernel is still $C^\infty$ since the gradient of $\theta \mapsto \Vert f_i - \theta_i\Vert_2^2$ is $2(f_i - \theta_i)$.
+With the output kernel as the RBF kernel, notice that $q, \theta \mapsto D_\theta\ell(q, \theta)$ is continuous. Indeed, $D_\theta \ell(q, \theta) = -q^\top D v(\theta) + D_\theta C(\theta)$ and $D v(\theta)$ and $DC(\theta)$ on $\theta$ through the kernel matrices $K(\theta, \theta)$ and $K(f, \theta)$. The differential of the kernel matrix for the RBF kernel is still $C^\infty$ since the gradient of $\theta \mapsto \Vert f_i - \theta_i\Vert_2^2$ is $2(f_i - \theta_i)$.
 
 In the end, $\theta \mapsto D_\theta\ell(\bar q, \theta)$ is continuous at $\theta_0$ and so is $ \delta \mapsto \Vert D_\theta\ell(\bar q, \theta_0 + \delta) -D_\theta\ell(\bar q, \theta_0)\Vert$ is continuous. In particular, it is equal to $0$ at $\delta=0$.
 
@@ -237,79 +237,85 @@ Assume corresponding lower bound is false, i.e. for any $\varepsilon>0$ and any 
     This contradicts \cref{eq:proof_hyp}.
 \end{proof}
 
+
+
+
+
+
 \subsection{Relation to implicit differentiation}\label{sec:lagrangian}
-Our approach is to use implicit differentiation. Roughly, we proceed as follows: link optimality of $q^*$ using strong duality (Slater's Condition) and the KKT conditions ; rewrite the KKT conditions as an implicit function ; use the implicit function theorem.
+In this section, we derive the gradient ($\theta$ is seen as a vector) of $V$ using implicit differentiation, as in \cite{QP-Layer,optnet}, and show we arrive to the same expression as in \cref{thm:diffytw-grad}. This derivation is informal.
 
-\noindent We first state our result:
 
-\begin{theorem}[Lagrangian approach]
-$v(\theta) = l(\theta, q^*(\theta))$ is differentiable and is gradient is defined as:
-\begin{equation}
-    \nabla v(\theta) = \nabla_1 l(\theta, q^*(\theta)) + \nabla_2 l(\theta, q^*(\theta))J q^*(\theta)
+Roughly, we proceed as follows: link optimality of $q^*$ to the KKT conditions using strong duality (Slater's Condition) and the KKT conditions ; rewrite the KKT conditions as an implicit function ; use the implicit function theorem and simplify the expression.
+
+Indeed, differentiating freely with a chain rule yields:
+\begin{equation}\label{eq:lagrangian-first}
+    \nabla V(\theta) = \nabla_1 \ell(\theta, q^*(\theta)) + \nabla_2 \ell(\theta, q^*(\theta))J q^*(\theta)
 \end{equation}
-\end{theorem}
+where $q^*(\theta)$ is the optimal solution to the problem for parameter $\theta$. The first term corresponds to the differential we derived formally. We will show that the second term is $0$.
 
-\begin{proof}
+\paragraph{Step 1: Derivation of the Lagrangian \& KKT conditions}
 The Lagrangian of \cref{prob:fullqp} is:
 \begin{equation}
-    L(q, u, v, \theta) = \underbrace{\frac{1}{2}q^\top P(\theta)q - v(\theta)^\top q + C(\theta)}_{l(q, \theta)}+ u^\top (h^\top q - 1) - v^\top q
+    L(q, \lambda, \nu, \theta) = \underbrace{\frac{1}{2}q^\top Pq - v(\theta)^\top q + C(\theta)}_{\ell(q, \theta)}+ \lambda^\top (h^\top q - 1) - \nu^\top q
 \end{equation}
-
+where
 where $L: \mathbb R^M \times \mathbb R \times \mathbb R^M\times\Theta\to\mathbb R$, as there are $M$ variables, $1$ equality constraint and $M$ inequality constraints, where we added the dependence on $\theta$.
 
-For an optimal primal and dual solutsion $(q^*(\theta), u^*(\theta), v^*(\theta))$, the KKT conditions are verified:
+For optimal primal and dual solutions $(q^*(\theta), \lambda^*(\theta), \nu^*(\theta))$, the KKT conditions are verified:
 \begin{align}
-    0 &= \partial_q l(q^*, \theta) + u^*h - v^* &\text{(primal stationarity)}\\
+    0 &= \partial_q \ell(q^*, \theta) + \lambda^*h - \nu^* &\text{(primal stationarity)}\\
     1 & =h^\top q^*(\theta)  & \text{(primal feasibility)} \\
     0 & \geq q^*(\theta) & \text{(primal feasibility)}\\
-    0 & = \mathrm{Diag}(v^*(\theta))q(\theta) & \text{(complimentary slackness)}
+    0 & = \mathrm{Diag}(\nu^*(\theta))q(\theta) & \text{(complimentary slackness)}
 \end{align}
 
 
+\paragraph{Step 2: translate the KKT conditions as an implicit function}
 
-
-
-
-\textbf{Step 2: translate the KKT conditions as an implicit function}
-
-Let $g(q, u, v, \theta) = \begin{bmatrix}
-    P(\theta)q - v(\theta) + uh - v\\
+We define the function
+\begin{equation}
+g(q, \lambda, \nu, \theta) = \begin{bmatrix}
+    Pq - v(\theta) + uh - v\\
     h^\top q- 1\\
-    \mathrm{Diag}(v)q
-\end{bmatrix}$. $(q^*, u^*, v^*)$ are solutions if and only if $g(q^*, u^*, v^*, \theta) = 0$.
+    \mathrm{Diag}(\nu)q
+\end{bmatrix}.
+\end{equation}
+By strong duality, $(q^*, \lambda^*, \nu^*)$ are solutions if and only if $g(q^*, \lambda^*, \nu^*, \theta) = 0$.
 
-\textbf{Step 3: applying the implicit function theorem}
-Denoting $z = (q, u, v)$, $g$ is a function of two variables $(z, \theta)$. To apply the implicit function theorem, we prove that $\partial_z g(z^*, \theta)$ is invertible for any solution $z^*$.
+\paragraph{Step 3: applying the implicit function theorem}
+Denoting $z = (q, u, v)$, $g$ is a function of two variables $(z, \theta)$. We apply the implicit function theorem by inverting $\partial_z g(z^*, \theta)$.
 
 The partial Jacobian can be written:
 \begin{align}
     J_z g(z^*, \theta) = \begin{bmatrix}
-    P(\theta) & h^\top  & - I\\
+    P & h^\top  & - I\\
     h & 0 & 0\\
-    \mathrm{Diag}(v)& 0 & \mathrm{Diag}(q)
+    \mathrm{Diag}(\nu)& 0 & \mathrm{Diag}(q)
     \end{bmatrix}
 \end{align}
 
-If there exists $1 \leq i\leq m$ such that $v_i = q_i = 0$, $J_z g$ is not invertible. This corresponds to the ``zero-zero'' case for complementary slackness : the constraint is active and the Lagrange multiplier is $0$. In this case, at optimality, \textcolor{red}{todo todo}.
+We do not go into details but we can justify solving the corresponding system even if the matrix is not invertible in our simple case. Note that the structure of the partial Jacobian is particularly simple in our case since the constraints do not depend on $\theta$.
 
 
 In the end,
 \begin{align}
     J_\theta z^*(\theta) = - J_zg(z^*, \theta)^{-1}J_\theta g(z^*, \theta)
 \end{align}
-We can then combine these results:
-\begin{align}
-J_\theta v(\theta) &=  J_q l(q^*, \theta)J_\theta q^*(\theta) + J_\theta l(q^*, \theta),\\
-&= J_q l(q^*, \theta)  \left[J_\theta z^*(\theta)\right]_{q, \theta} + J_\theta l(q^*, \theta),\\
-&= - J_ql(q^*, \theta) \left[J_z g(z^*, \theta)^{-1} J_\theta g(z^*, \theta)\right]_{q,\theta}+ J_\theta l(q^*, \theta)
-\end{align}
-\end{proof}
 
-Here we assume that $\theta$ is such that $q^*(\theta) > 0 $, so $v^*(\theta)=0$. Thus:
+
+We can then combine these results with \cref{eq:lagrangian-first}, selecting the parts of the Jacobians that we are interested in:
+\begin{align}
+J_\theta V(\theta) &=  J_q \ell(q^*, \theta)J_\theta q^*(\theta) + J_\theta \ell(q^*, \theta),\\
+&= J_q \ell(q^*, \theta)  \left[J_\theta z^*(\theta)\right]_{q, \theta} + J_\theta \ell(q^*, \theta),\\
+&= - J_q\ell(q^*, \theta) \left[J_z g(z^*, \theta)^{-1} J_\theta g(z^*, \theta)\right]_{q,\theta}+ J_\theta \ell(q^*, \theta)
+\end{align}
+
+\paragraph{Step 4: simplify the expression} To retrieve the result in \cref{thm:diffytw-grad}, we prove that $\left[J_z g(z^*, \theta)^{-1} J_\theta g(z^*, \theta)\right]_{q,\theta}=0$. For simplicty, we assume that $\theta$ is such that $q^*(\theta) > 0 $ so $\nu^*(\theta)=0$. Thus:
 
 \begin{align}
     J_z g(z^*, \theta) = \begin{bmatrix}
-    P(\theta) & - I & h\\
+    P & - I & h\\
     0 & \mathrm{Diag}(q)& 0\\
     h^\top  & 0 & 0
     \end{bmatrix}
@@ -326,7 +332,7 @@ Here we assume that $\theta$ is such that $q^*(\theta) > 0 $, so $v^*(\theta)=0$
 We solve the following system:
 \begin{equation}
 \begin{bmatrix}
-    P(\theta) & - I & h\\
+    P & - I & h\\
     0 & \mathrm{Diag}(q)& 0\\
     h^\top  & 0 & 0
     \end{bmatrix}
@@ -345,18 +351,20 @@ We solve the following system:
 which is equivalent to:
 
 \begin{align}
-   P(\theta)A - B + hC =& -J_\theta v(\theta)\\
+   PA - B + hC =& -J_\theta v(\theta)\\
    \mathrm{Diag}(q)B =& 0\\
    h^\top A =& 0
 \end{align}
 
 The second equation implies that $B=0$, and the first implies
 \begin{equation}
-    A = - P(\theta)^{-1}hC - P(\theta)^{-1}J_\theta v(\theta)
+    A = - P^{-1}hC - P^{-1}J_\theta v(\theta)
 \end{equation}
 
-And
+And finally,
 \begin{align}
-    J_ql(q^*,\theta)A &= (q^\top P(\theta) - v(\theta)^\top )A = h^\top A = 0
+    J_q\ell(q^*,\theta)A &= (q^\top P - v(\theta)^\top )A = h^\top A = 0
 \end{align}
-\vskip 0.2in
+\paragraph{}
+And we do indeed recover the result in \cref{thm:diffytw-grad}, which did not seem obvious from the outset.
+\qed
