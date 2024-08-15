@@ -77,7 +77,7 @@ We use their arguments to study the robustness of the filter we propose in \cref
 
 
 
-\paragraph{} Finally, related to the second point above, a filter must be computable in practice. \cref{eq:intro-hmm-iteration} requires complete knowledge of the transition and measurement kernels, which characterize the laws of $X_{t+1}$ conditionally on $X_t$ and $Y_t$ conditionnaly on $X_t$. Furthermore, it implies being able to compute arbitrary marginalizations in practice. Outside of well-known settings (Gaussian Linear Conditional Distributions and finite state space), this is intractable. Two approaches exist: make additional assumptions about the state space (for example the EFK and UKF assume it is Gaussian) ; or, use Monte Carlo sampling to approximate the optimal filter iterations (Sequential Monte Carlo methods such as the particle filter).
+\paragraph{} Finally, related to the second point above, a filter must be computable in practice. \cref{eq:intro-hmm-iteration} requires complete knowledge of the transition and measurement kernels, which characterize the laws of $X_{t+1}$ conditionally on $X_t$ and $Y_t$ conditionnaly on $X_t$. Furthermore, it implies being able to compute arbitrary marginalizations in practice. Outside of well-known settings (Gaussian Linear Conditional Distributions and finite state space), this is intractable. Two approaches exist: make additional assumptions about the state space (for example the EFK and UKF assume it is Gaussian) ; or, use Monte Carlo sampling to approximate the optimal filter iterations (Sequential Monte Carlo methods such as the particle filter). This makes choosing the approximation key, as we will see in \cref{ch:hmm}.
 
 
 

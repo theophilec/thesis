@@ -205,9 +205,11 @@ Beyond the Markovian structure, we aim to leverage a second source of structure 
 
 \paragraph{Intuition}
 
-The approach we propose works in two steps. First, using function evaluations of $Q$ and $G$ (we assume the kernels have densities), we learn $\hat Q$, $\hat G$ as Gaussian PSD models. This step is done ``offline''. Second, when we receive a sequence $y_1, \ldots, y_N$, we compute the sequence of approximate filtering distributions $\hat\pi_k$ by applying \cref{eq:intro-hmm-iteration} in closed-form with $\hat Q$, $\hat G$ and $\hat \pi_k$ \emph{in lieu} of $Q$, $G$ and $\pi_k$.
+The approach we propose works in two steps. First, using function evaluations of $Q$ and $G$ (we assume the kernels have densities), we learn $\hat Q$, $\hat G$ as Gaussian PSD models. This step is done ``offline'' \emph{via} a convex problem. Second, when we receive a sequence $y_1, \ldots, y_N$, we compute the sequence of approximate filtering distributions $\hat\pi_k$ by applying \cref{eq:intro-hmm-iteration} in closed-form with $\hat Q$, $\hat G$ and $\hat \pi_k$ \emph{in lieu} of $Q$, $G$ and $\pi_k$.
 
 We then derive bounds for the learning steps and generalize the results in \cite{oudjane} to quantify the stability and robustness of the approximate filter.
+
+In this development, Gaussian PSD Models are central for two reasons. First, they can go through the filtering iterations in closed-form since they are closed with respect to operations on probability densities. Second, their approximation properties are adaptive to the target function, which allows us to have a tight control on the model error and \emph{in fine} on the robustness of the filter.
 
 \paragraph{Main contributions}
 \textsc{PSDFilter} is a non-linear filtering algorithm that approximates the filtering distribution using positive semi-definite models. \textsc{PSDFilter} recovers previously proposed estimators such as the Kalman filter and can be applied to any filtering problem where the transition kernels admit a smooth density.
