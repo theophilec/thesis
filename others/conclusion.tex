@@ -1,7 +1,39 @@
 \addchapnonumber{Conclusion et perspectives}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Conclusion}
-\lipsum[11]
-\section{Future research directions}
-\lipsum[13]
+In this thesis, we developed and studied methods for leveraging structure in machine learning and statistical inference problems. First, we focused on invariance to smooth transformations on general spaces, developing a divergence between data points that is invariant to smooth diffeomorphisms. This made the case for casting data points as functions, unlocking a richer topology with better tools for analysis. Second, we developed a divergence to compare time-series that accounts for misalignment and time-warping. It should be seen as a principled alternative to Dynamic Time Warping, with strong theoretical properties such as invariance and differentiability. Finally, we combined Markovian structure with the non-negativity constraint of probability densities to develop a non-linear filter with stability and robustness guarantees.
+
+\paragraph{} Taken as a whole, our work underscores the importance of embedding structure into algorithm design. By enforcing invariances and using all intrinsic model characteristics, we pave the way for more effective methods. Our three contributions are supported by theoretical guarantees and empirical evidence.
+
+\paragraph{}\noindent We briefly summarize each contribution:
+
+\subparagraph{} Firstly, we introduced Diffy, a novel divergence tailored for functions, which is inherently invariant to smooth diffeomorphisms. By embedding data within reproducing kernel Hilbert spaces and formulating the divergence as an optimization problem, Diffy offers a closed-form solution that is both computationally efficient and theoretically grounded. Its applicability spans various data types, including images and point clouds, and it serves as a robust alternative in distance-based machine learning methods, ensuring resilience against naturally occurring transformations.
+
+\subparagraph{}Expanding on the concept of invariance, we developed DiffyTW to address the challenges of time-warping and misalignment in time-series data. Recognizing time-series as functions susceptible to smooth reparametrizations, DiffyTW provides a framework that not only compares such data effectively but also aligns them by estimating the underlying reparametrizations. Its discrete counterpart retains the core invariance properties, ensuring practical applicability. Moreover, the differentiability of DiffyTW with respect to its inputs facilitates its integration into broader machine learning pipelines, such as clustering and averaging tasks.
+
+\subparagraph{}Lastly, we ventured into the realm of non-linear filtering with the introduction of PSDFilter. By harnessing the properties of positive semi-definite models, PSDFilter approximates filtering distributions in Hidden Markov Models with commendable stability and robustness. Its design capitalizes on both the Markovian structure and the non-negativity of conditional densities, leading to a filtering algorithm that adapts to the regularity properties of the underlying model. Notably, PSDFilter achieves optimal learning rates through convex optimization, positioning it as a computationally efficient alternative to traditional methods like the particle filter, especially in scenarios involving smooth densities.
+
+\section*{Future research directions \& open problems}
+
+We close this thesis by opening future research directions, which could serve as
+
+\paragraph{Integrating Diffy into machine learning algorithms} Diffy was first expl
+
+
+\paragraph{Extending PSD models}
+In \cref{sec:generalization} of \cref{ch:hmm}, we present a generalization of PSD models using different, non-diagonal precision matrices for each basis function.
+
+\subparagraph{Filtering with Generalized Gaussian PSD Models} Gaussian PSD models have fixed anchor points and precision matrices after the first filtering iteration (see \cref{corollary:filtering}). We rightly focused on the computational interest of this since it implies that the computational complexity of the filtering iteration does not increase through time. However, this is no longer the case with Generalized Gaussian PSD Models.
+
+On one hand, this creates a computational burden, with complexity increasing exponentially through time, akin to what happens when combining Gaussian Mixture Models. We proposed to reduce this by compressing the filtering distribution after each iteration. If the compressed model is taken to be a Gaussian PSD Model, this can be achieved by solving a convex optimization problem for instance with \cref{alg:learn}, or using a non-convex solver to learn another Generalized Gaussian PSD Model with fewer anchor points.
+
+On the other, because the anchor points and precision matrices evolve over iterations, the analysis we do in \cref{ch:hmm} cannot be extended directly. Studying the evolution of the precision matrices resembles a hardened version of the Riccati equation problem, which is already very difficult. Attacking the problem from the point of view of the function spaces could prove useful to obtain similar theoretical guarantees as for the Gaussian PSD Model case.
+
+\subparagraph{Learning kernel parameters \& Squared-Neural Families} If $A$ is PSD matrix of size $M$ with rank $r \leq M$, we can write the PSD model induced by $A$ at anchor points $\tilde x_k$ as:
+\begin{equation}
+    f(x) = \left\Vert R\Phi(x)\right\Vert_2^2
+\end{equation}
+where $R$ is a $M \times r$ matrix such that $A = R^T R$ and $\Phi(x) = (k(x, \tilde x_1), \ldots, k(x, \tilde x_M))^\top\in\mathbb R^M$. This has been leveraged by \cite{beugnot-optim} for non-convex optimisation and \cite{squared-neural-families} for modelling probabilies. Note that this is equivalent to learning a Generalized Gaussian PSD Model using a non-convex solver as we propose in \cref{sec:generalization}.
+
+\cite{squared-neural-families} leverage empirical feature maps akin to $\Phi(x)$, which induce probabilistic models. They consider modelling probabilities from another perspective, focusing on the interpretation as exponential families and choosing embeddings that make marginalization easy.
+
+Exploring the point of view highlighted in \cite{squared-neural-families} could be promising, in particular to investigate how these models could be used for filtering.

@@ -109,58 +109,31 @@ We apply Diffy to comparing images with natural and synthetic transformations an
     \item We conduct comprehensive experiments to rigorously analyze the behavior of Diffy in practical applications. All code is made publicly available in the \texttt{diffy} library\footnote{Available at \url{github.com/theophilec/diffy}.}.
 \end{itemize}
 
-
-%\subparagraph{-- Computing Diffy in practice}
-%One one hand, we show (Proposition A) that the optimization problem defined in \cref{eq:intro_diffy} can be computed in closed-form as operations on linear operators. In practice, data points are not functions but composed of discrete ``samples'': pixels for images, samples for time series, ... We leverage Nystr\"om approximations to control the computational complexity for the approximation and bound the error committed by the approximation. Basically, we prove that $\hat D_\lambda(f, g)$ can be computed in $O(ZYU)$ time (note that this is less than the square of the number of pixels) and that the error is bounded by
-
-
-%\subparagraph{-- Invariance results}
-%\todo{Add informal theorem env}
-%Diffy is invariant to smooth diffeomorphisms. Indeed, if $Q$ is smooth diffeomorphism, then Theorem X states
-%\begin{informaltheorem}[see \cref{thm:main-theorem}]
-%\begin{equation}
-%D_\lambda(f\circ Q, f) \leq C_QC_\mu\lambda
-%\end{equation}
-%\end{informaltheorem}
-
-%This result can be combined with \cref{eq:intro_approx_diffy} to show (Theorem Y) that
-
-%\begin{informaltheorem}[see \cref{thm:appr-error-widehatD}]
-%\begin{equation}
-%\hat D_\lambda(f\circ Q, f) \leq \frac{C}{\sqrt{N}}.
-%\end{equation}
-%\end{informaltheorem}
-%\subparagraph{-- Experimental support \& library}
-
-%We conduct extensive experiments to study the behavior of Diffy in practice. All code is released in the \texttt{diffy} library at \url{github.com/theophilec/diffy}.
-
-\subsection*{\cref{ch:diffytw}: Differentiable Dynamic Time Warping with invariance properties}
-%\emph{DiffyTW is a differentiable divergence tailored for time-series that is robust to time-warping.}
-The contents of \cref{ch:diffytw} has previously been shared online and is under review in the following pre-publication:
+\subsection{Handling time-warping and misalignment when comparing time-series}
+\begin{mdframed}
+The contribution described is presented in \cref{ch:diffytw}.
+\noindent It has previously been shared online and is under review in the following pre-publication:
 \begin{mdframed}
 \Myprod{\noindent\textbf{Théophile Cantelobre}, Benjamin Guedj, Carlo Ciliberto, Alessandro Rudi}
 {Comparing time-series with smooth, time-warping invariance}{Under review (2024)}
 \end{mdframed}
 The library developed accompanying \cref{ch:diffytw} is available at \url{github.com/theophilec/diffytw}.
+\end{mdframed}
 \paragraph{Motivation}
-Time-series exhibit naturally occurring variations make inference challenging.
+Time-series exhibit naturally occurring variations make analysis and inference challenging.
 
-One common issue is misalignment. Comparing two time-series of the same signal but with different sample points is not straightforward. Indeed, consider $(x_i, f(x_i))_{1\leq i\leq n}$ and $(y_j, f(y_j))_{1 \leq j \leq m}$ two time-series representing the same underlying signal but with different sampling patterns. Computing a distance between values is not a satisfying solution: indeed, it is even impossible to do so if $n\neq m$.
+One common issue is misalignment. Comparing two time-series of the same signal but with different sample points is not straightforward. Indeed, consider $(x_i, f(x_i))_{1\leq i\leq n}$ and $(y_j, f(y_j))_{1 \leq j \leq m}$ two time-series representing the same underlying signal but with different sampling patterns. Treating the time series as vectors in Euclidean space is not satisfying. In fact, it is not even obvious how to do so if $n \neq m$.
 
-Dynamic Time Warping (DTW) is a time-tested solution to the time-series alignement problem. It has been successfully applied to many time-series analysis and machine learning tasks. Soft Dynamic Time Warping is variant with similar behavior. Because of its differentiability with respect to input, it has been integrated into deep neural network algorithms for time-dependent processing (time-series, videos, ...).
+Beyond time-series alignement, a related problem is invariance to time-warping. This allows one to compare trajectories, irrespective of speed differences \citep{dtw-trajectories}. There is an interest in having a way of comparing trajectories that is invariant to smooth transformations such as reparametrization of time caused by speed differences, while also eliminating the warping and aligning the time-series.
 
-Beyond time-series alignement, a related problem is invariance to speed differences. A common example is gait analysis. Recordings of a step of running and a step of walking have different shapes, beyond the inherent speed difference. Analyzing this requires eliminating the speed difference. We provide a simple example based on hiking in \cref{sec:diffytw-introduction}.
-
-In both cases, the goal is to warp the time dimension to better compare time-series.
-We posit that to be robust to these discrepancies, divergences between time-series should aim to be invariant to time-warping. Despite their practical utility, DTW and its variants do not have such guarantees.
+We posit that to be robust to these discrepancies, divergences between time-series should aim to be invariant to time-warping. Despite their practical utility, DTW \citep{sakoe} and its variants such as Soft-DTW \citep{s-dtw} do not have such guarantees. Other methods focus exclusively on aligning the time-series, as outlined in \ref{background:diffytw}.
 
 \paragraph{Intuition}
-The key insight to our approach is inherited from \cref{ch:diffy}: comparing integrals of functions instead of the functions themselves allows us to leverage the change of variable theorem and eliminate differences due to diffeomorphisms.
+The key insight to our approach is that a smooth reparametrization over $[0,1]$ is an inscreasing, smooth diffeomorphism over $[0,1]$. Since these are 1D functions, they can be potentially very efficiently estimated. We combine this with the intuition from \cref{sec:contributions-ch2}. Indeed, a repametrization $Q$ will match the statistics of the times series over time.
 
-In \cref{ch:diffy}, one cannot infer $Q$ from $\vert \nabla Q\vert$ and more generally, given a smooth, non-negative real function $q$, therethere is no guarantee that there exists a diffeomorphism $Q$ such that $q(x) = \vert \nabla Q(x) \vert$. On the other hand, DiffyTW is designed to produce a proper smooth reparametrization that aligns the two time-series. This stems from the fact that increasing diffeomorphisms on $[0,1]$ are exactly the integrals of smooth non-negative functions that integrate to $1$.
-%In this sense, there is some proximity between our approach and shape deformation approaches \cite{younes}.
+DiffyTW is designed to produce a proper smooth reparametrization that aligns the two time-series, in contrast to \cref{ch:diffy}. Indeed, one cannot infer $Q$ from $\vert \nabla Q\vert$ and more generally, given a smooth, non-negative real function $q$, therethere is no guarantee that there exists a diffeomorphism $Q$ such that $q(x) = \vert \nabla Q(x) \vert$.
 
-As we explain below and prove in \cref{ch:diffytw}, we can define a discrete counterpart for DiffyTW for time-series that is consistent with DiffyTW. Intuitively, this consistency -- which indirectly guarantees that certain invariance properties are ``transferred'' to Discrete DiffyTW -- relies on using functions to interpolate the time-series and computing DiffyTW between them.
+As we explain below and prove in \cref{ch:diffytw}, we can define a discrete counterpart for DiffyTW for time-series that is consistent with DiffyTW. Intuitively, this consistency -- which indirectly guarantees that certain invariance properties are ``transferred'' to Discrete DiffyTW -- relies on considering functions to interpolate the time-series and defining Discrete DiffTW to coincide with their DiffyTW value.
 
 \paragraph{Main contributions}Following the intuition outlined above, we define DiffyTW as follows:
 \begin{equation*}
@@ -186,7 +159,7 @@ where $P$, $v$ and $C$ depend on $\hat f$, $\hat g$ and $h$ depends only on basi
 
 We show this definition is consistent with that of DiffyTW for piece-wise constant functions. This allows us to transfer invariance properties from DiffyTW to Discrete DiffyTW in the limit of a large number of samples (see \cref{thm:prob-qp}). Note that additionally, despite being applied to discrete time-series, Discrete DiffyTW still estimates a proper smooth reparametrization. \todo{Add this point to main paper}
 
-Discrete DiffyTW is differentiable with respect to its second argument. To highlight where the difficulty is, let us recast this as differentiating $V(\theta) = \min_{q\in\mathcal C}\ell(q, \theta)$ where $\ell$ is the QP objective for parameter $\theta$ at $q$ and $\mathcal C$ is the set of constraints. In our setting, we prove we can differentiate ``through'' the $\min$ operator, that is:
+Discrete DiffyTW is differentiable with respect to its second argument, making it amenable to being used in averaging tasks such as clustering. To highlight where the difficulty is, let us recast this as differentiating $V(\theta) = \min_{q\in\mathcal C}\ell(q, \theta)$ where $\ell$ is the QP objective for parameter $\theta$ at $q$ and $\mathcal C$ is the set of constraints. In our setting, we prove we can differentiate ``through'' the $\min$ operator, that is:
 \begin{mdframed}
 \begin{informaltheorem}[based on \cref{thm:diffytw-grad}]
 So long as it has a unique solution, then $V$ is differentiable at $\theta$ and its gradient is given by:
@@ -205,32 +178,37 @@ We apply DiffyTW time-series with synthetic reparametrizations as well as natura
     \item DiffyTW is provably invariant to a class of smooth reparametrizations, which can be configured depending on the problem. As a by product of the computations, it produces the reparametrization so the functions can be aligned.
     \item DiffyTW enables robust and efficient time-series comparison through its discrete counterpart, while approximately preserving the key invariance properties of DiffyTW.
     \item DiffyTW is differentiable with respect to its inputs, allowing seamless integration into broader machine learning workflows.
-    \item We empirically demonstrate and analyze the behavior of DiffyTW on various time-series datasets, highlighting its effectiveness. All code is made publicly available in the \texttt{diffytw} library\footnote{Available at \url{github.com/theophilec/diffytw}.}.
+    \item We empirically demonstrate and analyze the behavior of DiffyTW on various time-series datasets. All code is made publicly available in the \texttt{diffytw} library\footnote{Available at \url{github.com/theophilec/diffytw}.}.
 \end{itemize}
 
-\subsection*{\cref{ch:hmm}: Closed-form filtering for non-linear systems}
-The contents of \cref{ch:hmm} has previously been shared online and is under review in the following pre-publication:
+\subsection{Leveraging PSD models for stable and robust non-linear filtering}
+\begin{mdframed}
+The contribution described is presented in \cref{ch:hmm}.
+\noindent It has previously been shared online and is under review in the following pre-publication:
 \begin{mdframed}
 \Myprod{\textbf{Théophile Cantelobre}, Benjamin Guedj, Carlo Ciliberto, Alessandro Rudi}
 {Closed-form filtering for non-linear systems}{Under review (2024)}
 \end{mdframed}
+%The library developed accompanying \cref{ch:hmm} is available at \url{github.com/theophilec/psdfilter}.
+\end{mdframed}
+
 \paragraph{Motivation}
-We consider the filtering problem for discrete-time, dynamical models. The goal of filtering is to compute (or approximate) the filtering distribution $\pi_t(dx) = \mathbb P(X_t\vert Y_1, \ldots, Y_{t})$. The filtering distribution is the distributions of a state variable at time $t$, conditionnally on past observations $Y_1, \ldots, Y_t$. $Y_s$ can be any random variable, but one can think of it as a noisy, perhaps indirect, observation of the state $X_s$. The filtering distribution is also known as the optimal filter.
-
-In general, computing $\pi_t$ is intractable as it requires full knowledge of the joint law of $X_t$  and $Y_1, \ldots, Y_t$. Markov assumptions on the model -- which is then called a Hidden Markov Model -- reduce computing the optimal filter to iterating the following equation:
-
+We consider the filtering problem for discrete-time Hidden Markov Models on general state-spaces. The goal of filtering is to compute (or approximate) the filtering distribution $\pi_t(dx) = \mathbb P(X_t\vert Y_1, \ldots, Y_{t})$. Markov assumptions on the model reduce computing the optimal filter to iterating the following equation:
 \begin{equation}\label{eq:intro-hmm-iteration}
 \pi_k(dx) = \frac{\int \pi_{k-1}(du)Q(u, dx)G(x, y_k)}{\int \int \pi_{k-1}(du)Q(u, dx)G(x, y_k)}
 \end{equation}
 
-Three main questions arise from the optimal filtering iteration \cref{eq:intro-hmm-iteration}. The first relates to the initialization of the sequence $\pi_k$. Assume two filters are initialized at $\mu$ and $\nu$ respectively. \emph{Stability} quantifies the behavior of $\Vert \pi_t^\mu - \pi_t^\nu \Vert_{TV}$ as $t$ grows. A stable filter sees this distance go to zero as $t$ grows, i.e. the filter forgets its initial condition.The second is \emph{robustness} to model error, which quantifies the behavior of $\Vert \hat\pi_t - \pi_t\Vert_{TV}$ where $\hat \pi$ is obtained by applying \cref{eq:intro-hmm-iteration} with $\hat Q$ and $\hat G$, approximate models, \emph{in lieu} of $Q$ and $G$. A robust filter will have bounded error, for a fixed time horizon. Finally, a filter must be computable in practice. \cref{eq:intro-hmm-iteration} requires complete knowledge of the transition and measurement kernels, which characterize the laws of $X_{t+1}$ conditionally on $X_t$ and $Y_t$ conditionnaly on $X_t$. Furthermore, it implies being able to compute arbitrary marginalizations in practice. Outside of well-known settings (Gaussian Linear Conditional Distributions and finite state space), this is intractable. Two approaches exist: make additional assumptions about the state space (for example the EFK and UKF assume it is Gaussian) ; or, use Monte Carlo sampling to approximate the optimal filter iterations (Sequential Monte Carlo methods such as the particle filter).
+In general state-spaces, computing \cref{eq:intro-hmm-iteration} implies either making strong assumptions on the model (e.g. Kalman filter), approximating the iteration while assuming a functional form for $\pi_T$ (e.g. variants of the Kalman filter) or approximation \cref{eq:intro-hmm-iteration} using Monte Carlo sampling (e.g. the particle filter). The particle filter can be made stable and robust, but does not produce a closed-form distribution.
 
-Our approach is to approximate $\hat Q$ and $\hat G$ using PSD models introduced in ref and compute the iterations in \cref{eq:intro-hmm-iteration} in closed-form.
+Beyond the Markovian structure, we aim to leverage a second source of structure in filtering, that (conditional) probability distributions are non-negative functions. This can seem trivial at first glance but the idea has recently attracted interest with the development of Positive Semi-Definite Models (PSD models). PSD models are a class of non-negative functions based on the kernel sum-of-squares framework which optimally approximate smooth, non-negative functions such as (conditional) densities. These approximations are solutions to convex problems. When the RBF kernel is used, this family is useful for approximating probability densities. Indeed, products and marginals of PSD models are PSD models, which can be computed efficiently. For a primer see \citep{ciliberto2021,ulysse-sampling}.
+
+
 
 \paragraph{Intuition}
-Positive Semi-Definite Models (PSD models) are a class of non-negative functions based on the kernel sum-of-squares framework which optimally approximate smooth, non-negative functions such as (conditional) densities. These approximations are solutions to convex problems. When the RBF kernel is used, this family is useful for approximating probability densities. Indeed, products and marginals of PSD models are PSD models, which can be computed efficiently.
 
-Taken together, this means we can approximate $G$ and $Q$ by PSD models $\hat G$ and $\hat Q$, then compute the filter $\hat \pi_k$ sequence by applying \cref{eq:intro-hmm-iteration}. Indeed, the approach we propose works in two steps. First, using function evaluations of $Q$ and $G$ (we assume the kernels have densities), we learn $\hat Q$, $\hat G$ as Gaussian PSD models. This step is done ``offline''. Second, when we receive a sequence $y_1, \ldots, y_N$, we compute the sequence of approximate filtering distributions $\hat\pi_k$ by applying \cref{eq:intro-hmm-iteration} with $\hat Q$, $\hat G$ and $\hat \pi_k$ \emph{in lieu} of $Q$, $G$ and $\pi_k$.
+The approach we propose works in two steps. First, using function evaluations of $Q$ and $G$ (we assume the kernels have densities), we learn $\hat Q$, $\hat G$ as Gaussian PSD models. This step is done ``offline''. Second, when we receive a sequence $y_1, \ldots, y_N$, we compute the sequence of approximate filtering distributions $\hat\pi_k$ by applying \cref{eq:intro-hmm-iteration} in closed-form with $\hat Q$, $\hat G$ and $\hat \pi_k$ \emph{in lieu} of $Q$, $G$ and $\pi_k$.
+
+We then derive bounds for the learning steps and generalize the results in \cite{oudjane} to quantify the stability and robustness of the approximate filter.
 
 \paragraph{Main contributions}
 \textsc{PSDFilter} is a non-linear filtering algorithm that approximates the filtering distribution using positive semi-definite models. \textsc{PSDFilter} recovers previously proposed estimators such as the Kalman filter and can be applied to any filtering problem where the transition kernels admit a smooth density.

@@ -1,94 +1,88 @@
 
 \section{Introduction}
-
-%The No Free Lunch theorem for machine learning \cite{ref} states that no machine learning method can perform well in all configurations. Consequences of the NFL are debated and invariably lead to a philosophical discussion that is outside of the scope of this thesis. However, we can take away the general principle that machine learning guarantees only make sense in specified scenarios. Designing such scenarios is a central part of research in machine learning. Some examples are the hypothesis that solutions to a regression problem are ``simple''.
-
-%Theoretical guarantees about machine learning algorithms and statistical inference methods depend on the situation that is considered. This statement could be a consequence of the No Free Lunch theorems but it is more an assessment of reality.
-
-During training and deployment of machine learning algorithms, scientists and engineers instill their knowledge to make the algorithms as performant as possible. This is done in a variety of ways: in the selection of the datasets (e.g. what is an outlier?), in the choice of the search space (e.g. convolutional or fully connected neural networks?), in the design of a regularization schema (e.g. should solutions have small $L_2$ or $L_1$ norms?), in the training recipe (e.g. which optimizer? small learning rate? large learning rate?), to mention a few examples. Each of these choices impacts the obtained algorithm, its performance and its properties. We call these choices \emph{inductive biases}\footnote{See \cite{mitchell-inductive,1806.01261} for a formal definition and review of such concepts.}.
-
-Inductive biases are -- often, implicit -- assumptions about the learning problem or the solution to learning problem such that constrain the space of solutions or influence the choice between several solutions. They allow us to take advantage of assumptions about the task at hand to design algorithms with strong theoretical guarantees and better practical performance.
-
-One way of discovering good assumptions for a problem and encoding it into a method is to consider the structure of the problem. This structure can be very explicit, like when working on graphs as input or output. In this case, the structure can seem like a hinderance, and methods historically designed to perform on vectors or images may be difficult to adapt and apply to this setting. In this case, the structure cannot be ignored and must be handled by an appropirate means. However, in
+Industrial processes, hospitals, and social networks create large quantities of data.
+This data can be used to solve longstanding challenges encoutered when solving the underlying problems. For instance, preventative maintenance can reduce operating costs due to untimely machine failures in a factory ; personalized medecine can recommend treatment to to a doctor based on all the patients detailed medical history, accounting for similarities with other patients ; and, posts from different groups can be used to detect and hinder fake news propagation online. These applications rely on machine learning methods to make inferences and recommand (or take) decisions based on data.
 
 
+\paragraph{}
+During training and deployment of machine learning algorithms, scientists and engineers instill their knowledge to make the algorithms as performant as possible. They tailor their choice of algorithm to match the problem they solve.
 
+This is done in a variety of ways: in the selection of the datasets (e.g. what is an outlier?), in the choice of the search space (e.g. convolutional or fully connected neural networks?), in the design of a regularization schema (e.g. should solutions have small $L_2$ or $L_1$ norms?), in the training recipe (e.g. which optimizer? small learning rate? large learning rate?), to mention a few examples. Each of these choices impacts the obtained algorithm, its performance and its properties. We call these choices \emph{inductive biases}.
 
+Inductive biases are -- often, implicit -- assumptions about the learning problem or the solution to learning problem such that constrain the space of solutions or influence the choice between several solutions\footnote{See \cite{mitchell-inductive,1806.01261} for a formal definition and review of such concepts.}. They allow us to take advantage of assumptions about the task at hand to design algorithms with strong theoretical guarantees and better practical performance.
 
+\paragraph{}
 
+One way of discovering good assumptions for a problem is considering the structure of the problem. When working on images, pixels that are close together carry semantic meaning like the existence of objects., Pixels that are further away are less correlated. This reflects structure on the features of data. This motivates the use for local filters in Convolutional Neural Networks (CNN) and patch representations in Vision Transformer models that are deployed today. Parts of an image can be strongly correlated even if they are far away: indeed, it is unlikely that a lion and a cat coexist on the same image. This fact induces structure on the set of labels in the machine learning problem, where labels of domestic and wild animals are unlikely to be predicted for the same image.
 
-%They can be opposed to an \emph{end-to-end} approach based solely on data. Deep learning is often cited as a poster child of the end-to-end approach: only the data dictates which model is chosen and deployed, free of any feature engineering or data tweaking.
-
-%However, the methods at the heart of the development of deep learning like Convolutional Neural Networks (CNN) encode inductive biases at their core. At their simplest, CNN are neural networks composed of a succession of convolutional layers and a linear classification layer. The parameters of the convolutional layers are learnable, but the same parameters are applied over the entire image. This implies that before the final classification layers, CNNs produce equivariant features\footnote{Loosely, equivariant features are such that $f(\tau \cdot x)=\tau f(x)$ where $x$ is a data point, $\tau$ is a transformation and $f$ is a model. In a nutshell: the features of the transformed datum are the transformed features of the datum.}. Put simply, a signal at the top left of an image will produce the same features as if it were at the bottom right of the image, but in a different position. This design choice constrains models to not be sensitive to the position of an object in an image, a prime example of an inductive bias.
-
-%Finally, as an arguably shaky epistemological argument, after dataset size, the evolutions in neural architectures are among the breakthroughs that seem to drive the field. Many The importance of neural architectures, such as ResNet and YOLO, which in some circles are almost household names, or the recurrent structure of Natural Language Processing models that power ChatGPT are other examples.
-
-While deep learning models have an impressive capacity for learning patterns from data and data is arguably the most valuable component of these systems, they are aided by inductice biases in their design that enforce known structures, heuristics, symmetries or invariances. Beyond this anecdotal evidence, integrating symmetries and structure has been theoretically proven to make learning more efficient. This structure can be present in the features (e.g. in an image) or in the labels (e.g. the hierarchical structure of a classification). Put together, there is evidence enforcing structure and invariances make the learning process more efficient and \emph{in fine} makes for more performant algorithms.
-
-In the next section, we survey some of the work done in this direction.
+\paragraph{}
+In this thesis, we present methods developed for ingraining a problem's structure into a machine learning method. This is central to machine learning research and effective applied algorithms.
 
 \section{Background: structure in machine learning \& statistical inference}
 
-In this section, we give some background on structure in machine learning. We quickly survey machine learning on structured objects (such as graphs) as well as structured prediction, then delve into the two types of structure we study in this thesis.
+In this section, we give some background on structure in machine learning. We quickly survey machine learning on structured objects, then delve into three instances of structure we study in this thesis: invariance to diffeormophisms in general data spaces, time-warping and misalgnment in time-series, and Markovian dependence structure in dynamical models. These structures can be encoutered in a wide variety of situations such as object detection in images, time-series classification, and filtering for dynamical models.
 
 \subsection{Machine learning on structured objects}
 
 At the time of writing this thesis, most of the world has heard of a machine learning application that strongly relies on the structure in its input and its output: text generation. Language models are designed, trained and deployed in a recurrent way, where the next word is predicted at each step. In fact, Natural Language Processing tasks such as parts-of-speech tagging drove the development of machine learning with structured objects.
 
-Much of the engineering effort put into solving a machine learning problem is put into identifying a meaningful structure for the problem and exploiting it in the choice of algorithm.
+Beyond NLP, identifying and leveraing meaningful structure for machine learning problems has been the source of considerable interest and engineering effort. When the structure is embedded in the output and the loss function, the field is often reffered to as \emph{structured prediction}. Two seminal books on the topic include \citep{advancedStructuredPrediction2014MIT,bakir2007predicting}. Protein folding  \cite{joachims2009}, information retrieval \cite{duchi2010} are some examples of applications of using structured objects in machine learning.
 
-Some seminal works on the topic include \cite{advancedStructuredPrediction2014MIT,bakir2007predicting}
-
-a such as graphs, trees or protein sequences. Let us briefly glance at some applications of learning with graph structure.
-
-Machine learning with graphs is a vast field. The interested reader is reffered to \cite{FengXiaGraphSurvey} for a survey. Two of the most highlighted applications of graph machine learning are information retrieval and drug discovery. A simple example of the former is generating a summary of a technique given not only the content of academic papers, but also the citation links between them. The latter is a vast field in of itself. A typical example may be using the graph structure of molecules to detect promising candidates for antibiotics of other drugs invert the sequence\cite{stokes-antibiotics}.
-
-Predicting structured objects on the other hand is known as structured prediction. Structured prediction has been a widely successful field that was initially motivated by sequence tagging tasks, such as identifying parts-of-speech in sentences. The field has grown to include all algorithms which predict structured objects such as multi-labels, trees, graphs or bounding boxes instead of categorical or continuous outputs. Structured prediction also contains the case where labels have a hierarchical structure, for example where labels exhibit semantic relationships (for instance, a lion is also a feline). Structured prediction has been widely studied in recent years\cite{rudi-structured,nowak-vila}.\footnote{In fact, structured prediction is how I entered the field of machine learning as well as my first machine learning contribution.}
+Conversely, routing time prediction \citep{deepmind-traffic} and drug discovery \citep{stokes-antibiotics} are examples of applications where the input is a structured object, e.g. a graph.
 
 \subsection{Invariance and stability to diffeomorphisms}
 
 Computational anatomy is a direct application of shape analysis methods that study the deformations induced on shapes by diffeomorphisms, in particular an evolution through time with variations in 2D or 3D. For instance, these methods can help analyze datasets composed of organ shapes segmented from MRI scan. We refer the reader to \cite{younes} for an in-depth treatment of shape analysis. Their approach is different from the one we develop in \cite{ch:diffy} as their goal is reconstruction of the deformation and the shapes, rather than comparing two shapes.
 
+\paragraph{}
 \cite{bronstein-geometric-deep-learning} propose a complete survey of geometric methods in deep-learning on a wide variety of structures and settings. In the rest of this section, we focus on three instances of prior work which are related to our approach in \cref{ch:diffy}.
 
+\paragraph{}
 Bietti et al study learning rates for Kernel Ridge Regression in the presence of an invariant target function. Their underlying hypotheseses are the invariance to a group action and geometric stability of the target function. They show that these hypotheses both improve learning bounds by replacing the number of samples by an \emph{effective number of samples}. Roughly, this gain is related to the size of the group or to size of the allowed set. The gain also relies on using a kernel tailored to the invariance or geometric stability property of the target function, which is computationally costly since it is based on the Haar-measure over the set of transformations considered. Their approach is based on seeing data as points, while a key insight to our approach is to consider them as functions over a continuous domain.
 
+\paragraph{}
 Mallat et al introduced the scattering transform in 2012. See Joan PhD for an in-depth review of the foundations. The scattering transform generate multi-scale features for images that are locally translation invariant and Lipschitz continuous to transformation by diffeomorphisms. This method has been applied to a variety of settings including images classificartion, audio analysis, astrophysics...
 
-Wyart et al empirically study stability to diffeomorphisms of neural networks to whether this quality correlates to performance.
-This work is part of a larger line of work that studies how internal representations of neural networks learn the invariances present in the data to effectively lower their dimension. Note that it is not clear the gain in \cite{bietti} is akin to an effective reduction in dimension. They define stability to diffeomorphisms as the relative effect of random diffeomorphisms to the feature layer of a deep neural network against that of additive noise of comparable magnitude. They highlight that performance is correlated with relative stability, and that larger, more modern networks tend to become more stable during training. This motivates our approach to enforcing invariance to diffeomorphisms in a dissimilarity that can be integrated into algorithms.
-
-In the context of time-series,
+\paragraph{}
+Wyart et al empirically study stability to diffeomorphisms of neural networks to whether this quality correlates to performance. This work is part of a larger line of work that studies how internal representations of neural networks learn the invariances present in the data to effectively lower their dimension. Note that it is not clear the gain in \cite{bietti} is akin to an effective reduction in dimension. They define stability to diffeomorphisms as the relative effect of random diffeomorphisms to the feature layer of a deep neural network against that of additive noise of comparable magnitude. They highlight that performance is correlated with relative stability, and that larger, more modern networks tend to become more stable during training. This motivates our approach to enforcing invariance to diffeomorphisms in a dissimilarity that can be integrated into algorithms.
 
 \subsection{Deformations for time-series}
+\label{background:diffytw}
 
-Why are deformating important?
+Developing methods that account for variations in time-series related to the underlying phenomemon or to the sensor characteristics (such as sampling positions and rates) is central to time-series analysis. Such methods are applied in clinical time-series analysis \citep{1808.06725,ortiz-ieee} or gesture recognition \citep{dtw-gesture}.
 
-Eliminating the deformation using the Fréchet distance. Computationally not obvious.
+\paragraph{} Dynamic Time Warping was introduced in \cite{dtw}, motivated by spoken word recognition. Dynamic Time Warping can be computed in $O(nm)$ time where the compared time-series are of length $n$ and $m$ thanks to Dynamic programming. \citep{dtw} also proposed refinements that constrain possible alignements between time-series. The performance of these refinements is analyzed in \cite{sakove-vs-ikatura}. Continuous Dynamic Time Warping in \cite{2203.04531} combines ideas from the Fréchet distance and DTW to solve DTW's sensitivity to sampling rates, which can be computed in $O(n^5)$.
 
-Dynamic Time Warping was introduced in...
+Soft-Dynamic Time Warping focuses on the averaging task of time-series, which requires eliminating misalignment (implicitly). Because DTW-based averaging lead to poor local minima, Soft-DTW is presented as a differentiable alternative to DTW, while retaining efficient computation in $O(nm)$ time.
 
+\paragraph{}
+The functional data analysis litterature tackles a more general problem of aligning (open or closed curves) in space. \cite{srvf} the Square-Root Velocity representation defines a tolopology between shapes that can be used to align and average them. Another approach is decribed in \cite{0712.1425}, which considers matching 1-D curves with so-called moments and landmarks in the curve. They embed the values of the functions with a handcrafed transformation based on first and high-order derivatives. The existence of high-order derivatives is not practical for time-series data.
 
-Other methods: The shape analysis litterature \cite{younes} abudantly treats the question of deformation through time. The problem tackled is significantly different from the one of time-warping. Indeed, these methods study the deformation of a shape through time. Given a time-series of shapes $s(t)$, the rough goal is to estimate a map $Q$ such that at any time $t$, $Q(t)$ is itself a diffeomorphism and $s(t) = Q(t) \cdot s(0)$. Time-warping is the goal of finding a transformation that aligns two time-series when applied to the time-domain of one of them, i.e. $f \approx g \circ Q$.
+The shape analysis litterature also studies this question, but time-series are not handled except as the representation of the evolution of shapes through time \citep{2108.05634,hal-00813825}.
+
+\paragraph{} Using neural networks for time-series is also an important direction of research. An example is \cite{2106.11911,dtan} and references therein. This line of work learns representations of time-series based on \cite{pavf} that allow alignment without solving the LDDMM style problems at inference time. Refinements in the computation of transformations are proposed in \cite{2206.08107}. These methods learn the invariances from data (with a difeomorphic constraint), while we are interested in specifying the set of transformations \emph{a priori}.
 
 \subsection{Markovian structure in dynamical models}
-Hidden Markov Models are useful models for dynamical systems, which can be used to solve many scientific or engineering problems. Inference on HMM has been widely studied with the development of many algorithms for finance, robotics, weather, ... Filtering is an example of inference task on HMMs. The goal of filtering is estimating $\pi_T$, the conditional distribution of $X_T$ given $Y_1, \ldots, Y_T$.
+Hidden Markov Models are useful models for dynamical systems, which can be used to solve many scientific or engineering problems. Inference on HMMs has been widely studied with the development of many algorithms for finance, robotics, weather, ... \cite{ref} The goal of filtering is estimating $\pi_T$, the conditional distribution of $X_T$ given $Y_1, \ldots, Y_T$. In HMMs, $\pi_T$ can be computed iteratively through the filtering iteration \cref{eq:intro-hmm-iteration}. For background on Hidden Markov Models we refer the reader to \cite{cappe2005}.
 
-In this section, we review some relevant work to filter stability and robustness.
-\cite{cappehmm} and \cite{Saarka} is a good text for general topics about Hidden Markov Models and filtering. \cite{saarka} is a
+Three questions arise when computing the filtering distributions $\pi_T$.
 
-
-Filter stability is the evolution of the discrepancy between two filters for the same HMM model with different initial distributions. Filtering can be defined in different ways, but a survey of the strength of results is out of the scope of our work.
+\paragraph{} The first relates to the initialization of the sequence $\pi_k$. Assume two filters are initialized at $\mu$ and $\nu$ respectively. \emph{Stability} quantifies the behavior of $\Vert \pi_t^\mu - \pi_t^\nu \Vert_{TV}$ as $t$ grows. A stable filter sees this distance go to zero as $t$ grows, i.e. the filter forgets its initial condition. In the litterature there are different definitions of stability and forgetting.
 
 \cite{ocone} studied the asymptotic stability of the filtering distribution. They rely on an ergodicity of the chain and that the conditional observation density is positive (strictly). The takeaway here is that assumptions on the state distribution and minimal assumptions about the observation distribution can be enough to obtain stability, i.e. that almost surely, $\Vert \pi_T^\mu - \pi^\nu_T\Vert_{TV} \to 0$ as $T\to\infty$. Other relevant references are \cite{atar,chigansky,mcdonald}.
+
 A modern review of the stability litterature can be found in \cite{kimphd}, in particular concerning the rich history of the field.
 
-Beyond the finite state-space and Kalman filter settings, computing an exact filtering distribution is intractable. Variants of the Kalman filter like the Extended or Unscented Kalman Filters linearize the transition and observation functions (and not the kernels) and assume the conditional distribution is Gaussian\cite{sarkka}. Particle filter methods approximate the filtering iteration with Monte Carlo sampling\cite{pf,smc}. \cite{oudjane,legland,} show that such models are consistent. We use their arguments to study the robustness of the filter we propose in \cref{ch:hmm}. These theoretical guarantees are strong.
-
+\paragraph{} The second is \emph{robustness} to model error, which quantifies the behavior of $\Vert \hat\pi_t - \pi_t\Vert_{TV}$ where $\hat \pi$ is obtained by applying the filtering iteration approximately. A robust filter will have a constant error bound over a finite time horizon. Indeed, beyond the finite state-space and Kalman filter settings, computing an exact filtering distribution is intractable so approimating is necessary. Variants of the Kalman filter like the Extended or Unscented Kalman Filters \cite{ekf,ukf} linearize the transition and observation functions (and not the kernels) and assume the conditional distribution is Gaussian\cite{sarkka}. Particle filter methods approximate the filtering iteration with Monte Carlo sampling\cite{pf,smc}. \cite{oudjane,legland} show that such models are robust, and that the bound can be reduced as needed with richer approximations (more pseudo samples).
+We use their arguments to study the robustness of the filter we propose in \cref{ch:hmm}.
 \cite{castro,mitrophanov} study the propagation of error from estimating models to filter error in finite state-spaces and continuous emission densities.
 
-% Their work relies on the implication from \cite{kunita} that if the state chain is ergodic then so is the filtering distribution. This was proven to be false, and created a flaw in \cite{ocone} which was patched.
-\pagebreak
+
+
+\paragraph{} Finally, related to the second point above, a filter must be computable in practice. \cref{eq:intro-hmm-iteration} requires complete knowledge of the transition and measurement kernels, which characterize the laws of $X_{t+1}$ conditionally on $X_t$ and $Y_t$ conditionnaly on $X_t$. Furthermore, it implies being able to compute arbitrary marginalizations in practice. Outside of well-known settings (Gaussian Linear Conditional Distributions and finite state space), this is intractable. Two approaches exist: make additional assumptions about the state space (for example the EFK and UKF assume it is Gaussian) ; or, use Monte Carlo sampling to approximate the optimal filter iterations (Sequential Monte Carlo methods such as the particle filter).
+
+
+
 \section{Toolbox: kernel methods \& Nyströme approximations}\label{sec:tools}
 In this manuscript, each chapter is self-contained in terms of notations, definitions and results. However, the reader may remark some reccuring tooling. In particular, two tools are general to all chapters: (a) kernel methods; and, (b) Nyström approximations. We present these methods below.
 
