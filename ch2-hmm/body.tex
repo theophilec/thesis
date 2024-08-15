@@ -51,7 +51,7 @@ Gaussian PSD Models, introduced in \cite{ciliberto2021}, is a family of models f
 
 \paragraph{Relation to general PSD models} In \cite{ulysse-non-negative}, PSD Models are introduced as functions of the form $x \mapsto \langle\phi(x), A\phi(x)\rangle$ where $\phi: \mathbb R^d \to \mathcal H$ and $A$ is a positive semi-definite operator on $\mathcal H$, where $\mathcal H$ is a Hibert space. Notice that we can define Gaussian PSD Models as functions of the form $f(x) = \Phi_\eta(x)^\top A\Phi(x)$ where $\Phi_\eta$ is defined as $\Phi_\eta(x)= (k_\eta(x, x_1) \ldots k_\eta(x, x_M))^\top \in\mathbb R^M$, which matches the more general definition.
 
-\paragraph{Main properties} From the above comment, it is clear a Gaussian PSD Model is non-negative everywhere and admits a linear parametrization in $A$.  Indeed, a Gaussian PSD model is a linear combination of kernels, whose weights are chosen such that the function is non-negative. Gaussian PSD Models can be learned from samples and function evaluations. In the context of fitting HMM transition kernels, we are interested in learning from function evaluations. We decribe our algorithm for learning Gaussian PSD Models from function evaluations in \cref{learning-gaussian-psd} and prove learning rates for the algorithm.
+\paragraph{Main properties} From the above comment, it is clear a Gaussian PSD Model is non-negative everywhere and admits a linear parametrization in $A$.  Indeed, a Gaussian PSD model is a linear combination of kernels, whose weights are chosen such that the function is non-negative. Gaussian PSD Models can be learned from samples and function evaluations. In the context of fitting HMM transition kernels, we are interested in learning from function evaluations. We decribe our algorithm for learning Gaussian PSD Models from function evaluations in \cref{sec:learning-gaussian-psd} and prove learning rates for the algorithm.
 
 
 When defined on the product of Euclidean spaces $\mathbb R^d \times \mathbb R ^{d^\prime}$ with anchor points $[X, Y]$ (the row-wise concatenation of $X$ and $Y$) and precision vector $\eta = (\eta, \eta^\prime)$ (column-wise concatenation of $\eta_1$ and $\eta_2$), we denote denote the model $f(x, y ; A, [X, Y], (\eta_1, \eta_2))$. This split notation is justified by the fact that $k_\eta((x, y), (u, v)) = k_{\eta_1}(x, u)k_{\eta_2}(y, v)$.
@@ -68,7 +68,7 @@ Let $g(x) = w^\top \Phi_\eta(x)$ where $w\in\mathbb R^d$ and $\Phi_\eta(x)= (k_\
 
  \missingfigure{illustration for the example above}
 
-\subsection{Operations on Gaussian PSD Models}
+\subsection{Operations on Gaussian PSD Models}\label{sec:operations}
 Gaussian PSD Models are compatible with operations on probabilistic models such as integration, partial evaluation, product and marginalization. The operations are summarized in \cref{prop:ops-diagonal} and the algorithms, based on kernel evaluations and matrix-vector products are detailed in \cite{ciliberto2021}. These operations are implemented in a library to be released in open-source.
 
 In \cref{sec:generalized-psd-models}, we generalize these operations to a larger family of models, where each basis function has an independent precision matrix and this precision matrix is not necessarily diagonal.
@@ -115,7 +115,7 @@ A function $f$ satisfies \cref{assumption:target_function} on $\Omega = (-1, 1)^
 In \cref{sec:optimization}, we introduce the optimization problem we solve to learn $f$ and present the learning algorithm. In \cref{sec:learning}, we prove that the obtained estimator $\hat f$ is an optimal approximator of $f$.
 
 \subsection{Learning algorithm}\label{sec:optimization}
-The intuition behind our algorithm is to approximate $g=\sqrt{f}$ using $\hat g$ a Gaussian Linear Model. Then, $\hat f = \hat g^2$ should approximate $f=g^2$ well. Indeed, we showed in \cref{ex:sq:linear-model} that the square of any Gaussian Linear Model is a Gaussian PSD Model and its weight matrix is of rank $1$ and given by $A =aa^\top $ where $a$ is the weight vector of the Gaussian Linear Model.
+The intuition behind our algorithm is to approximate $g=\sqrt{f}$ using $\hat g$ a Gaussian Linear Model. Then, $\hat f = \hat g^2$ should approximate $f=g^2$ well. Indeed, we showed in \cref{ex:sq-linear-model} that the square of any Gaussian Linear Model is a Gaussian PSD Model and its weight matrix is of rank $1$ and given by $A =aa^\top $ where $a$ is the weight vector of the Gaussian Linear Model.
 
 \paragraph{What about $A$?} In \cref{def:psd-model}, we defined as Gaussian PSD Model as parametrized by a positive semi-definite matrix $A$, not necessarily of rank $1$. $A$ A full-rank estimator $\hat f$ can be also learned, by solving a Semi-Definite Programming problem using \emph{e.g.\ } Newton's method. This does not improve the learning rate, indeed it is minimax optimal, however can improve the constants \todo{ref -> Ale/Ulysse?}. Algorithmically, solving as SDP problem is harder and costs $O(M^4)$.
 
@@ -170,7 +170,7 @@ The first key argument is to separate $g - \hat g$ as the sum of an approximatio
 
 By opening the proof of Proposition 11 in \cite{sampling-ulysse}, we can obtain bounds on $\Vert g - \hat g \Vert_{L^2(\Omega)}$ and (essentially) $\Vert \hat g - g\Vert_{W^m_2(\Omega)}$ as a function of $\Vert g\Vert_{W^\beta_2(\Omega)\cap L^\infty(\Omega)}$ and $\epsilon$ with optimal dependence on $\epsilon$. We combine these results to bound $\Vert f - \hat f\Vert_{L^\infty(\Omega)}$ with optimal rates in $\epsilon$.
 
-Combining all the terms yields the result in \cref{theorem:learning}. See \cref{sec:learning-proof} for a complete proof.
+Combining all the terms yields the result in \cref{theorem:learning}. See \cref{sec:proof-learning} for a complete proof.
 
 \section{Gaussian PSD Models for filtering}\label{sec:psd-filter-root}
 In \cref{sec:operations}, we presented how to efficiently carry out closed-form filtering operations using Gaussian PSD Models. In \cref{sec:learning}, we designed an algorithm for learning optimal approximations of non-negative functions using this family of models. Combining both contributions, in this section, we introduce \textsc{PSDFilter} and study its stability and robustness properties.

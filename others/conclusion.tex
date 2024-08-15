@@ -22,9 +22,9 @@ We close this thesis by opening future research directions, which could serve as
 
 
 \paragraph{Extending PSD models}
-In \cref{sec:generalization} of \cref{ch:hmm}, we present a generalization of PSD models using different, non-diagonal precision matrices for each basis function.
+In \cref{sec:proof-ops} of \cref{ch:hmm}, we present a generalization of PSD models using different, non-diagonal precision matrices for each basis function.
 
-\subparagraph{Filtering with Generalized Gaussian PSD Models} Gaussian PSD models have fixed anchor points and precision matrices after the first filtering iteration (see \cref{corollary:filtering}). We rightly focused on the computational interest of this since it implies that the computational complexity of the filtering iteration does not increase through time. However, this is no longer the case with Generalized Gaussian PSD Models.
+\subparagraph{Filtering with Generalized Gaussian PSD Models} Gaussian PSD models have fixed anchor points and precision matrices after the first filtering iteration (see \cref{theorem:algorithm}). We rightly focused on the computational interest of this since it implies that the computational complexity of the filtering iteration does not increase through time. However, this is no longer the case with Generalized Gaussian PSD Models.
 
 On one hand, this creates a computational burden, with complexity increasing exponentially through time, akin to what happens when combining Gaussian Mixture Models. We proposed to reduce this by compressing the filtering distribution after each iteration. If the compressed model is taken to be a Gaussian PSD Model, this can be achieved by solving a convex optimization problem for instance with \cref{alg:learn}, or using a non-convex solver to learn another Generalized Gaussian PSD Model with fewer anchor points.
 
@@ -34,7 +34,7 @@ On the other, because the anchor points and precision matrices evolve over itera
 \begin{equation}
     f(x) = \left\Vert R\Phi(x)\right\Vert_2^2
 \end{equation}
-where $R$ is a $M \times r$ matrix such that $A = R^T R$ and $\Phi(x) = (k(x, \tilde x_1), \ldots, k(x, \tilde x_M))^\top\in\mathbb R^M$. This has been leveraged by \citet{gaspard} for non-convex optimisation and \citet{squared-neural-families} for modelling probabilies. Note that this is equivalent to learning a Generalized Gaussian PSD Model using a non-convex solver as we propose in \cref{sec:generalization}.
+where $R$ is a $M \times r$ matrix such that $A = R^T R$ and $\Phi(x) = (k(x, \tilde x_1), \ldots, k(x, \tilde x_M))^\top\in\mathbb R^M$. This has been leveraged by \citet{gaspard} for non-convex optimisation and \citet{squared-neural-families} for modelling probabilies. Note that this is equivalent to learning a Generalized Gaussian PSD Model using a non-convex solver as we propose in \cref{sec:proof-ops}.
 
 \cite{squared-neural-families} leverage empirical feature maps akin to $\Phi(x)$, which induce probabilistic models. They consider modelling probabilities from another perspective, focusing on the interpretation as exponential families and choosing embeddings that make marginalization easy.
 
