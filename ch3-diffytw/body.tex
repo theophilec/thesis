@@ -21,14 +21,14 @@ DiffyTW is divergence between functions on $[0,1]$ representing time-series. It 
 \section{DiffyTW}
 In this section, we introduce DiffyTW, a divergence between functions $[0,1] \to \mathcal X$ which is invariant to a chosen class of diffeomorphic reparametrizations of $[0,1]$.
 
-\subsection{Intuition}
+\subsection{Intuition}\label{sec:diffytw-intuition}
 We call \emph{reparametrization} any increasing, diffeomorphic function $Q:[0,1] \to [0,1]$. Let $\mathcal Q$ be a set of such functions. Our goal is to concieve a divergence such that $d(f\circ Q, f) = 0$ for any $Q\in\mathcal Q$ and any $f:[0,1] \to \mathbb R^d$.
 
 A key idea is to compare the integrals of $f\circ Q$ and $f$. Indeed, this allows one to apply the change of variable theorem \citep{change-variable-ref}:
 \begin{equation}
     \int_0^1 f\circ Q(x)Q^\prime(x)dx = \int_0^1 f(x)dx.
 \end{equation}
-The intuition is then that finding $q(x) = Q^\prime(x)$ makes the integrals match, and makes the difference between both integrals small. This was also proposed in \cref{ch:diffy} for handling invariances on general data spaces. We highlight differences with \ciref{ch:diffy} in \cref{sec:diffytw-vs-diffy}.
+The intuition is then that finding $q(x) = Q^\prime(x)$ makes the integrals match, and makes the difference between both integrals small. This was also proposed in \cref{ch:diffy} for handling invariances on general data spaces. We highlight differences with \cref{ch:diffy} in \cref{sec:diffytw-vs-diffy}.
 
 If $q = Q^\prime$ is contained in the space we optimized over,
 \begin{equation}
@@ -44,11 +44,13 @@ First, to ensure matchings work for all features of the time series, we embed th
 Second, we enforce the search space to contain only derivatives of reparametrizations, i.e. we restrict functions $q$ to verify the two following constraints: $q(x) \geq 0, \forall x\in[0,1]$ and $\int_0^1 q(u)du=1$. As a byproduct, retieving $q$ allows us to reconstruct a reparametrization $Q$ and align the time series.
 
 \subsection{Definition of DiffyTW}
+In this work, we call reparametrization any function $Q: [0,1] \to [0,1]$ that is continuously differentiable on $[0,1]$, bijective and inscreasing. Note that we do not require $Q$ to be a diffeomorphism, since we make no assumption about the derivative of its inverse.
 
-Let $\mathcal F$ be a space of functions $[0, 1] \to \mathbb R$. Let $\mathcal F_{0,1} \subset \mathcal F$ be a subset of $\mathcal F$ such that if $q\in\mathcal F_{0,1}$, $q\geq 0$ and $\int_0^1q(t)dt =1$. $\mathcal F_{0,1}$ defines the class of diffeormophic reparametrizations the divergence is invariant to through its derivatives. We denote $\mathcal Q$ the set of reparametrizations obtained by integrating the elements of $\mathcal F_{0,1}$, i.e.
-\begin{equation}
-    \mathcal Q = \left\lbrace Q: x\in[0,1] \mapsto \int_0^x q(x)dx ~\vert~ q \in \mathcal F_{0,1}\right\rbrace
+Let $\mathcal F$ be a space of continuous functions $[0, 1] \to \mathbb R$ with isolated zeros. Let $\mathcal F_{0,1} \subset \mathcal F$ a subset of $\mathcal F$ such that if $q\in\mathcal F_{0,1}$, $q \geq 0$ and $\int_0^1q(t)dt =1$. We denote $\mathcal Q$ the set of reparametrizations obtained by integrating the elements of $\mathcal F_{0,1}$, i.e.
+\begin{equation}\label{eq:Q-from-F}
+    \mathcal Q = \left\lbrace Q: x\in[0,1] \mapsto \int_0^x q(x)dx \mid q \in \mathcal F_{0,1}\right\rbrace.
 \end{equation}
+Note that all elements of $Q$ are indeed reparametrizations. If $Q\in\mathcal Q$, then $Q^\prime(x) \in\mathcal F_{0,1}$ and $Q^\prime$ is continuous, so $Q$ is continuously differentiable. Additionally, since $Q^\prime \geq 0$ except at isolated points, $Q$ is increasing. By definition, $Q(0)=0$ and $Q(1)=\int_0^1 Q^\prime(x)dx =1$, and $Q$ is a bijection.
 
 \begin{definition}[DiffyTW]\label{def:diffytw}
 Let $d: \mathcal X^{[0,1]} \times \mathcal X^{[0,1]} \to \mathbb R^+$ be for any $f, g\in\mathcal X^{[0,1]}$,
@@ -57,21 +59,13 @@ Let $d: \mathcal X^{[0,1]} \times \mathcal X^{[0,1]} \to \mathbb R^+$ be for any
 \end{equation}
 We call this divergence DiffyTW.
 \end{definition}
-
 Note that as soon as $f$ and $g$ and measurable, then $d$ is well defined. Indeed, since $\phi$ is bounded on $[0,1]$ and $q$ is integrable, the integrals are well-defined Bochner integrals and $d(f, g)$ is finite and well-defined.
-
-\paragraph{Time-series alignment}
-If $f$ and $g$ are two functions representing two time-series, DiffyTW aligns $f$ and $g$. Indeed, we can -- applying the change of variable theorem -- rewrite \cref{eq:diffytw} as
-\begin{equation}\label{eq:diffytw-Q}
-    d(f, g) = \min_{Q \in \mathcal Q} \left\Vert \int_0^1 \phi(f \circ Q^{-1}(x))dx - \int_0^1\phi(g(x))dx\right\Vert^2_\mathcal H
-\end{equation}
-
-\noindent \Cref{eq:diffytw-Q} shows we that the minimizer of the optimization problem in \cref{eq:diffytw} is the derivative of the reparametrization that aligns $f$ with $g$ in terms of the embedding $f \mapsto \int \phi(f(x))dx$.
 
 We adopt the following notation for convenience:
 \begin{equation}\label{def:diffytw-delta}
 \Delta(f , g) = \left\Vert \int_0^1 \phi(f(x))dx - \int_0^1\phi(g(x))dx\right\Vert^2_\mathcal H
 \end{equation}
+
 
 \begin{figure}[ht!]
 \begin{center}
@@ -83,9 +77,7 @@ We adopt the following notation for convenience:
 \end{figure}
 
 \subsection{Invariance to time-warping}
-DiffyTW was designed to be equal to zero when comparing functions that are diffeomorphic one to the other, i.e. $d(f\circ Q, f)=0$. We show this is \cref{thm:diffytw-invariance}:
-
-
+Following \cref{sec:diffytw-intuition}, we show that for any function $f: [0,1] \to \mathbb R^d$ and $Q\in\mathcal Q$, $d(f\circ Q, f)=0$.
 \begin{theorem}\label{thm:diffytw-invariance}
 Let $Q$ be a reparametrization of $[0,1]$ such that $Q^\prime \in \mathcal F_{0, 1}$. Then, for any $f: [0,1] \to \mathcal X$,
 \begin{equation}
@@ -94,66 +86,64 @@ Let $Q$ be a reparametrization of $[0,1]$ such that $Q^\prime \in \mathcal F_{0,
 \end{theorem}
 
 \begin{proof}
-Let $f: [0,1] \to\mathbb R^d$ a measurable function. $Q:[0,1] \to [0,1]$ is continuously differentiable, bijective and $Q^{-1}$ is continuously differentiable. We apply the Change of variable theorem:
+We apply the Change of variable theorem\cite{ref}:
 \begin{equation}
 \int_0^1 \phi(f\circ Q(x))\vert Q^\prime(x)\vert dx = \int_0^1 \phi(f(x))dx.
 \end{equation}
-
 Since $Q$ is a reparametrization, it is increasing and $Q^\prime(x) \geq 0$ so we can drop the absolute value.
 
-Since $Q^\prime \in \mathcal F_{0,1}$,
+Because $Q^\prime \in \mathcal F_{0,1}$,
 \begin{equation}
     d(f\circ Q, f) \leq \left \Vert \int_0^1 \phi(f\circ Q(x))Q^\prime(x)dx - \int_0^1 \phi(f(x))dx\right\Vert_\mathcal H^2
 \end{equation}
-and finally,
-\begin{equation}
-    d(f\circ Q, f) \leq 0.
-\end{equation}
-Since $d(f\circ Q, f) \geq 0$, we have proven the result.
+and finally, $d(f\circ Q, f) \leq 0$. Since $d(f\circ Q, f) \geq 0$, we have proven the result.
 \end{proof}
 
+Intuitively, if $Q^\prime$ is an optimal solution to the optimization problem defined by $d(f, g)$, then $Q$ aligns $f$ and $g$. At this stage, we do not consider whether a solution is attained or if it is unique. But this intuition is important for the following properties, and will be formally true when we consider Discrete DiffyTW.
 
-Of course, in practice, one wishes to compute $d(f, g)$ where $f$ and $g$ are not exactly diffeomorphic. In \cref{prop:diffytw-properties} we show that some intuitive invariance properties remain:
-\begin{proposition}\label{prop:diffytw-properties} Let $f, g:[0,1] \to\mathbb R^d$. Then, $d$ verifies the following properties:
+\begin{proposition}\label{prop:diffytw-properties} Let $f, g:[0,1] \to\mathbb R^d$. Then, DiffyTW verifies the following properties:
 \begin{enumerate}
 \item[(a)]if $id \in Q$, $d$ is a semi pseudo-distance, i.e. for any $f, g: [0,1] \to\mathcal X$,  $d(f, g)\geq 0$ and $d(f, f)=0$.
-\item[(b)]if $id \in \mathcal Q$ and $Q_0\in\mathcal Q$ is such that $\Delta(f\circ Q_0^{-1}, g) \leq d(f, g) + \varepsilon$ then, $d(f \circ Q_0^{-1}, g) \leq d(f, g) + \varepsilon$. In particular, if $\Delta(f\circ Q_0^{-1}, g) = d(f,g)$ then $d(f\circ Q_0^{-1}, g)=d(f, g)$.
+\item[(b)]if $id \in \mathcal Q$ and $\varepsilon >0$, for any $Q_0\in\mathcal Q$ such that $\Delta(f\circ Q_0^{-1}, g) \leq d(f, g) + \varepsilon$, then $d(f \circ Q_0^{-1}, g) \leq d(f, g) + \varepsilon$. In particular, if $\Delta(f\circ Q_0^{-1}, g) = d(f,g)$ then $d(f\circ Q_0^{-1}, g)=d(f, g)$.
 \item[(c)] if $Q_0$ is a reparametrization that leaves $\mathcal Q$ invariant (i.e. $\lbrace Q\circ Q_0 ~\vert~ Q\in \mathcal Q \rbrace = \mathcal Q$), then $d(f\circ Q_0^{-1}, g) = d(f, g)$.
 \end{enumerate}
 \end{proposition}
-\begin{proof} (a) is clear. Proof of (b) follows from noticing that:
-\begin{equation}
-d(f\circ Q_0^{-1}) \leq \Delta(f\circ Q_0^{-1}, g)
-\end{equation}
-Finally, proof of (c) follows from noticing that:
+\begin{proof}
+
+To prove (a), notice that $d(f,g)$ is always verified and if $id\in\mathcal Q$, $d(f,f) \leq \Delta(f, f)=0$.
+The proof of (b) follows from noticing that: $d(f\circ Q_0^{-1}, g) \leq \Delta(f\circ Q_0^{-1}, g)$ because $id\in\mathcal Q$.
+The proof of (c) follows from noticing that:
 \begin{align}
 d(f \circ Q_0^{-1}, g) &= \min_{Q\in\mathcal Q}\Delta(f\circ Q_0^{-1} \circ Q^{-1}, g)\\
 & = \min_{R\in\mathcal Q} \Delta(F\circ R^{-1}, g)\\
 & = d(f, g),
-\end{align} where the second equality comes from the change of variable $Q \to R \circ Q_0^{-1}$, which does not modify the set we optimize over by hypothesis.
+\end{align} where the second equality comes from the change of variable $Q \to R \circ Q_0$, which does not modify the set we optimize over by hypothesis.
 \end{proof}
 
-\section{Computing DiffyTW in practice}\label{sec:computing-diffytw}
-DiffyTW is defined over the space of functions $[0,1] \to \mathcal X$ and the optimization problem is defined over an arbitrary set of functions $\mathcal F_{0,1}$, which determines the set of transformations $\mathcal Q$ the divergence is invariant to. In this section, we show DiffyTW can be computed for sampled time-series and with an expressive set of diffeomorphims $\mathcal F_{0,1}^M$ by solving a Quadratic program. We show that this approximate computation is exact if we assume the underlying signals are piece-wise constant. When the signals have regularity, we show that as the number of sample points grow, the approximated DiffyTW value approaches that compyuted on the underlying signals.
 
-\emph{\textbf{In what follows, we highlight the main ingredients and steps in our reasoning.} Formal definitions of components, statements of results and proofs follow in the rest of the section and related appendices.}
+\section{Computing DiffyTW in practice}\label{sec:computing-diffytw}
+DiffyTW is defined over the space of functions $[0,1] \to \mathcal X$ and the optimization problem is defined over an arbitrary set of functions $\mathcal F_{0,1}$, which determines the set of transformations $\mathcal Q$ the divergence is invariant to. In this section, we show DiffyTW can be computed for sampled time-series and with an expressive set of reparametrizations $\mathcal F_{0,1}^M$ by solving a Quadratic program. We call this divergence Discrete DiffyTW.
+
+
+\subsection{Intuitive derivation for Discrete DiffyTW}
+We define Discrete DiffyTW is such a way that it is consistent with Diffy, if we consider piece-wise constant functions that interpolate the time-series we consider. We derive Discrete DiffyTW intuitively below before defining it formally in \cref{sec:consistent}.
 
 \paragraph{Time-series as piece-wise constant functions} Times series are discrete objectifs, with data arriving at different time points. By representing them as piece-wise constant functions (i.e. step functions), we take into account the relative position between the sample points and their values. %Consider $f$ and $g$ two piece-wise constant functions adapted to $(x_1, \ldots, x_n)$ and $(y_1, \ldots, y_m)$. A piece-wise constant function is adapted to an increasing sequence of distinct points in its domain if $f$ is a constant between each point.
-Thus we define $\hat f(\hat f, \hat g) =d(f, g)$ where $f$ and $g$ are piece-wise constant functions adapted to $\hat f$ and $\hat g$. By doing so, we can rewrite the integrals in the definition of \cref{eq:diffytw} as follows:
+Thus we define $\hat d(\hat f, \hat g) =d(f, g)$ where $f$ and $g$ are piece-wise constant functions that interpolate $\hat f$ and $\hat g$, i.e. such that $f([x_i, x_{i+1}[)=\lbrace f_i\rbrace$ and $g([y_j, y_{j+1}[ = \lbrace g_j \rbrace$. By doing so, we can rewrite the integrals in the definition of \cref{eq:diffytw} as follows:
 \begin{align}
-    \hat d(\hat f, \hat g) &= \min_{q \in \mathcal F_{0,1}}\left\Vert \int_0^1 \phi(f(x))q(x)dx - \int_0^1\phi(g(x))dx\right\Vert^2_\mathcal H\label{eq:diffytw-step-1}\\
+    d(f, g) &= \min_{q \in \mathcal F_{0,1}}\left\Vert \int_0^1 \phi(f(x))q(x)dx - \int_0^1\phi(g(x))dx\right\Vert^2_\mathcal H\label{eq:diffytw-step-1}\\
             &\label{eq:diffytw-step-2}= \min_{q\in\mathcal F_{0,1}} \left \Vert \sum_{i=1}^{n-1} \underbrace{\int_{x_i}^{x_{i+1}}q(u)du}_{I(q, x_i, x_{i+1})} \phi(f(x_i)) - \sum_{j=1}^{m-1} (y_{j+1} - y_j)\phi(g(y_j))\right\Vert_\mathcal H^2
-            %&\label{eq:diffytw-step-3}=\min_{\substack{q\in\mathbb R^{M}\\h^\top q=1\\0 \leq q}}\frac{1}{2}q^\top Pq - v^\top q + C
 \end{align}
 
-\paragraph{Linear parametrization of $\mathcal F_{0,1}$} If $\mathcal F_{0,1}$ is chosen to be very general, then the optimization problem in \cref{eq:diffytw} is intractable. Furthermore, from a modelling perspective, very large diffeomorphism classes may encompass transformations that are not representative of the invariance structure present in data. We propose to choose $\mathcal F_{0,1}^M\subset \mathcal F_{0,1}$ such that solving \cref{eq:diffytw} is feasible and such that $\mathcal F_{0,1}^M$ is expressive enough to encompass a wide class of transformations. Anotherway of seeing things -- in the spirit of the approximation litterature -- is to consider how $\mathcal F_{0, 1}^M$ grows as $M \to \infty$.
+\paragraph{Linear parametrization of $\mathcal F_{0,1}$} If $\mathcal F_{0,1}$ is chosen to be very general, then the optimization problem in \cref{eq:diffytw} is intractable. Furthermore, from a modelling perspective, very large reparametrization classes may encompass transformations that are not representative of the invariance structure present in data. We propose to choose $\mathcal F_{0,1}^M\subset \mathcal F_{0,1}$ such that solving \cref{eq:diffytw} is feasible and such that $\mathcal F_{0,1}^M$ is expressive enough to encompass a wide class of transformations.
+%Anotherway of seeing things -- in the spirit of the approximation litterature -- is to consider how $\mathcal F_{0, 1}^M$ grows as $M \to \infty$.
 
 In this chapter, we rely on Non-Negative Linear Models in the style of Gaussian Mixture Models of the form
 \begin{equation}\label{eq:nnlm}
-q(x) = \sum_{k=1}^M q_k k(x, \tilde x_k)\text{ such that } q_k\in\mathbb R^+, \int_0^1q(u)du=1
+\mathcal F_{0,1}^M = \left\lbrace q(x) = \sum_{k=1}^M q_k k(x, \tilde x_k) \mid q_k\in\mathbb R^+, \int_0^1q(u)du=1\right\rbrace.
 \end{equation}
 %$q(x) = \sum_{k=1}^M q_k k(x, \tilde x_k)$ where $q_k$, $k$ and $\tilde x$ are chosen such that $q\in\mathcal F_{0,1}$.
-For $q\in\mathcal F_{0,1}^M$, $I(q, x, y)$ can be computed in closed-form (see \cref{ex:H-rbf,ex:H-laplace}) and is linear in the coordinates $q$. This also implies that \cref{eq:nnlm} are linear equality and inequality constraints in $q$.
+For $q\in\mathcal F_{0,1}^M$, $\int_x^y q(u)du)$ can be computed in closed-form (see \cref{ex:H-rbf,ex:H-laplace}) and is linear in the coordinates $q$. This also implies that \cref{eq:nnlm} are linear equality and inequality constraints in $q$.
 
 We define $d_M(f, g)$ as $d(f,g)$ replacing $\mathcal F_{0,1}$ by $\mathcal F_{0,1}^M$ in the optimization problem, i.e.:
 \begin{equation}\label{eq:hat-d_M}
@@ -161,44 +151,24 @@ d_M(f, g) = \min_{q \in\mathcal F_{0,1}^M} \Vert \int \phi(f(x))q(x) - \int \phi
 \end{equation}
 
 
-\paragraph{Quadratric Program} We can now find a natural expression for $\hat d_M(\hat f, \hat g)$ which combines representing $\hat f$ and $\hat g$ by adapted piece-wise constant functions and optimizing over $\mathcal F_{0,1}^M$. We exploit the linearity in the coordinates on $q$ in \cref{eq:diffytw-step-2} and develop the squared-norm. This leads to defining $\hat d_M(\hat f, \hat g)$ as the optimal value to a Quadratic program over the coordinates $q$ with a single equality constraint (corresponding to $\int_0^1q(x)dx = 1$) and $M$ inequality constraints ($q \geq 0$):
+\paragraph{Quadratric Program} We can now find a natural expression for $\hat d_M(\hat f, \hat g)$ which combines representing $\hat f$ and $\hat g$ by interpolating piece-wise constant functions and optimizing over $\mathcal F_{0,1}^M$. We exploit the linearity in the coordinates on $q$ in \cref{eq:diffytw-step-2} and develop the squared-norm. This leads to defining $\hat d_M(\hat f, \hat g)$ as the optimal value to a Quadratic program over the coordinates $q$ with a single equality constraint (corresponding to $\int_0^1q(x)dx = 1$) and $M$ inequality constraints ($q \geq 0$):
 \begin{equation}\label{eq:discrete-diffytw-informal}
 \hat d_M(\hat f, \hat g) :=\min_{\substack{q\in\mathbb R^{M}\\h^\top q=1\\0 \leq q}}\frac{1}{2}q^\top Pq - v^\top q + C
 \end{equation}
-We define $\hat d_M(\hat f, \hat g)$ formally in \cref{sec:consistent}.
-
-In the rest of \cref{sec:computing-diffytw}, we prove that \cref{eq:discrete-diffytw-informal} is consistent with \cref{def:diffytw}, that (under mild hypotheses) it is not sensitive to the sampling patterns of $\hat f$ and $\hat g$ as $n, m\to\infty$ and how it can be computed in practice.
-
-%\subsection{Application to sampled time-series}
-
-%A time series is a series of data points indexed in by time indexes. Often, the data points are taken at regular intervals. For instance, the position of a smartphone's GPS has a frequency around 1 Hz. However, this is not always the case. Indeed, in power-saving modes, a GPS position can be updated only when required by the algorithm or by the user.
-
-%To incorporate the question of sampling pattern, we model a time series as n-tuple of couples $\left( t_i, f_i\right)_{1\leq i\leq n}$. The value $f_i$ is taken by the time-series at time $t_i$. We call $t_i$ sample points and the set $(t_i)_{1 \leq i \leq n}$ the sampling pattern. Without loss of generality, we assume that $0 \leq t_1 < \ldots < t_n \leq 1$.
-
-%Given $\hat f_n = (t_i, f_i)_{1 \leq i\leq n}$ and $\hat g_m  = (s_j, g_j)_{1\leq j\leq m}$ taken from $f$ and $g$ we show that one can compute $d(\hat f_n, \hat g_m)$, by approximating $f$ and $g$ as rectangle functions. The approximated functions are denoted $\hat f_n$ and $\hat g_m$, by abuse of notation. We then show that $d(\hat f_n, \hat g_m)$ is close to $d(f, g)$ when $f,g$ have minimal regularity properties or if the sample pattern is random. For instance, if $f = g \circ Q$, then when $n, m \to 0$, $d(\hat f, \hat g) \to 0$.
-
-%\subsection{Non-negative linear models}
-
-%Non-negative linear models (NNLM) are widely used in probabilistic modeling, statistics and machine learning. One of the most well known classes are Gaussian Mixture Models (GMM).
-
-%Let $M$ be a positive integer, the order of approximation considered. Let $(\tilde x_k)_{1\leq k\leq M}$ be $M$ distinct points in $[0, 1]$. To simplify our notations, we assume that $k < l \implies \tilde x_k < \tilde x_l$. We define the set of normalized NNLMs on $[0, 1]$ of order $M$ as the set of functions $q$ of the form
-%\begin{equation}\label{eq:nnlm}
-%q(x) = \sum_{k=1}^M q_k k(x, \tilde x_k)\text{ such that } q_k\in\mathbb R^+, \int_0^1q(u)du=1
-%\end{equation}
-%where $x \mapsto k(x, y)$ is a basis function, for instance the partial evaluation of a positive definite kernel. Normalized NNLMs are clearly a subset of $\mathcal F_{0,1}$, which we denote $\mathcal F_{0, 1}^M$. Note that $\mathcal F_{0,1}^M$ depends on the choice of kernel $k$ and of the set of anchor points $\tilde X = (\tilde x_k)_{1\leq k\leq M}$, both of which are fixed. When clear from context, we use the same notation for the function $q$ and the vector of coefficients $q\in{\mathbb R^+}^M$.
-
+We define $\hat d_M(\hat f, \hat g)$ formally in \cref{sec:consistent}. We then prove that \cref{eq:discrete-diffytw-informal} is consistent with \cref{def:diffytw}, that (under mild hypotheses) it is not sensitive to the sampling patterns of $\hat f$ and $\hat g$ as $n, m\to\infty$. Finally, we discuss computing it in practice.
 
 \subsection{Discrete DiffyTW is consistent with DiffyTW}\label{sec:consistent}
 We begin by formally defining Discrete DiffyTW, as motivated above:
-\begin{definition}[Discrete DiffyTW]\label{def:discrete-diffytw} Let $\hat f = (x_i, f_i)$ and $\hat g= (y_j, g_j)$. We define the discrete DiffyTW between discrete time series as the optimal value of the Quadratic program:
+\begin{definition}[Discrete DiffyTW]\label{def:discrete-diffytw} Let $\hat f = (x_i, f_i)_{1 \leq i\leq n}$ and $\hat g= (y_j, g_j)_{1\leq j\leq m}$. We define the discrete DiffyTW between discrete time series as the optimal value of the Quadratic program:
 \begin{equation}\label{prob:qp}
     \hat d_M(\hat f, \hat g) :=\min_{\substack{q\in\mathbb R^{M}\\h^\top q=1\\0 \leq q}}\frac{1}{2}q^\top Pq - v^\top q + C
 \end{equation}
 where $P= 2\tilde H^\top K_{f, f}\tilde H$, $C= \delta^\top K_{g,g}\delta$ and $v= 2 \delta^\top K_{g,f}\tilde H$. $\delta\in\mathbb R^{m-1}$ is defined by $\delta_j = y_{j+1} - y_j$. $\tilde H$ is defined in \cref{eq:H}, $[K_{gf}]_{ij} = K(g_i, f_j)$, $[K_{ff}]_{ij} = K(f_i, f_j)$, and $[K_{gg}]_{ij} = K(g_i, g_j)$, where $K(z_1, z_2) = \langle \phi(z_1), \phi(z_2)\rangle_\mathcal H$.
 \end{definition}
-Notice that $P$ is symmetric, semi-definite positive by construction.
 
-Our definition of $\hat d_M(\hat f, \hat g)$ coincides with that of DiffyTW when applied to piece-wise constant functions that interpolate $\hat f$ and $\hat g$ as defined in the \cref{thm:prob-qp} (for short, we say $f$ and $g$ are adapted to $\hat f$ and $\hat g$ respectively).
+By definition, $P$ is symmetric, positive semi-definite. In practice, we consider regularization to ensure QP solvers find a solution. We discuss this in \cref{sec:solving-qp}.
+
+Our definition of $\hat d_M(\hat f, \hat g)$ coincides with that of DiffyTW when applied to piece-wise constant functions that interpolate $\hat f$ and $\hat g$ as defined in the \cref{thm:prob-qp}.
 
 \begin{theorem}\label{thm:prob-qp}
 Let $\hat f = (x_i, f_i)_{1 \leq i\leq n}$ and $\hat g = (y_j, g_j)_{1 \leq j\leq m}$ be two sampled time series. We define $f[0, 1]\to\mathbb R^d$ (resp. $g$) as the piece-wise constant function defined by $f([x_i, x_{i+1}[) = \lbrace f_i\rbrace$ (resp. $g([y_i, y_{j+1}[) = \lbrace g_j\rbrace$). Then:
@@ -208,7 +178,7 @@ d_M(f, g) = \hat d_M(\hat f, \hat g)
 where $d_M(f, g)$ is defined in \cref{eq:hat-d_M} and $\hat d_M(\hat f, \hat g)$ is defined in \cref{def:discrete-diffytw}.
 \end{theorem}
 
-The proof of \cref{thm:prob-qp} stems from the development at the beginning of \cref{sec:computing-diffytw} and can be found in \cref{proof:prob-qp}. A consequence of \cref{thm:prob-qp} is that some of the invariance properties of DiffyTW transfer to Discrete DiffyTW, i.e. Discrete DiffyTWequal to zero for discrete time-series which encode the time-warping of a piece-wise constant function:
+The proof of \cref{thm:prob-qp} stems from the development at the beginning of \cref{sec:computing-diffytw} and can be found in \cref{proof:prob-qp}. A consequence of \cref{thm:prob-qp} is that some of the invariance properties of DiffyTW transfer to Discrete DiffyTW. For instance:
 
 \begin{corollary}\label{corollary:discrete-invariance}
 Let $h: [0, 1] \to \mathbb R^d$ be a piece-wise constant function adapted to the sampling pattern $0 \leq x_1 < \ldots < x_n \leq 1$. Let $Q$ be a reparametrization such that $Q^\prime \in \mathcal F_{0,1}^M$. Consider $\hat f = (Q(x_i), h(x_i))$ and $\hat g = (x_i, h(x_i))$. Then,
@@ -220,14 +190,16 @@ The proof of \cref{corollary:discrete-invariance} can be found in \cref{proof:di
 
 \subsection{Computing Discrete DiffyTW}\label{sec:solving-qp}
 
-\Cref{prob:qp} is a quadratic program with $M$ variables and linear inequality and equality constraints. It is convex, and strongly convex as soon as $K_{f,f}$ is positive definite. The interior point Newton method, for instance in \cite{fabian} solves this type of convex problem. Their time complexity is generally in $O(M^3)$.
+DiffyTW is defined by \Cref{prob:qp} as the solution to a quadratic program with $M$ variables and linear inequality and equality constraints. The problem is convex and strongly convex as soon as $K_{f,f}$ is positive definite.
 
-As a point of comparaison, Dynamic Time Warping can be computed in $O(M^2)$ time using Dynamic programming.
+It can be solved using an interior point Newton method, for which several open-source, off-the-shelf solvers exist. We use \texttt{Prox-QP} a solver based on the primal-dual proximal augmented Lagrangian method \citep{fabian}. The time complexity of this kind of method for our situation is $O(M^3)$. As a point of comparison, DTW has time complexity $O(nm)$ where $n, m$ are the lengths of the time series. We also incur quadratic cost of this order to build $K_{ff}$. This cost can be reduced using low-rank approximations for the kernel matrices, and at this stage the computation cost of solving a QP is not a limiting factor for DiffyTW.
+
+Numerically, this sort of solver works best when $P$ is positive definite. To enforce this, we replace $P$ with $P + \lambda I$ in the defintion of Discrete DiffyTW. We analyse the effect of this regularization empricially in \cref{sec:diffytw-experiments}.
 
 \subsection{Approximation error}
-\cref{corollary:discrete-invariance} illustrates that the definition of Discrete DiffyTW is ``tight'' with respect to that of DiffyTW if the underlying signals are piece-wise constant and diffeomorphic. In this section, we raise three questions : how good is this approximation for arbitrary signals $f$ and $g$? how dependent is $\hat d_M(\hat f, \hat g)$ on the sampling patterns? how should one go about choosing $k$, $\tilde x$ and $K$?
+\cref{corollary:discrete-invariance} illustrates that the definition of Discrete DiffyTW is ``tight'' with respect to that of DiffyTW if the underlying signals are piece-wise constant and diffeomorphic. In this section, we raise three questions : how good is this approximation for arbitrary signals $f$ and $g$? how dependent is $\hat d_M(\hat f, \hat g)$ on the sampling patterns? how should one go about choosing $k$, $\tilde x$ and $K$? These questions are answered in \cref{sec:thm:rectangle-approx}:
 
-\begin{theorem}[Rectangle approximation]\label{thm:rectangle-approx}
+\begin{theorem}\label{thm:rectangle-approx}
 Let $f,g:[0,1] \to \mathbb R^d$ be two $L$-Lipchitz functions. Let $(x_i)_{1\leq i \leq n}$ and $(y_j)_{1\leq j\leq m}$ two sampling patterns. We denote $\hat f = (x_i, f(x_i))$ and $\hat g = (y_j, g(y_j))$.
 If $K$ is the RBF kernel with $\gamma > 0$,
 \begin{equation}
@@ -240,10 +212,10 @@ In particular, if $(x_i)$ and $(y_j)$ are evenly spaced in $[0,1]$, then:
 \end{equation}
 \end{theorem}
 
+The proof on \cref{thm:rectangle-approx} is included in \cref{sec:proof-rectangle-approx}.
+
 \todo[inline]{Using $a^2- b^2 = (a-b)(a+b)$, restate on $d_m$ and $\hat d_M$}
 \todo[inline]{Optimal rates ? This is with direct naïve proof.}
-
-The proof on \cref{thm:rectangle-approx} is included in \cref{sec:proof-rectangle-approx}.
 
 \subsection{Parameter choice}
 Discrete DiffyTW has several hyper-parameters in particular the choice of $\mathcal F_{0,1}^M$ -- i.e. the basis function kernel $k(\cdot, \tilde x)$ and the anchor points $(\tilde x_k)_{1\leq j\leq M}$ -- and of $K$ the kernel on time-series features. When Discrete DiffyTW is integrated into a machine learning algorithm, a solution is to typical hyperparameter tuning strategies such as cross-validation. Below, we give intuition into the impact of the different hyperparameters.
@@ -289,7 +261,7 @@ DiffyTW is implemented in the \texttt{difftw} library, open-sourced at \url{gith
 In this section, we demonstrate and study DiffyTW's behavior on the UCR dataset. Some takeaways of these experiments are:
 
 \begin{itemize}
-    \item DiffyTW captures synthetic diffeomorphisms.
+    \item DiffyTW captures synthetic reparametrizations.
     \item DiffyTW is sensitive to the choice of $\gamma$ (and more generally to the choice of $\phi$), including with synthetic warpings. Making DiffyTW more robust to this choice is key to making it useful for applied settings (such as averaging), and this is left for future work.
     \item Regularizing the choice of $q$ has significant effect on the robustness of DiffyTW. Regularization is not studied in the previous sections and it is incorporated in practice by padding the Hessian matrix, which is necessary for numerical reasons. Adding regularization to the definition of DiffyTW (in the spirit of Diffy in \cref{ch:diffy}) and analyzing its role is left for future work.
 \end{itemize}
