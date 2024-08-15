@@ -264,7 +264,8 @@
           \hspace{-2mm}
           \fontsize{9}{11}\selectfont
           \begin{tabularx}{100mm}{p{70mm}p{30mm}}
-            \psljurystylepresident{\@jiname}{\@jitt}%{\@jirole}
+            %\psljurystylepresident{\@jiname}{\@jitt}{Examinateur}%{\@jirole}
+            \psljurystyle{\@jiname}{\@jitt}{\@jirole}
             \psljurystyle{\@jiiname}{\@jiitt}{\@jiirole}
             \psljurystyle{\@jiiiname}{\@jiiitt}{\@jiiirole}
             \psljurystyle{\@jivname}{\@jivtt}{\@jivrole}
@@ -354,8 +355,9 @@
 
 \newcommand{\psljurystyle}[3]{
   \ifdefempty{#1}{}{
-    \fontsize{10}{12}\selectfont #1 & \emph{#3}\\
-    #2 &  \\[3mm]
+    %\fontsize{10}{12}\selectfont #1 & \emph{#3}\\
+    \fontsize{8}{10}\selectfont #1 & \emph{#3}\\
+    #2 &  \\[1mm]
   }
 }
 
