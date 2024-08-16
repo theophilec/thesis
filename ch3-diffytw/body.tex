@@ -28,7 +28,7 @@ A key idea is to compare the integrals of $f\circ Q$ and $f$. Indeed, this allow
 \begin{equation}
     \int_0^1 f\circ Q(x)Q^\prime(x)dx = \int_0^1 f(x)dx.
 \end{equation}
-The intuition is then that finding $q(x) = Q^\prime(x)$ makes the integrals match, and makes the difference between both integrals small. This was also proposed in \cref{ch:diffy} for handling invariances on general data spaces. We highlight differences with \cref{ch:diffy} in \cref{sec:diffytw-vs-diffy}.
+The intuition is then that finding $q(x) = Q^\prime(x)$ makes the integrals match, and makes the difference between both integrals small. This was also proposed in \cref{ch:diffy} for handling invariances on general data spaces.
 
 If $q = Q^\prime$ is contained in the space we optimized over,
 \begin{equation}
@@ -41,7 +41,7 @@ Such spurious minimizers can be avoided with two refinements.
 
 First, to ensure matchings work for all features of the time series, we embed their values with $\phi$, chosen as a high-dimensional embedding. This avoids the minimizer above, but also handles the case where $f(x)\in\mathbb R^d$. Indeed, if the match is not perfect, then $f$ and $g$ can be made close by favoring the coordinates with the highest magnitude. This is avoided when embedding with $\phi$.
 
-Second, we enforce the search space to contain only derivatives of reparametrizations, i.e. we restrict functions $q$ to verify the two following constraints: $q(x) \geq 0, \forall x\in[0,1]$ and $\int_0^1 q(u)du=1$. As a byproduct, retieving $q$ allows us to reconstruct a reparametrization $Q$ and align the time series.
+Second, we enforce the search space to contain only derivatives of reparametrizations, i.e. we restrict functions $q$ to verify the two following constraints: $q(x) \geq 0, \forall x\in[0,1]$ and $\int_0^1 q(u)du=1$. As a byproduct, retieving $q$ allows us to reconstruct a reparametrization $Q$ and align the time series. This is in contrast to \cref{ch:diffy}, in which we cannot guarantee to reconstruct a warp from (an approximate) determinant Jacobian.
 
 \subsection{Definition of DiffyTW}
 In this work, we call reparametrization any function $Q: [0,1] \to [0,1]$ that is continuously differentiable on $[0,1]$, bijective and inscreasing. Note that we do not require $Q$ to be a diffeomorphism, since we make no assumption about the derivative of its inverse.
@@ -264,7 +264,7 @@ Differentiating through convex problems is a subject of interest in the machine 
 
 The latter method is used in the deep learning and robotics communities to integrate QPs as layers in neural networks\citep{QP-Layer,optnet}. These works study differentiation the optimal solution of a Quadratic Program for which the constraints also depend on $\theta$. To handle this, the KKT conditions can be expressed as an implicit function problem, and the implicit function theorem applied to differentiate with repect to all parameters implicitly. Handling constraints can make differentiation impossible since when using QPs in a iterative optimization method while training a neural network the constraints may become infeasible. In this case, Extended Conservative Jacobians of the closest feasible QP can be computed instead \citep{QP-Layer}. \citet{optnet} take another approach to handling infeasibility by adding slack variables. As a sanity check, we verify that we recover our result using their method for our setting in \cref{sec:lagrangian}.
 
-\section{Experiments}
+\section{Experiments}\label{sec:diffytw-experiments}
 DiffyTW is implemented in the \texttt{difftw} library, open-sourced at \url{github.com/theophilec/diffytw}. This library implements the computation of DiffyTW, the gradient computation using the \texttt{jax} library. It can be used with different QP solvers. When computing DiffyTW, the \texttt{Prox-QP} solver is used \cite{fabian}. When computing the gradient, the \texttt{qpax} solver, introduced by \citet{qpax}.
 
 %In this section, we demonstrate and study DiffyTW's behavior on the UCR dataset. Some takeaways of these experiments are:
@@ -309,7 +309,7 @@ The experiments show the reconstruction error increases with the Hilbert norm of
 \subsection{Aligning distinct time-series instances}
 We conduct a similar experiment for distinct time-series from the UCR dataset. In \cref{fig:gamma-sensitivity-50words-distinct}, we show an example with the alignments for the different embeddings $\phi$ (varying $\gamma$ for the Laplace kernel). We chose the space $\mathcal F_{0,1}^M$ empirically to reflect possible warps.
 
-\cref{fig:gamma-sensitivity} illustrates the important of the choice of parameters.
+\cref{fig:gamma-sensitivity-50words-distinct} illustrates the important of the choice of parameters.
 
 
 
