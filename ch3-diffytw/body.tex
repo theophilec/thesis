@@ -206,21 +206,25 @@ Numerically, this sort of solver works best when $P$ is positive definite. To en
 
 \begin{theorem}\label{thm:rectangle-approx}
 Let $f,g:[0,1] \to \mathbb R^d$ be two $L$-Lipchitz functions. Let $(x_i)_{1\leq i \leq n}$ and $(y_j)_{1\leq j\leq m}$ two sampling patterns. We denote $\hat f = (x_i, f(x_i))$ and $\hat g = (y_j, g(y_j))$.
-If $K$ is the RBF kernel with $\gamma > 0$,
-\begin{equation}
-    \left\vert \sqrt{d_M(f, g)} - \sqrt{\hat d_M(\hat f_n, \hat g_m)}\right\vert \leq \sqrt{2\gamma L}\left(\sum_{i=1}^{n-1} (x_{i+1} - x_i)^{3/2} + \sum_{j=1}^{m-1} (y_{j+1} - y_j)^{3/2}\right)
-\end{equation}
+If $K$ is the RBF kernel with $\gamma > 0$ and all functions in $\mathcal F_{0,1}$ are bounded by a constant $C_\mathcal F$,
+\begin{align}
+    \left\vert \sqrt{d(f, g)} - \sqrt{d(f \circ s, g\circ r)} \right\vert &\leq C_\gamma \sqrt{L}\left(C_\mathcal F \sum_{i=1}^{n-1} (x_{i+1} - x_i)^{3/2} + \sum_{j=1}^{m-1}(y_{j+1} - y_j)^{3/2}\right).
+\end{align}
 
-In particular, if $(x_i)$ and $(y_j)$ are evenly spaced in $[0,1]$, then:
+In particular, if $(x_i)_{1\leq i\leq n}$ and $(y_j)_{1 \leq j \leq m}$ are evenly-spaced in $[0,1]$, then:
 \begin{equation}
-    \left\vert \sqrt{d_M(f, g)} - \sqrt{\hat d_M(\hat f_n, \hat g_m)}\right\vert \leq \sqrt{2\gamma L}\left(\frac{1}{\sqrt{n}} + \frac{1}{\sqrt{m}}\right)
+    \left\vert \sqrt{d_M(f, g)} - \sqrt{\hat d_M(\hat f_n, \hat g_m)}\right\vert \leq \sqrt{2\gamma L}\left(C_\mathcal F\frac{1}{\sqrt{n}} + \frac{1}{\sqrt{m}}\right)
 \end{equation}
 \end{theorem}
 
 The proof on \cref{thm:rectangle-approx} is included in \cref{sec:proof-rectangle-approx}.
 
 \paragraph{}
+The hypothesis on a uniform bound on functions in $\mathcal F_{0,1}$ is not unreasonable. Indeed, when $\mathcal F_{0,1}^M$ is considered, this is the case due to the constraint that $\int_0^1 q(u)du = 1$. In that case, we know that if $q_i >0$ then $q_i \leq \frac{1}{h_i}$ where the integral constraint is represented by $h^\top q =1$. Indeed, since $q \geq 0$, the worst case is attained for a single non-zero coordinate for $q$, which implies $q_ih_i = 1$ and $q_i = \frac{1}{h_i}$.
 
+\cref{thm:rectangle-approx} can be generalized for other kernels such that the induced distance between points $\Vert \phi(x) - \phi(x)\Vert_\mathcal H^2$ is Hölder.
+
+\paragraph{}
 In particular, if $f = g \circ Q$ where $Q^\prime \in\mathcal F_{0, 1}^M$ then $d_M(f, g)=0$ and $n=m$, then \cref{thm:rectangle-approx} implies that
 \begin{equation}
 \hat d_M(\hat f_n, \hat g_n) = O\left(\frac{1}{n}\right).
@@ -257,6 +261,8 @@ The difficulty is differentiating through the $\min$ operator since the optimal 
 In particular, so long as $P$ is positive definite, $V$ is differentiable. For differentiability, having a unique solution is not necessary, but multiple solutions make the expression of the gradient less straightforward and may cause non-differentiability. Following \cref{sec:solving-qp}, since $P$ is positive definite in practice, assume that $\ell(\cdot, \theta)$ is strictly convex.
 
 We prove \cref{thm:diffytw-grad} directly, as a special case of the proof from \cite{shapiro} and \cite{lee}, which give sufficient conditions for differentiability of quadratic programs (see \cref{sec:proof-diffytw-grad}). Note the same result from \citep{shapiro} is used in \cite{tavenard-dtw-diff} for the differentiability of DTW.
+
+Finally, the result can be generalized to other kernels that play well with differentiation with respect to their inputs. Since we focus on the RBF and Laplace kernels in this chapter, we focus on the RBF kernel here.
 
 \paragraph{Other methods for differentiability of QPs}
 Differentiating through convex problems is a subject of interest in the machine learning and optimization communities. We recall the three main approaches to this question: analytical differentiation (when a closed-form solution to the convex problem is known, \emph{e.g.\ } unconstrained QPs), unrolling (differentiating through the operations in the algorithm used to solve the convex problem), implicit differentiation (applying the implicit function theorem).

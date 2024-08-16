@@ -54,7 +54,7 @@ Our goal is to prove that our definition of $\hat d_M(\hat f, \hat g)$ coincides
 \end{align}
 
 \begin{align}
-\left\langle \int\phi(f(x))q(x)dx, \int\phi(g(x))\right\rangle&=\sum_{i=1}^{n-1}\sum_{j=1}^{m-1} I(q, x_i, x_{i+1}) \delta_j \langle \phi(f(x_i)), \phi(g(x_j))\rangle\\
+\left\langle \int_0^1\phi(f(x))q(x)dx, \int_0^1\phi(g(x))\right\rangle&=\sum_{i=1}^{n-1}\sum_{j=1}^{m-1} I(q, x_i, x_{i+1}) \delta_j \langle \phi(f(x_i)), \phi(g(x_j))\rangle\\
 &= \delta^\top K_{gf} Hq
 \end{align}
 
@@ -66,22 +66,26 @@ where $P = 2 H^\top K_{ff}H$, $C = \delta^\top K_{gg}\delta$ and $v = 2\delta^\t
 \end{proof}
 
 \section{Proof of the approximation theorem}\label{sec:proof-rectangle-approx}
+In this section, we prove \cref{thm:rectangle-approx}. We first introduce some useful lemmas.
+
 \begin{lemma}\label{lemma:rectangle-approx}
-Consider $f, g:[0, 1] \to \mathbb R^d$ and $s, r:[0,1] \to[0,1]$ two piece-wise constant functions such that $s(0)=r(0)=0$ and $s(1)=r(1)=1$. Then,
+Consider $f, g:[0, 1] \to \mathbb R^d$ and $s, r:[0,1] \to[0,1]$ two piece-wise constant functions such that $s(0)=r(0)=0$ and $s(1)=r(1)=1$ and assume the functions in $\mathcal F_{0,1}$ are bounded by $C_\mathcal F >0$. Then,
 \begin{equation}
-    \vert d(f, g) - d(f \circ s, g\circ r) \vert \leq \max_{q\in\mathcal F_{0,1}}\max_{x\in[0,1]}\vert q(x) \vert \left\Vert \int \phi(f) - \phi(f\circ s)\right\Vert_{\mathcal H} + \left\Vert \int \phi(g)- \phi(g\circ s)\right\Vert_\mathcal H
+    \vert \sqrt{d(f, g)} - \sqrt{d(f \circ s, g\circ r)} \vert \leq C_\mathcal F \left\Vert \int_0^1\phi(f(x)) - \phi(f\circ s(x))dx\right\Vert_{\mathcal H} + \left\Vert \int_0^1\phi(g(x))- \phi(g\circ s(x))dx\right\Vert_\mathcal H.
 \end{equation}
 
 \end{lemma}
 \begin{proof}[Proof of \cref{lemma:rectangle-approx}]
 Indeed, let $q\in\mathcal F_{0,1}$. By the triangle inequality,
 \begin{align}
-\left\Vert \int \phi(f(x))q(x)dx - \int \phi(g(x))dx \right\Vert
+\left\Vert \int_0^1\phi(f(x))q(x)dx - \int_0^1\phi(g(x))dx \right\Vert
 \leq
-\left\Vert \int \phi(f(x))q(x)dx - \int \phi(f\circ s(x))q(x)dx \right\Vert\\
-+ \left\Vert \int \phi(f\circ s(x))q(x)dx - \int \phi(g\circ r(x))dx \right\Vert
-+ \left\Vert \int \phi(g\circ r(x))dx - \int \phi(g(x))dx \right\Vert
+\left\Vert \int_0^1 \phi(f(x))q(x)dx - \int_0^1 \phi(f\circ s(x))q(x)dx \right\Vert\\
++ \left\Vert \int_0^1 \phi(f\circ s(x))q(x)dx - \int_0^1 \phi(g\circ r(x))dx \right\Vert
++ \left\Vert \int_0^1 \phi(g\circ r(x))dx - \int_0^1 \phi(g(x))dx \right\Vert.
 \end{align}
+
+Then, we lower-bound the left-hand side by $\sqrt{d(f, g)}$, upper-bound the right-hand side with $C_\mathcal F$ and finally take the infimum over the remaining instance of $q$ to obtain $\sqrt{d(f\circ s, f\circ r)}$.
 \end{proof}
 
 \begin{lemma}\label{lemma:rbf-lip}
@@ -101,8 +105,7 @@ where $C_\gamma = \sqrt{\frac{2\sqrt{2\gamma}}{\sqrt{e}}}$.
 &= 2 \left(1 - K(u, z)\right)
 \end{align}
 
-Denote $\varphi(x) = 1- e^{-\gamma x^2}$. $\varphi^\prime$ attains its global maxima at $x = \pm \sqrt{\frac{1}{2\gamma}}$, with value $\Vert \phi^\prime\Vert_{\infty} = \sqrt{\frac{2\gamma}{e}}$. And so:
-
+Denote $\varphi(x) = 1- e^{-\gamma x^2}$. $\varphi^\prime$ attains its global maxima at $x = \pm \sqrt{\frac{1}{2\gamma}}$, with value $\Vert \varphi^\prime\Vert_{\infty} = \sqrt{\frac{2\gamma}{e}}$. This implies that $K(u, z) \leq \sqrt{\frac{2 \gamma}{e}} \Vert z - u\Vert$. Finally:
 \begin{align}
 \Vert \phi(z) - \phi(u)\Vert_\mathcal H^2 & \leq \frac{2\sqrt{2\gamma}}{\sqrt{e}}\Vert z - u \Vert_2
 \end{align}
@@ -110,23 +113,36 @@ Denote $\varphi(x) = 1- e^{-\gamma x^2}$. $\varphi^\prime$ attains its global ma
 
 \begin{proof}[Proof of \cref{thm:rectangle-approx}]
 Let $s:[0,1] \to [0,1]$ be a step function such that $f\circ s$ is adapted to $\hat f$. Similarly, let $r:[0,1]\to[0,1]$ be such that $g\circ r$ is adapted to $\hat g$. Then, by \cref{lemma:rectangle-approx},
-\begin{equation}
-    \vert d(f, g) - d(f \circ s, g\circ r) \vert \leq \max_{q\in\mathcal F_{0,1}}\Vert q \Vert_\mathcal H \left\Vert \int \phi(f) - \phi(f\circ s)\right\Vert_{\mathcal H} + \left\Vert \int \phi(g)- \phi(g\circ s)\right\Vert_\mathcal H
-\end{equation}
-By \cref{lemma:rbf-lip},
-\begin{equation}
-\left\Vert \int \phi(f) - \phi(f\circ s)\right\Vert_{\mathcal H} \leq \sum_{i=1}^{n-1} \delta_i^{3/2}C_\gamma\sqrt{\gamma L}
-\end{equation}
+\begin{align}
+    \left\vert \sqrt{d(f, g)} - \sqrt{d(f \circ s, g\circ r)} \right\vert &\leq C_\mathcal F\left\Vert \int_0^1 \phi(f) - \phi(f\circ s)\right\Vert_{\mathcal H} + \left\Vert \int_0^1 \phi(g)- \phi(g\circ s)\right\Vert_\mathcal H.
+\end{align}
+We have that:
+\begin{align}
+\left\Vert \int_0^1\phi(f(x)) - \phi(f\circ s(x))dx\right\Vert_{\mathcal H} &\leq \int_0^1\Vert\phi(f(x)) - \phi(f\circ s(x))\Vert_\mathcal H dx,\\
+&= \sum_{i=1}^{n-1} \int_{x_i}^{x_{i+1}}\Vert\phi(f(x)) - \phi(f(x_i))\Vert_\mathcal H dx.
+\end{align}
+For $x \in [x_i, x_{i+1}]$, then by \cref{lemma:rbf-lip},
+\begin{align}
+\Vert \phi(f(x)) - \phi(f(x_i))\Vert_\mathcal H&\leq C_\gamma \sqrt{\Vert f(x) - f(x_i)\Vert_2},\\
+& \leq C_\gamma \sqrt{L\vert x - x_i\vert},\\
+& \leq C_\gamma \sqrt{L\vert x_{i+1} - x_i \vert}.
+\end{align}
+Putting everything together:
+\begin{align}
+\left\Vert \int_0^1\phi(f(x)) - \phi(f\circ s(x))dx\right\Vert_{\mathcal H} &\leq \sum_{i=1}^{n-1} \int_{x_i}^{x_{i+1}}\Vert\phi(f(x)) - \phi(f(x_i))\Vert_\mathcal H dx,\\
+&\leq \sum_{i=1}^{n-1} \int_{x_i}^{x_{i+1}}\vert x_{i+1} - x_i\vert C_\gamma \sqrt{L\vert x_{i+1} - x_i\vert},\\
+&= C_\gamma \sqrt{L}\sum_{i=1}^{n-1} \vert x_{i+1} - x_i\vert^{3/2}.
+\end{align}
+Following the same reasoning for $g$, we obtain:
+\begin{align}
+\left\Vert \int_0^1\phi(g(x)) - \phi(g\circ r(x))dx\right\Vert_{\mathcal H}  \leq C_\gamma \sqrt{L}\sum_{j=1}^{m-1} (y_{j+1} - y_{j})^{3/2}.
+\end{align}
 
+Combining the above equations, we have proven that:
+\begin{align}
+    \left\vert \sqrt{d(f, g)} - \sqrt{d(f \circ s, g\circ r)} \right\vert &\leq C_\gamma \sqrt{L}\left(C_\mathcal F \sum_{i=1}^{n-1} (x_{i+1} - x_i)^{3/2} + \sum_{j=1}^{m-1}(y_{j+1} - y_j)^{3/2}\right).
+\end{align}
 
-
-
-
-Let $f$ be $L$-Lipschitz on $[0,1]$ and $\phi$ be the RBF kernel with parameter $\gamma > 0$.
-Then, for any $\vert x - u \vert \leq \Delta$,
-\begin{equation}
-    \Vert \phi(f(x)) - \phi(f(u)) \Vert^2 \leq 2\left(1 - k(f(x), f(u))\right) \leq 2 \gamma L \Delta
-\end{equation}
 \end{proof}
 
 \section{On the differentiability of DiffyTW}
@@ -185,7 +201,7 @@ Assume corresponding lower bound is false, i.e. for any $\varepsilon>0$ and any 
 
    Then, by the Mean Value Theorem,
    \begin{align}
-       \vert \ell(q_n, \theta_0 + d_n) - \ell(q_n, \theta_0) - D_\theta \ell(q_n, \theta_0)d_n\vert \leq \Vert d_n\Vert \int \Vert D_\theta \ell(q_n, \theta_0 + td_n) - D_\theta \ell(q_n, \theta_0)\Vert dt
+       \vert \ell(q_n, \theta_0 + d_n) - \ell(q_n, \theta_0) - D_\theta \ell(q_n, \theta_0)d_n\vert \leq \Vert d_n\Vert \int_0^1 \Vert D_\theta \ell(q_n, \theta_0 + td_n) - D_\theta \ell(q_n, \theta_0)\Vert dt
    \end{align}
 
    For $n$ large enough, $\theta_0 + d_n$ is close to $\theta_0$ and $q_n$ is close to $\bar q$. By continuity of $q, u \mapsto D_\theta\ell(q, u)$ (again, because kernel matrices are smooth for the RBF kernel), wer have the three following bounds:
@@ -214,18 +230,21 @@ Assume corresponding lower bound is false, i.e. for any $\varepsilon>0$ and any 
 
 
 \subsection{Relation to implicit differentiation}\label{sec:lagrangian}
-In this section, we derive the gradient ($\theta$ is seen as a vector) of $V$ using implicit differentiation, as in \citet{QP-Layer,optnet}, and show we arrive to the same expression as in \cref{thm:diffytw-grad}. This derivation is informal.
+In this section, we derive the gradient ($\theta$ is seen as a vector) of $V$ using implicit differentiation, as in \citet{optnet}. Our exposition here in informal and the goal is to verify that we recover the expression in \cref{thm:diffytw-grad}.
+Two relevant references to this approach are \cite{rockafellar} for regularity of implicit mappings and \cite{convex-optimization} for convex optimization.
 
-
-Roughly, we proceed as follows: link optimality of $q^*$ to the KKT conditions using strong duality (Slater's Condition) and the KKT conditions ; rewrite the KKT conditions as an implicit function ; use the implicit function theorem and simplify the expression.
-
-Indeed, differentiating freely with a chain rule yields:
+\paragraph{}
+Differentiating without justification with a chain rule yields:
 \begin{equation}\label{eq:lagrangian-first}
     \nabla V(\theta) = \nabla_1 \ell(\theta, q^*(\theta)) + \nabla_2 \ell(\theta, q^*(\theta))J q^*(\theta)
 \end{equation}
-where $q^*(\theta)$ is the optimal solution to the problem for parameter $\theta$. The first term corresponds to the differential we derived formally. We will show that the second term is $0$.
+where $q^*(\theta)$ is the optimal solution to the problem for parameter $\theta$.
 
-\paragraph{Step 1: Derivation of the Lagrangian \& KKT conditions}
+The first term corresponds to the differential we derived formally. In this section, we verify that the second term is equal to $0$ in our setting, i.e. when the constraints do not depend on $\theta$. To do this, we must first compute the Jacobian term of $q^*(\theta)$, which is the map from parameter $\theta$ to the solution of the QP.
+
+We proceed as follows: (1) express the Lagrangian for the QP and compute the KKT optimality conditions for the primal and dual solutions; (2) rewrite the KKT conditions as an optimality function thanks to strong duality; (3) apply the Implicit Function Theorem (we introduce it below) to the optimality function and compute the Jacobian of $q^*(\theta)$; and finally, (4) show the product $\nabla_2 \ell(\theta, q^*(\theta))J q^*(\theta)$ is equal to $0$.
+
+\paragraph{Step 1: Derivation of the Lagrangian \& KKT optimality conditions}
 The Lagrangian of \cref{prob:fullqp} is:
 \begin{equation}
     L(q, \lambda, \nu, \theta) = \underbrace{\frac{1}{2}q^\top Pq - v(\theta)^\top q + C(\theta)}_{\ell(q, \theta)}+ \lambda^\top (h^\top q - 1) - \nu^\top q
@@ -242,7 +261,7 @@ For optimal primal and dual solutions $(q^*(\theta), \lambda^*(\theta), \nu^*(\t
 \end{align}
 
 
-\paragraph{Step 2: translate the KKT conditions as an implicit function}
+\paragraph{Step 2: Definition of the optimality function}
 
 We define the function
 \begin{equation}
@@ -255,9 +274,19 @@ g(q, \lambda, \nu, \theta) = \begin{bmatrix}
 By strong duality, $(q^*, \lambda^*, \nu^*)$ are solutions if and only if $g(q^*, \lambda^*, \nu^*, \theta) = 0$.
 
 \paragraph{Step 3: applying the implicit function theorem}
-Denoting $z = (q, u, v)$, $g$ is a function of two variables $(z, \theta)$. We apply the implicit function theorem by inverting $\partial_z g(z^*, \theta)$.
+A simple statement of the implicit function theorem from \cite{rockafellar} and orginally proven by Dini is:
+\begin{theorem}
+Let the function $g: \mathbb R^n \times \mathbb R^n \to \mathbb R^n$. Let $(\bar p, \bar x)\in\mathbb R^n \times \mathbb R^n$ be such that (a) $g(\bar x, \bar p)=0$, (b) $g$ is continuously differentiable at $(\bar x, \bar p)$, (c) the partial Jacobian of $g$ with respect to $x$ at $(\bar x, \bar p)$ is nonsingular, denoted $\nabla_x g(\bar x, \bar p)$.
 
-The partial Jacobian can be written:
+Then, there is a continuously differentiable map $s$ defined on a neighborhood $N_p$ of $\bar p$ such that for every $p\in N_p$, $g(s(p), p)=0$ and
+\begin{equation}
+\nabla s(p) = - \nabla_x g(s(p), p)^{-1}\nabla_p g(s(p), p).
+\end{equation}
+\end{theorem}
+
+The key hypothesis is non-singularity of the KKT matrix at an interior point in the domain. This is not straightforward, and to the best of our knowledge, we did not find a rigourous treatment. This explains why we turned to the approach in \cite{shapiro}.
+
+Denoting $z = (q, u, v)$, $g$ is a function of two variables $(z, \theta)$. We apply the implicit function theorem by inverting $\partial_z g(z^*, \theta)$. The partial Jacobian can be written:
 \begin{align}
     J_z g(z^*, \theta) = \begin{bmatrix}
     P & h^\top  & - I\\
@@ -265,34 +294,31 @@ The partial Jacobian can be written:
     \mathrm{Diag}(\nu)& 0 & \mathrm{Diag}(q)
     \end{bmatrix}
 \end{align}
-
-We do not go into details but we can justify solving the corresponding system even if the matrix is not invertible in our simple case. Note that the structure of the partial Jacobian is particularly simple in our case since the constraints do not depend on $\theta$.
-
-
-In the end,
+Note that the structure of the partial Jacobian is particularly simple in our case since the constraints do not depend on $\theta$. Finally, we obtain:
 \begin{align}
     J_\theta z^*(\theta) = - J_zg(z^*, \theta)^{-1}J_\theta g(z^*, \theta)
 \end{align}
 
-
-We can then combine these results with \cref{eq:lagrangian-first}, selecting the parts of the Jacobians that we are interested in:
+Returning to the context of \cref{eq:lagrangian-first}, we select the parts of the Jacobians that we are interested in:
 \begin{align}
 J_\theta V(\theta) &=  J_q \ell(q^*, \theta)J_\theta q^*(\theta) + J_\theta \ell(q^*, \theta),\\
 &= J_q \ell(q^*, \theta)  \left[J_\theta z^*(\theta)\right]_{q, \theta} + J_\theta \ell(q^*, \theta),\\
 &= - J_q\ell(q^*, \theta) \left[J_z g(z^*, \theta)^{-1} J_\theta g(z^*, \theta)\right]_{q,\theta}+ J_\theta \ell(q^*, \theta)
 \end{align}
+where $[J]_{q, \theta}$ is the block of the Jacobian that corresponds to differentiating $q$ with respect to $\theta$.
 
-\paragraph{Step 4: simplify the expression} To retrieve the result in \cref{thm:diffytw-grad}, we prove that $\left[J_z g(z^*, \theta)^{-1} J_\theta g(z^*, \theta)\right]_{q,\theta}=0$. For simplicty, we assume that $\theta$ is such that $q^*(\theta) > 0 $ so $\nu^*(\theta)=0$. Thus:
+\paragraph{Step 4: Simplify the expression} To retrieve the result in \cref{thm:diffytw-grad}, we prove that
+\begin{equation}\label{appendix:goal}
+Jq\ell(q^, \theta)\left[J_z g(z^*, \theta)^{-1} J_\theta g(z^*, \theta)\right]_{q,\theta}=0.
+\end{equation}
 
+For simplicty, we assume that $\theta$ is such that $q^*(\theta) > 0 $ so $\nu^*(\theta)=0$. We then have:
 \begin{align}
     J_z g(z^*, \theta) = \begin{bmatrix}
     P & - I & h\\
     0 & \mathrm{Diag}(q)& 0\\
     h^\top  & 0 & 0
-    \end{bmatrix}
-\end{align}
- and recall
-\begin{align}
+    \end{bmatrix} & &
     J_\theta g(z^*, \theta) = \begin{bmatrix}
     -J_\theta v(\theta)\\
     0 \\
@@ -300,7 +326,8 @@ J_\theta V(\theta) &=  J_q \ell(q^*, \theta)J_\theta q^*(\theta) + J_\theta \ell
     \end{bmatrix}
 \end{align}
 
-We solve the following system:
+\paragraph{}
+Showing \cref{appendix:goal} is equivalent to showing that $Jq\ell(q^, \theta)A = 0$ where $A$ verifies the following system:
 \begin{equation}
 \begin{bmatrix}
     P & - I & h\\
@@ -318,24 +345,22 @@ We solve the following system:
     0
     \end{bmatrix}
 \end{equation}
-
-which is equivalent to:
-
+which is equivalent to the three following equations:
 \begin{align}
    PA - B + hC =& -J_\theta v(\theta)\\
    \mathrm{Diag}(q)B =& 0\\
    h^\top A =& 0
 \end{align}
 
-The second equation implies that $B=0$, and the first implies
+\paragraph{}
+We solve the system for $A$. The second equation implies that $B=0$, and the first implies
 \begin{equation}
     A = - P^{-1}hC - P^{-1}J_\theta v(\theta)
 \end{equation}
-
-And finally,
+Finally,
 \begin{align}
-    J_q\ell(q^*,\theta)A &= (q^\top P - v(\theta)^\top )A = h^\top A = 0
+    J_q\ell(q^*,\theta)A &= (q^\top P - v(\theta)^\top )A = h^\top A = 0.
 \end{align}
 \paragraph{}
-And we do indeed recover the result in \cref{thm:diffytw-grad}, which did not seem obvious from the outset.
+And we do indeed recover the result in \cref{thm:diffytw-grad}, using a different method. This did not seem obvious from the outset.
 \qed
