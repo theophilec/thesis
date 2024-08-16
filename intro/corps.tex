@@ -5,18 +5,18 @@
 
 
 \paragraph{}
-During training and deployment of machine learning algorithms, scientists and engineers instill their knowledge to make the algorithms as performant as possible. They tailor their choice of algorithm to match the problem they solve.
+During training and deployment of machine learning algorithms, scientists and engineers instill their knowledge to make the algorithms as performant as possible. They tailor their choice of algorithm to solve the problem at hand.
 
-This is done in a variety of ways: in the selection of the datasets (\emph{e.g.\ } what is an outlier?), in the choice of the search space (\emph{e.g.\ } convolutional or fully connected neural networks?), in the design of a regularization schema (\emph{e.g.\ } should solutions have small $L_2$ or $L_1$ norms?), in the training recipe (\emph{e.g.\ } which optimizer? small learning rate? large learning rate?), to mention a few examples. Each of these choices impacts the obtained algorithm, its performance and its properties. We call these choices \emph{inductive biases}.
+This is done in a variety of ways: the selection of the datasets (\emph{e.g.\ } what is an outlier?), the choice of the class of models (\emph{e.g.\ } convolutional or fully connected neural networks?), the design of a regularization schema (\emph{e.g.\ } should solutions have small $L_2$ or $L_1$ norms?), the training recipe (\emph{e.g.\ } which optimizer? small learning rate? large learning rate?), to mention a few examples. Each of these choices impacts the obtained algorithm, its performance and its properties. We call these choices \emph{inductive biases}.
 
 Inductive biases are -- often, implicit -- assumptions about the learning problem or the solution to learning problem such that constrain the space of solutions or influence the choice between several solutions\footnote{See \citet{mitchell-inductive,1806.01261} for a formal definition and review of such concepts.}. They allow us to take advantage of assumptions about the task at hand to design algorithms with strong theoretical guarantees and better practical performance.
 
 \paragraph{}
 
-One way of discovering good assumptions for a problem is considering the structure of the problem. When working on images, pixels that are close together carry semantic meaning like the existence of objects., Pixels that are further away are less correlated. This reflects structure on the features of data. This motivates the use for local filters in Convolutional Neural Networks (CNN) and patch representations in Vision Transformer models that are deployed today. Parts of an image can be strongly correlated even if they are far away: indeed, it is unlikely that a lion and a cat coexist on the same image. This fact induces structure on the set of labels in the machine learning problem, where labels of domestic and wild animals are unlikely to be predicted for the same image.
+One way of discovering good assumptions for a problem is considering the structure of the problem. When working on images, pixels that are close together carry semantic meaning like the presence of objects., Pixels that are further away are less correlated. This reflects structure on the features of data and motivates the use for local filters in Convolutional Neural Networks (CNN) and patch representations in Vision Transformer models that are deployed today. Parts of an image can be strongly correlated even if they are far away: indeed, it is unlikely that a lion and a cat coexist on the same image. This fact induces structure on the set of labels in the machine learning problem, where labels of domestic and wild animals are unlikely to be predicted for the same image.
 
 \paragraph{}
-In this thesis, we present methods developed for ingraining a problem's structure into a machine learning method. This is central to machine learning research and effective applied algorithms.
+In this thesis, we present methods developed for accounting for problem structure in machine learning methods. This is central to machine learning research and effective applied algorithms.
 
 \section{Background: structure in machine learning \& statistical inference}
 
@@ -26,13 +26,11 @@ In this section, we give some background on structure in machine learning. We qu
 
 At the time of writing this thesis, most of the world has heard of a machine learning application that strongly relies on the structure in its input and its output: text generation. Language models are designed, trained and deployed in a recurrent way, where the next word is predicted at each step. In fact, Natural Language Processing tasks such as parts-of-speech tagging drove the development of machine learning with structured objects.
 
-Beyond NLP, identifying and leveraing meaningful structure for machine learning problems has been the source of considerable interest and engineering effort. When the structure is embedded in the output and the loss function, the field is often reffered to as \emph{structured prediction}. Two seminal books on the topic include \citep{advancedStructuredPrediction2014MIT,bakir2007predicting}. Protein folding  \citep{alphafold}, information retrieval \citep{duchi2010} are some examples of applications of using structured objects in machine learning.
-
-Conversely, routing time prediction \citep{deepmind-traffic} and drug discovery \citep{stokes-antibiotics} are examples of applications where the input is a structured object, \emph{e.g.\ } a graph.
+Beyond NLP, identifying and leveraing meaningful structure for machine learning problems has been the source of considerable interest and engineering effort. When the structure is embedded in the output and the loss function, the field is often reffered to as \emph{structured prediction}. Two seminal books on the topic include \cite{advancedStructuredPrediction2014MIT,bakir2007predicting}. Protein folding  \citep{alphafold}, information retrieval \citep{duchi2010} are some examples of applications of using structured labels in machine learning. Conversely, routing time prediction \citep{deepmind-traffic} and drug discovery \citep{stokes-antibiotics} are examples of applications where the input is a structured object, \emph{e.g.\ } a graph.
 
 \subsection{Dealing with intrinsic topology: invariance to Invariance and stability to diffeomorphisms}
 
-Computational anatomy is a direct application of shape analysis methods that study the deformations induced on shapes by diffeomorphisms, in particular an evolution through time with variations in 2D or 3D. For instance, these methods can help analyze datasets composed of organ shapes segmented from MRI scan. We refer the reader to \citet{younes} for an in-depth treatment of shape analysis. Their approach is different from the one we develop in \cref{ch:diffy} as their goal is reconstruction of the deformation and the shapes, rather than comparing two shapes.
+Computational anatomy is a direct application of shape analysis methods that study the deformations induced on shapes by diffeomorphisms. For instance, these methods can help analyze datasets composed of organ shapes segmented from MRI scan. We refer the reader to \citet{younes} for an in-depth treatment of shape analysis.
 
 \paragraph{}
 \citet{bronstein} propose a complete survey of geometric methods in deep-learning on a wide variety of structures and settings. In the rest of this section, we focus on three instances of prior work which are related to our approach in \cref{ch:diffy}.
@@ -41,10 +39,10 @@ Computational anatomy is a direct application of shape analysis methods that stu
 \citet{bietti} study learning rates for Kernel Ridge Regression in the presence of an invariant target function. Their underlying hypotheseses are the invariance to a group action and geometric stability of the target function. They show that these hypotheses both improve learning bounds by replacing the number of samples by an \emph{effective number of samples}. Roughly, this gain is related to the size of the group or to size of the allowed set. The gain also relies on using a kernel tailored to the invariance or geometric stability property of the target function, which is computationally costly since it is based on the Haar-measure over the set of transformations considered. Their approach is based on seeing data as points, while a key insight to our approach is to consider them as functions over a continuous domain.
 
 \paragraph{}
-\citet{mallat-scattering} introduced the scattering transform in 2012. The scattering transform generates multi-scale features for images that are locally translation invariant and Lipschitz continuous to transformation by diffeomorphisms. This method has been applied to a variety of settings including images classificartion, audio analysis, astrophysics... \citet{bruna-book} reviews the foundations of the scattering transform and applications to machine learning.
+\citet{mallat-scattering} introduced the scattering transform in 2012. The scattering transform generates multi-scale features for images that are locally translation invariant and Lipschitz continuous to transformation by diffeomorphisms. This method has been applied to a variety of settings including images classification, audio analysis, astrophysics... \citet{bruna-book} reviews the foundations of the scattering transform and applications to machine learning.
 
 \paragraph{}
-\citet{wyartdiffeo} empirically study stability to diffeomorphisms of neural networks to whether this quality correlates to performance. This work is part of a larger line of work that studies how internal representations of neural networks learn the invariances present in the data to effectively lower their dimension. Note that it is not clear the gain in \cite{bietti} is akin to an effective reduction in dimension. They define stability to diffeomorphisms as the relative effect of random diffeomorphisms to the feature layer of a deep neural network against that of additive noise of comparable magnitude. They highlight that performance is correlated with relative stability, and that larger, more modern networks tend to become more stable during training. This motivates our approach to enforcing invariance to diffeomorphisms in a dissimilarity that can be integrated into algorithms.
+\citet{wyartdiffeo} empirically study stability to diffeomorphisms of neural networks to whether this quality correlates to performance. This work is part of a larger line of work that studies how internal representations of neural networks learn the invariances present in the data to effectively lower their dimension. Note that it is not clear the gain in \citet{bietti} is akin to an effective reduction in dimension. \citet{wyartdiffeo} define stability to diffeomorphisms as the relative effect of random diffeomorphisms to the feature layer of a deep neural network against that of additive noise of comparable magnitude. They highlight that performance is correlated with relative stability, and that larger, more modern networks tend to become more stable during training. This motivates our approach to enforcing invariance to diffeomorphisms in a dissimilarity that can be integrated into algorithms.
 
 \subsection{Handling temporal structure: deformations for time-series}
 \label{background:diffytw}
@@ -56,14 +54,14 @@ Developing methods that account for variations in time-series related to the und
 Soft-Dynamic Time Warping \citep{soft-dtw} focuses on the averaging task of time-series, which requires eliminating misalignment (implicitly). Because DTW-based averaging lead to poor local minima, Soft-DTW is presented as a differentiable alternative to DTW, while retaining efficient computation in $O(nm)$ time.
 
 \paragraph{}
-The functional data analysis litterature tackles a more general problem of aligning (open or closed curves) in space. In \cite{srvf}, the Square-Root Velocity representation defines a tolopology between shapes that can be used to align and average them. Another approach is decribed in \cite{curve-moments}, which considers matching 1-D curves with so-called moments and landmarks in the curve. They embed the values of the functions with a handcrafed transformation based on first and high-order derivatives. The existence of high-order derivatives is not practical for time-series data.
+The functional data analysis litterature tackles a more general problem of aligning (open or closed) curves in space. In \cite{srvf}, the Square-Root Velocity representation defines a tolopology between shapes that can be used to align and average them. Another approach is decribed in \cite{curve-moments}, which considers matching 1-D curves with so-called moments and landmarks in the curve. They embed the values of the functions with a handcrafed transformation based on first and high-order derivatives. However, the existence of high-order derivatives is not practical for time-series data.
 
 The shape analysis litterature also studies this question, but time-series are not handled except as the representation of the evolution of shapes through time \citep{2108.05634,Durrleman2013}.
 
-\paragraph{} Using neural networks for time-series is also an important direction of research. An example is \cite{2106.11911,dtan} and references therein. This line of work learns representations of time-series based on \cite{pavf} that allow alignment without solving the LDDMM style problems at inference time. Refinements in the computation of transformations are proposed in \cite{martinez22a}. These methods learn the invariances from data (with a difeomorphic constraint), while we are interested in specifying the set of transformations \emph{a priori}.
+\paragraph{} Using neural networks for time-series is also an important direction of research. Two examples are \cite{2106.11911} and \cite{dtan} and references therein. This line of work learns representations of time-series based on \cite{pavf} that allow alignment without solving an alignment problem at inference time. Refinements in the computation of transformations are proposed in \cite{martinez22a}. These methods learn the invariances from data (with a difeomorphic constraint), while we are interested in specifying the set of transformations \emph{a priori}.
 
 \subsection{Structure in dynamical models}
-Hidden Markov Models are useful models for dynamical systems, which can be used to solve many scientific or engineering problems. Inference on HMMs has been widely studied with the development of many algorithms for finance, robotics or weather.\citep{cappehmm} The goal of filtering is estimating $\pi_T$, the conditional distribution of $X_T$ given $Y_1, \ldots, Y_T$. In HMMs, $\pi_T$ can be computed iteratively through the filtering iteration \cref{eq:intro-hmm-iteration}. For background on Hidden Markov Models we refer the reader to \cite{cappehmm}. Three questions arise when computing the filtering distributions $\pi_T$.
+Hidden Markov Models are useful models for dynamical systems, which can be used to solve many scientific or engineering problems. Inference on HMMs has been widely studied with the development of many algorithms for finance, robotics or weather \citep{cappehmm}. The goal of filtering is estimating $\pi_T$, the conditional distribution of $X_T$ given $Y_1, \ldots, Y_T$. In HMMs, $\pi_T$ can be computed iteratively through the filtering iteration \cref{eq:intro-hmm-iteration}. For background on Hidden Markov Models we refer the reader to \cite{cappehmm}. Three questions arise when computing the filtering distributions $\pi_T$.
 
 \paragraph{} The first relates to the initialization of the sequence $\pi_k$. Assume two filters are initialized at $\mu$ and $\nu$ respectively. \emph{Stability} quantifies the behavior of $\Vert \pi_t^\mu - \pi_t^\nu \Vert_{TV}$ as $t$ grows. A stable filter sees this distance go to zero as $t$ grows, i.e. the filter forgets its initial condition. In the litterature there are different definitions of stability and forgetting.
 
@@ -71,23 +69,23 @@ Hidden Markov Models are useful models for dynamical systems, which can be used 
 
 A modern review of the stability litterature can be found in \cite{kim2022duality}, in particular concerning the rich history of the field.
 
-\paragraph{} The second is \emph{robustness} to model error, which quantifies the behavior of $\Vert \hat\pi_t - \pi_t\Vert_{TV}$ where $\hat \pi$ is obtained by applying the filtering iteration approximately. A robust filter will have a constant error bound over a finite time horizon. Indeed, beyond the finite state-space and Kalman filter settings, computing an exact filtering distribution is intractable so approimating is necessary. Variants of the Kalman filter like the Extended or Unscented Kalman Filters \citep{ukf,sarkka} linearize the transition and observation functions (and not the kernels) and assume the conditional distribution is Gaussian \citep{sarkka}. Particle filter methods approximate the filtering iteration with Monte Carlo sampling\citep{gordon-pf}. \citet{oudjane} show that such models are robust, and that the bound can be reduced as needed with richer approximations (more pseudo samples).
-We use their arguments to study the robustness of the filter we propose in \cref{ch:hmm}.
+\paragraph{} The second is \emph{robustness} to model error, which quantifies the behavior of $\Vert \hat\pi_t - \pi_t\Vert_{TV}$ where $\hat \pi$ is obtained by applying the filtering iteration approximately. A robust filter will have a constant error bound over a finite time horizon. Indeed, beyond the finite state-space and Kalman filter settings, computing an exact filtering distribution is intractable so approximating is necessary. Variants of the Kalman filter like the Extended or Unscented Kalman Filters \citep{ukf,sarkka} linearize the transition and observation functions (and not the kernels) and assume the conditional distribution is Gaussian \citep{sarkka}. Particle filter methods approximate the filtering iteration with Monte Carlo sampling \citep{gordon-pf}. \citet{oudjane} show that particle filters are robust, and that the bound can be reduced as needed with richer approximations (more pseudo samples).
+We use their arguments to study the robustness of the deterministic and closed-form filter we propose in \cref{ch:hmm}.
 \cite{decastro2017,mitrophanov-hmm-stability-2005} study the propagation of error from estimating models to filter error in finite state-spaces and continuous emission densities.
 
 
 
-\paragraph{} Finally, related to the second point above, a filter must be computable in practice. \cref{eq:intro-hmm-iteration} requires complete knowledge of the transition and measurement kernels, which characterize the laws of $X_{t+1}$ conditionally on $X_t$ and $Y_t$ conditionnaly on $X_t$. Furthermore, it implies being able to compute arbitrary marginalizations in practice. Outside of well-known settings (Gaussian Linear Conditional Distributions and finite state space), this is intractable. Two approaches exist: make additional assumptions about the state space (for example the EFK and UKF assume it is Gaussian) ; or, use Monte Carlo sampling to approximate the optimal filter iterations (Sequential Monte Carlo methods such as the particle filter). This makes choosing the approximation key, as we will see in \cref{ch:hmm}.
+\paragraph{} Finally, related to the second point above, a filter must be computable in practice. \cref{eq:intro-hmm-iteration} requires complete knowledge of the transition and measurement kernels, which characterize the laws of $X_{t+1}$ conditionally on $X_t$ and $Y_t$ conditionnaly on $X_t$. Furthermore, it implies being able to compute arbitrary marginalizations in practice. Outside of well-known settings (Gaussian Linear Conditional Distributions and finite state space), this is intractable. Two approaches exist: make additional assumptions about the state space (for example the EFK and UKF assume it is Gaussian) ; or, use Monte Carlo sampling to approximate the optimal filter iterations (Sequential Monte Carlo methods such as the particle filter). This makes efficient approximation key, as we will see in \cref{ch:hmm}.
 
 
 
 \section{Toolbox: kernel methods \& Nyström approximations}\label{sec:tools}
-In this manuscript, each chapter is self-contained in terms of notations, definitions and results. However, the reader may remark some reccuring tooling. In particular, two tools are general to all chapters: (a) kernel methods; and, (b) Nyström approximations. We present these methods below.
+In this manuscript, each chapter is self-contained in terms of notations, definitions and results. However, the reader may remark some recurring tooling. In particular, two tools are general to all chapters: kernel methods and Nyström approximations. We present these methods below.
 
 \subsection{Kernel methods}
-Kernel methods are a widely applied family of methods for machine learning, inverse problems, approximation and applied mathematics, in general. They express classes of functions that combine expressivity and applicability. In particular, they can be integrated into optimization methods and can be learned from data efficiently.
+Kernel methods are a widely applied family of methods for machine learning, inverse problems, approximation and applied mathematics, in general. They express classes of functions that combine expressivity and applicability. In particular, they can be integrated into optimization methods and can be efficiently learned from data.
 
-We recall some of their most important properties below, many of where already present in Aronszajn's seminal work \citep{aronszajn1950theory}. \cite{shawe-taylor2004,scholkopf-kernels} are good references for going further.
+We recall some of their most important properties below, many of where already present in Aronszajn's seminal work \cite{aronszajn1950theory}. \cite{shawe-taylor2004,scholkopf-kernels} are good references for going further.
 
 \paragraph{}
 Kernel methods have three main characters: the positive definite kernel $k$, the embedding map $\phi$, and the Reproducting Kernel Hilbert Space (RKHS) $\mathcal H$.
@@ -99,7 +97,7 @@ Kernel methods have three main characters: the positive definite kernel $k$, the
 A positive definite kernel on $\mathcal X$ is any function $k: \mathcal X \times \mathcal X \to \mathbb R$ such that: for any $(x_1, \ldots, x_n)\in\mathcal X^n$ the kernel matrix $K$ defined by $[K]_{ij} = k(x_i, x_j)$ is symmetric and positive semi-definite.
 \end{definition}
 \end{mdframed}
-Two canoncial examples of p.d. kernels on $\mathcal X = \mathbb R^d$ are the Radial-Basis function (or Gaussian) kernel $k(x, y) = \exp(-\gamma \Vert x - y \Vert_2^2)$ or the Euclidean kernel $k(x, y) = \langle x, y \rangle$. Note that $\mathcal X$ does not need to be a vector space. Indeed, there exist p.d. kernels for all sorts of data, including strings or graphs.
+Two canoncial examples of p.d. kernels on $\mathcal X = \mathbb R^d$ are the Radial-Basis function (or Gaussian) kernel $k(x, y) = \exp(-\gamma \Vert x - y \Vert_2^2)$ or the Euclidean kernel $k(x, y) = \langle x, y \rangle$. Note that $\mathcal X$ does not need to be a vector space (e.g. a set of strings, graphs or trees).
 
 \paragraph{Reproducing Kernel Hilbert Space}
 The Reproducing Kernel Hilbert Space is the set of functions defined by a p.d. kernel.
@@ -113,7 +111,7 @@ A Reproducing Kernel Hilbert Space of a p.d. kernel $k$ is a space of functions 
 \end{itemize}
 \end{definition}
 \end{mdframed}
-In fact, each p.d. kernel has a unique RKHS, and vice versa any RKHS has a unique p.d. kernel.\citep{aronszajn1950theory}
+In fact, each p.d. kernel has a unique RKHS, and vice versa any RKHS has a unique p.d. kernel \citep{aronszajn1950theory}.
 
 \paragraph{Kernel embedding}
 The kernel embedding explicitly links $\mathcal X$ and $\mathcal H$.
@@ -127,14 +125,16 @@ $$ \phi(x) = k_x.$$
 The map $\phi$ lifts $x\in\mathcal X$ into $\mathcal H$. Intuitively, it does so in a way that is useful for the task at hand. If we are doing classification, then we should choose $\phi$ (i.e. $k$ and $\mathcal H$) such that it is easier to differentiate between different classes among vectors $\phi(x_1)$ and $\phi(x_2)$ then among $x_1$ and $x_2$. %Generally, we never compute $\phi(x)$ nor express it explicitly. Indeed, $\mathcal H$ is often infinite dimensional. Data points are never \emph{really} embedded in $\mathcal H$. This is done implicitly through kernel evaluations, as we explain in the next paragraph.
 
 \paragraph{Evaluating a function in $\mathcal H$}
-To understand the point of kernel methods, let us consider a finite combination of functions $\phi(x_k)$ for some $x_k\in\mathcal X$, \emph{e.g.\ } $f= \sum_{k=1}^k w_k \phi(x_k)$. Note that $f\in\mathcal H$ since $\phi(x)\in\mathcal H$ for any $x\in\mathcal X$ by hypothesis. For now, $f$ is expressed as an element in a functional space. In order to evaluate $f$ at $x\in\mathcal X$, using the reproducing property and linearity, we see that:
-$$f(x) = \langle f, \phi(x)\rangle = \langle \sum_{k=1}^n w_k\phi(x_k), \phi(x_k)\rangle= \sum w_k \langle \phi(x), \phi(x_k)\rangle = \sum_{k}w_k k(x, x_k)= \Phi(X)^Tw,$$
+To understand the importance of kernel methods, let us consider a finite combination of functions $\phi(x_k)$ for some $x_k\in\mathcal X$, \emph{e.g.\ } $f= \sum_{k=1}^k w_k \phi(x_k)$. Note that $f\in\mathcal H$ since $\phi(x)\in\mathcal H$ for any $x\in\mathcal X$ by hypothesis. For now, $f$ is expressed as an element in a functional space. In order to evaluate $f$ at $x\in\mathcal X$, using the reproducing property and linearity, we see that:
+\begin{equation*}
+f(x) = \langle f, \phi(x)\rangle = \langle \sum_{k=1}^n w_k\phi(x_k), \phi(x_k)\rangle= \sum_{k=1}^nw_k \langle \phi(x), \phi(x_k)\rangle = \sum_{k=1}^nw_k k(x, x_k)= \Phi(X)^Tw,
+\end{equation*}
 where $\Phi(X) = (k(x, x_1), \ldots, k(x, x_n))^\top\in\mathbb R^n$. So, like $f$ is a linear combination of $\phi(x_k)$, $f(x)$ is a linear combination of $k(x, x_k)$. Importantly, $f$ is not a linear function in $x$ since $k(\cdot, x_k)$ is not.
 
 \paragraph{Kernel trick}
 When evaluating $f$, we were able to replace inner-functions in $\mathcal H$ of the form $\langle \phi(x), \phi(y)\rangle$ by kernel evaluations $k(x, y)$. The kernel trick generalizes this and states that if an expression depends on finite-dimensional vectors only through pair-wise inner-products, then it can be generalized to (possibly) infinite-dimensional vectors in an RKHS by replacing the inner product with the kernel evaluation. This means we can apply many common machine learning algorithms to non-vectorial data such as strings or graphs. For instance, we can compute the average distance from the embedding of each string to the mean of the their embeddings.
 
-\paragraph{Representer theorem} The representer theorem is key to machine learning with kernel methods. We present it in Empirical Risk Minimization context for conciseness. Consider a dataset $(x_k, y_k)_{1\leq k\leq n}$ such that $x_k\in\mathcal X$ (the features) and $y_k\in\mathbb R$ (the label). Let $\ell: \mathbb R \times\mathbb R\to\mathbb R$ be the loss function we are using to learn a model $f$. We consider the regression setting with $\ell(y, z) = (y - z) ^2$, the squared loss. In the ERM setting, we learn $f$ by minimizing the loss incurred by $f$ on the dataset and adding a regularization term, for instance Tikhonov regularization.
+\paragraph{Representer theorem} The representer theorem is key to machine learning with kernel methods. We present it in Empirical Risk Minimization context for conciseness. Consider a dataset $(x_k, y_k)_{1\leq k\leq n}$ such that $x_k\in\mathcal X$ (the features) and $y_k\in\mathbb R$ (the label). Let $\ell: \mathbb R \times\mathbb R\to\mathbb R$ be the loss function we are using to learn a model $f$. We consider the regression setting with $\ell(y, z) = (y - z) ^2$, the squared loss. In the ERM setting, we learn $f$ by minimizing the loss incurred by $f$ on the dataset and adding a regularization term, for instance Tikhonov regularization \citep{devroye1996probabilistic}.
 
 \begin{mdframed}
 \begin{theorem}[simplified from \cite{smale}]If $\lambda > 0$,
@@ -148,9 +148,9 @@ then the optimization problem $\min_{f\in\mathcal H}L(f)$ has a solution in $\ma
 The representer theorem effectively transforms a problem over a (possibly) infinite dimensional function space into an optimization problem over $\mathbb R^n$, the coordinates of a solution $f$ of the form $f= \sum_{k=1}^n \alpha_k \phi(x_k)$. Indeed, the repesenter implies that $\min_{f\in\mathcal H}L(f)$ is equivalent to $\min_{\alpha\in\mathbb R^n}\tilde L(\alpha)$ where
 \begin{equation}
 \tilde L(\alpha) = \sum_{k=1}^n \ell(\Phi(x_k)^\top\alpha, y_k) + \lambda \alpha^\top K \alpha
-\end{equation} where $\Phi(x)$ is defined as above and $K$ is the kernel matrix over $x_1, \ldots, x_n$. We used the fact that the squared $\mathcal H$ norm of a function of the form $x \mapsto \sum_{k=1}^n \alpha_k k(x, x_k)$ is equal to $\alpha^\top K \alpha$.
+\end{equation} where $\Phi(x)$ is defined as above and $K$ is the kernel matrix over $x_1, \ldots, x_n$. We used the fact that the squared $\mathcal H$ norm of a function of the form $x \mapsto \sum_{k=1}^n \alpha_k k(x, x_k)$ can be expressed as $\alpha^\top K \alpha$.
 
-\paragraph{Kernel Ridge Regression \& Regularization} The learning problem above is an example of a regression task that we can solve with kernel methods. We call this formulation Kernel Ridge Regression. We now take the time to express $\tilde L$ in terms of function evaluations:
+\paragraph{Kernel Ridge Regression \& Regularization} The learning problem above is an example of a regression task that we can solve with kernel methods. We call this formulation Kernel Ridge Regression. We now express $\tilde L$ in terms of kernel evaluations:
 \begin{align}
 \tilde L(\alpha) &= \sum_{k=1}^n (\Phi(x_k)^\top \alpha - y_k)^2 + \lambda \alpha^\top K\alpha\\
                & = \frac{1}{n}\Vert K\alpha - Y \Vert_2^2 + \lambda \alpha^\top K\alpha
@@ -159,14 +159,16 @@ where $\alpha = (\alpha_1, \ldots, \alpha_n)^\top \in\mathbb R^n$ and $Y = (y_1,
 \begin{equation}
 K\left((K + \lambda n I)\alpha - Y\right) = 0
 \end{equation}
-which are the vector of the form $\alpha = (K + n\lambda I)^{-1}Y + \beta$ where $\beta \in \mathrm{Ker}(K)$. Indeed, $K + n\lambda I$ is invertible for any $\lambda > 0$ since $K$ is a positive, semi-definite matrix because $k$ a p.d. kernel.
+which are the vector of the form $\alpha = (K + n\lambda I)^{-1}Y + \beta$ where $\beta \in \mathrm{Ker}(K)$. Indeed, $K + n\lambda I$ is invertible for any $\lambda > 0$ since $K$ is a positive, semi-definite matrix.
 
 However, $\lambda$ plays a role beyond making $K+n\lambda I$ invertible. For larger values of $\lambda$, a solution to $\min_{f\in\mathcal H}L(f)$ (and equivalently $\min_\alpha \tilde L(\alpha)$) will have smaller norm $\Vert f \Vert_\mathcal H^2$. This is known as the regularization effect. Regularization is a vast field of study with origins in integral equations, inverse problems and statistics, and we only introduce the necessary tools when needed in the following chapters. For readers familiar with functional analysis, the regularization effect may be intuitive as $L_p$ and Sobolev norms enforce regularity of a function. Another way of understanding this is through lens of numerical stability: adding regularization limits the effect of small eigenvalues in $K$ and produces a more ``well-behaved'' solution.
 
 
 \subsection{Nyström approximations}
 
-Thanks to the representation theorem, we can represent functions in a RKHS using a finite number of kernel evaluations between the points that intervene in the optimization problem to learn the function. In the case of Kernel Ridge Regression, inverting a (regularized) kernel matrix incurs a high computational cost $O(n^3)$ and memory cost $O(n^2)$. Reducing this cost without sacrifying on accuracy of the solution to the learning problem is a rich field (see \cite{blanchard,rudi2015less,falkon} and references therein). When needed, we introduce these results in the chapters. However, we use a compression result several times. In a nutshell, this result guarantees that a function $f=\sum_{i=1}^n\alpha_i\phi(x_i)$ can be approximated by $f_M(x) = \sum_{k=1}^M \beta_k \phi(\tilde x_k)$ where $M \ll n$, with $\tilde x_k$ are subsambled from $\lbrace x_1, \ldots, x_n\rbrace$ and $f_M$ is the projection of $f$ on $\mathrm{Span}\left(\phi(\tilde x_1), \ldots, \phi(\tilde x_M)\right)$.
+Thanks to the representer theorem, we can represent functions in a RKHS using a finite number of kernel evaluations between the points that intervene in the optimization problem to learn the function. For Kernel Ridge Regression, inverting a (regularized) kernel matrix incurs a high computational cost $O(n^3)$ and memory cost $O(n^2)$. Reducing this cost without sacrifying on accuracy of the solution to the learning problem is a rich field (see \cite{blanchard,rudi2015less,falkon} and references therein). When needed, we introduce these results in the chapters.
+
+We state a usefule compression result that contains the core ideas of Nyström aprproximations. In a nutshell, this result guarantees that a function $f=\sum_{i=1}^n\alpha_i\phi(x_i)$ can be approximated by $f_M(x) = \sum_{k=1}^M \beta_k \phi(\tilde x_k)$ where $M \ll n$, with $\tilde x_k$ are subsambled from $\lbrace x_1, \ldots, x_n\rbrace$ and $f_M$ is the projection of $f$ on $\mathrm{Span}\left(\phi(\tilde x_1), \ldots, \phi(\tilde x_M)\right)$.
 
 \begin{mdframed}
 \begin{proposition}
