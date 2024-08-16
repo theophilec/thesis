@@ -556,121 +556,119 @@ We propose a collection of experiments with \Diffy on the \texttt{peppers} (see 
 
 We consider a random square area $f$ of size $150 \times 150$. We rotate, translate and scale it and denote it $g = \textrm{transform}(f)$. We then show $f$, $h$ (over $f$), $g$ and $q$ (over $g$) as well as the value of $\widehat D_\lambda(f, g)$. \cref{fig:appendix-peppers-matching} is obtained with \texttt{appendix\char`_peppers\char`_match.py}.
 
-% TODO : hidden for compilation speed
-%\begin{figure}[!h]
-%    \centering
-%    \begin{subfigure}{0.60\textwidth}
-%    \includegraphics[width=\textwidth]{ch1-diffy/figures/fig_peppers/appendix_match_0.01_14.pdf}
-%    \end{subfigure}
-%    \begin{subfigure}{0.60\textwidth}
-%    \includegraphics[width=\textwidth]{ch1-diffy/figures/fig_peppers/appendix_match_0.01_19.pdf}
-%    \end{subfigure}
-%    \begin{subfigure}{0.60\textwidth}
-%    \includegraphics[width=\textwidth]{ch1-diffy/figures/fig_peppers/appendix_match_0.01_8.pdf}
-%    \end{subfigure}
-%    \begin{subfigure}{0.60\textwidth}
-%    \includegraphics[width=\textwidth]{ch1-diffy/figures/fig_peppers/appendix_match_0.01_9.pdf}
-%    \end{subfigure}
-%    \begin{subfigure}{0.60\textwidth}
-%    \includegraphics[width=\textwidth]{ch1-diffy/figures/fig_peppers/appendix_match_0.01_15.pdf}
-%    \end{subfigure}
-%    \begin{subfigure}{0.60\textwidth}
-%    \includegraphics[width=\textwidth]{ch1-diffy/figures/fig_peppers/appendix_match_0.01_5.pdf}
-%    \end{subfigure}
-%    \caption{$\widehat D_\lambda(f, \textrm{transform}(f))$ for $f$ random patches from \texttt{peppers}. We show $f$, $g=\textrm{transform}(f)$ as well as the optimal functions $h$ and $q$.}
-%    \label{fig:appendix-peppers-matching}
-%\end{figure}
+\begin{figure}[!h]
+    \centering
+    \begin{subfigure}{0.60\textwidth}
+    \includegraphics[width=\textwidth]{ch1-diffy/figures/fig_peppers/appendix_match_0.01_14.pdf}
+    \end{subfigure}
+    \begin{subfigure}{0.60\textwidth}
+    \includegraphics[width=\textwidth]{ch1-diffy/figures/fig_peppers/appendix_match_0.01_19.pdf}
+    \end{subfigure}
+    \begin{subfigure}{0.60\textwidth}
+    \includegraphics[width=\textwidth]{ch1-diffy/figures/fig_peppers/appendix_match_0.01_8.pdf}
+    \end{subfigure}
+    \begin{subfigure}{0.60\textwidth}
+    \includegraphics[width=\textwidth]{ch1-diffy/figures/fig_peppers/appendix_match_0.01_9.pdf}
+    \end{subfigure}
+    \begin{subfigure}{0.60\textwidth}
+    \includegraphics[width=\textwidth]{ch1-diffy/figures/fig_peppers/appendix_match_0.01_15.pdf}
+    \end{subfigure}
+    \begin{subfigure}{0.60\textwidth}
+    \includegraphics[width=\textwidth]{ch1-diffy/figures/fig_peppers/appendix_match_0.01_5.pdf}
+    \end{subfigure}
+    \caption{$\widehat D_\lambda(f, \textrm{transform}(f))$ for $f$ random patches from \texttt{peppers}. We show $f$, $g=\textrm{transform}(f)$ as well as the optimal functions $h$ and $q$.}
+    \label{fig:appendix-peppers-matching}
+\end{figure}
 
 
 \section{Warping demonstrations}\label{sec:appendix-warping}
 The warps below were generated using file \texttt{appendix\char`_warp.py} in our source code, using an image from ImageNet. Rows are from different samples, columns for different warp temperatures. All waps use $c=2$.
 
-%todo : hidden for compilation speed
-%\begin{figure}[!h]
-%    \centering
-%    \begin{subfigure}{0.18\textwidth}
-%    \includegraphics[width=\textwidth]{ch1-diffy/figures/warping_examples/8000_3_0.png}
-%    \caption{$T=10^{-3}$}
-%    % \label{fig:my_label}
-%    \end{subfigure}
-%    \begin{subfigure}{0.18\textwidth}
-%    \includegraphics[width=\textwidth]{ch1-diffy/figures/warping_examples/8000_2_0.png}
-%    \caption{$T=10^{-2}$}
-%    % \label{fig:my_label}
-%    \end{subfigure}
-%    \begin{subfigure}{0.18\textwidth}
-%    \includegraphics[width=\textwidth]{ch1-diffy/figures/warping_examples/8000_1_0.png}
-%    \caption{$T=10^{-1}$}
-%    % \label{fig:my_label}
-%    \end{subfigure}
-%    \begin{subfigure}{0.18\textwidth}
-%    \includegraphics[width=\textwidth]{ch1-diffy/figures/warping_examples/8000_0_0.png}
-%    \caption{$T=1$}
-%    % \label{fig:my_label}
-%    \end{subfigure}
-%    \begin{subfigure}{0.18\textwidth}
-%    \includegraphics[width=\textwidth]{ch1-diffy/figures/warping_examples/8000_-1_0.png}
-%    \caption{$T=10$}
-%    % \label{fig:my_label}
-%    \end{subfigure}
-%    %%%%%
-%    \begin{subfigure}{0.18\textwidth}
-%    \includegraphics[width=\textwidth]{ch1-diffy/figures/warping_examples/8000_3_1.png}
-%    \caption{$T=10^{-3}$}
-%    % \label{fig:my_label}
-%    \end{subfigure}
-%    \begin{subfigure}{0.18\textwidth}
-%    \includegraphics[width=\textwidth]{ch1-diffy/figures/warping_examples/8000_2_1.png}
-%    \caption{$T=10^{-2}$}
-%    % \label{fig:my_label}
-%    \end{subfigure}
-%    \begin{subfigure}{0.18\textwidth}
-%    \includegraphics[width=\textwidth]{ch1-diffy/figures/warping_examples/8000_1_1.png}
-%    \caption{$T=10^{-1}$}
-%    % \label{fig:my_label}
-%    \end{subfigure}
-%    \begin{subfigure}{0.18\textwidth}
-%    \includegraphics[width=\textwidth]{ch1-diffy/figures/warping_examples/8000_0_1.png}
-%    \caption{$T=1$}
-%    % \label{fig:my_label}
-%    \end{subfigure}
-%    \begin{subfigure}{0.18\textwidth}
-%    \includegraphics[width=\textwidth]{ch1-diffy/figures/warping_examples/8000_-1_1.png}
-%    \caption{$T=10$}
-%    % \label{fig:my_label}
-%    \end{subfigure}
-%    %%%%%
-%    \begin{subfigure}{0.18\textwidth}
-%    \includegraphics[width=\textwidth]{ch1-diffy/figures/warping_examples/8000_3_2.png}
-%    \caption{$T=10^{-3}$}
-%    % \label{fig:my_label}
-%    \end{subfigure}
-%    \begin{subfigure}{0.18\textwidth}
-%    \includegraphics[width=\textwidth]{ch1-diffy/figures/warping_examples/8000_2_2.png}
-%    \caption{$T=10^{-2}$}
-%    % \label{fig:my_label}
-%    \end{subfigure}
-%    \begin{subfigure}{0.18\textwidth}
-%    \includegraphics[width=\textwidth]{ch1-diffy/figures/warping_examples/8000_1_2.png}
-%    \caption{$T=10^{-1}$}
-%    % \label{fig:my_label}
-%    \end{subfigure}
-%    \begin{subfigure}{0.18\textwidth}
-%    \includegraphics[width=\textwidth]{ch1-diffy/figures/warping_examples/8000_0_2.png}
-%    \caption{$T=1$}
-%    % \label{fig:my_label}
-%    \end{subfigure}
-%    \begin{subfigure}{0.18\textwidth}
-%    \includegraphics[width=\textwidth]{ch1-diffy/figures/warping_examples/8000_-1_2.png}
-%    \caption{$T=10$}
-%    % \label{fig:my_label}
-%    \end{subfigure}
-%    %%%%%
-%    \centering
-%    \begin{subfigure}{0.18\textwidth}
-%    \includegraphics[width=\textwidth]{ch1-diffy/figures/warping_examples/8000.png}
-%    \caption{Original}
-%    % \label{fig:my_label}
-%    \end{subfigure}
-%    \caption{Image \#8000. Deformations $\text{warp}(f, T)$ for different values of $T$ ($c=2$).}
-%\end{figure}
+\begin{figure}[!h]
+    \centering
+    \begin{subfigure}{0.18\textwidth}
+    \includegraphics[width=\textwidth]{ch1-diffy/figures/warping_examples/8000_3_0.png}
+    \caption{$T=10^{-3}$}
+    % \label{fig:my_label}
+    \end{subfigure}
+    \begin{subfigure}{0.18\textwidth}
+    \includegraphics[width=\textwidth]{ch1-diffy/figures/warping_examples/8000_2_0.png}
+    \caption{$T=10^{-2}$}
+    % \label{fig:my_label}
+    \end{subfigure}
+    \begin{subfigure}{0.18\textwidth}
+    \includegraphics[width=\textwidth]{ch1-diffy/figures/warping_examples/8000_1_0.png}
+    \caption{$T=10^{-1}$}
+    % \label{fig:my_label}
+    \end{subfigure}
+    \begin{subfigure}{0.18\textwidth}
+    \includegraphics[width=\textwidth]{ch1-diffy/figures/warping_examples/8000_0_0.png}
+    \caption{$T=1$}
+    % \label{fig:my_label}
+    \end{subfigure}
+    \begin{subfigure}{0.18\textwidth}
+    \includegraphics[width=\textwidth]{ch1-diffy/figures/warping_examples/8000_-1_0.png}
+    \caption{$T=10$}
+    % \label{fig:my_label}
+    \end{subfigure}
+    %%%%%
+    \begin{subfigure}{0.18\textwidth}
+    \includegraphics[width=\textwidth]{ch1-diffy/figures/warping_examples/8000_3_1.png}
+    \caption{$T=10^{-3}$}
+    % \label{fig:my_label}
+    \end{subfigure}
+    \begin{subfigure}{0.18\textwidth}
+    \includegraphics[width=\textwidth]{ch1-diffy/figures/warping_examples/8000_2_1.png}
+    \caption{$T=10^{-2}$}
+    % \label{fig:my_label}
+    \end{subfigure}
+    \begin{subfigure}{0.18\textwidth}
+    \includegraphics[width=\textwidth]{ch1-diffy/figures/warping_examples/8000_1_1.png}
+    \caption{$T=10^{-1}$}
+    % \label{fig:my_label}
+    \end{subfigure}
+    \begin{subfigure}{0.18\textwidth}
+    \includegraphics[width=\textwidth]{ch1-diffy/figures/warping_examples/8000_0_1.png}
+    \caption{$T=1$}
+    % \label{fig:my_label}
+    \end{subfigure}
+    \begin{subfigure}{0.18\textwidth}
+    \includegraphics[width=\textwidth]{ch1-diffy/figures/warping_examples/8000_-1_1.png}
+    \caption{$T=10$}
+    % \label{fig:my_label}
+    \end{subfigure}
+    %%%%%
+    \begin{subfigure}{0.18\textwidth}
+    \includegraphics[width=\textwidth]{ch1-diffy/figures/warping_examples/8000_3_2.png}
+    \caption{$T=10^{-3}$}
+    % \label{fig:my_label}
+    \end{subfigure}
+    \begin{subfigure}{0.18\textwidth}
+    \includegraphics[width=\textwidth]{ch1-diffy/figures/warping_examples/8000_2_2.png}
+    \caption{$T=10^{-2}$}
+    % \label{fig:my_label}
+    \end{subfigure}
+    \begin{subfigure}{0.18\textwidth}
+    \includegraphics[width=\textwidth]{ch1-diffy/figures/warping_examples/8000_1_2.png}
+    \caption{$T=10^{-1}$}
+    % \label{fig:my_label}
+    \end{subfigure}
+    \begin{subfigure}{0.18\textwidth}
+    \includegraphics[width=\textwidth]{ch1-diffy/figures/warping_examples/8000_0_2.png}
+    \caption{$T=1$}
+    % \label{fig:my_label}
+    \end{subfigure}
+    \begin{subfigure}{0.18\textwidth}
+    \includegraphics[width=\textwidth]{ch1-diffy/figures/warping_examples/8000_-1_2.png}
+    \caption{$T=10$}
+    % \label{fig:my_label}
+    \end{subfigure}
+    %%%%%
+    \centering
+    \begin{subfigure}{0.18\textwidth}
+    \includegraphics[width=\textwidth]{ch1-diffy/figures/warping_examples/8000.png}
+    \caption{Original}
+    % \label{fig:my_label}
+    \end{subfigure}
+    \caption{Image \#8000. Deformations $\text{warp}(f, T)$ for different values of $T$ ($c=2$).}
+\end{figure}

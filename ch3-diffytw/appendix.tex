@@ -1,32 +1,3 @@
-%\section{Hiking and time-warping}\label{sec:appendix-hiking}
-%\todo[inline]{write}
-%Consider two hikers (Felix and Gabrielle) who each go on an hour-long hike round-trip from Nice. They each record their altitude on their machine-learning enabled smart watches. From both recordings, can we determine if they took the same route (in altitude at least)? Suppose they have different speeds through time. For instance, Felix may have constant speed, while Gabrielle oscillates between going slower then catching up (and vice versa). This situation is illustrated in \cref{fig:hiking} and we go into more detail in \cref{sec:appendix-hiking}.
-
-%\begin{figure}[!h]
-%    \centering
-%    \includegraphics[width=0.5\textwidth]{ch3-diffytw/figures/hiking-1.pdf}
-%    \includegraphics[width=0.4\textwidth]{ch3-diffytw/figures/hiking-3.pdf}
-%    \caption[Hiking example for DiffyTW.]{Motivating example for DiffyTW: time-warping from hiking.}\label{fig:hiking}
-%\end{figure}
-
-%From their elevation recordings, can we determine whether they did indeed follow the same path (in elevation at least)?
-
-%We can model their profiles by two functions $f:[0,1] \to [0, \infty[$ and $g:[0, 1] \to [0, \infty[$. We can model the time-warp caused by their differences in speed by a \emph{reparametrization} of time, i.e. the existence of a repramaetrization $[0,1]$, such that $g$ is equal to $f$ composed with the reparametrization. More formally, we would have $g = f \circ Q$ where $Q$ is the reparametrization. Our goal in this chapter is to develop a divergence $d$ that compares $f$ and $g$ with a divergence $d$ such that $d(f, g)=0$ if there exists $Q$ such that $g = f \circ Q$.\begin{figure}[!h]
-%    \centering
-%    \includegraphics[width=0.5\textwidth]{ch3-diffytw/figures/hiking-1.pdf}
-%    \caption[Sample image for Diffy experiments.]{Peppers image from Matlab software.}
-%\end{figure}
-%\begin{figure}[!h]
-%    \centering
-%    \includegraphics[width=0.5\textwidth]{ch3-diffytw/figures/hiking-2.pdf}
-%    \caption[Sample image for Diffy experiments.]{Peppers image from Matlab software.}
-%\end{figure}
-%\begin{figure}[!h]
-%    \centering
-%    \includegraphics[width=0.5\textwidth]{ch3-diffytw/figures/hiking-3.pdf}
-%    \caption[Sample image for Diffy experiments.]{Peppers image from Matlab software.}
-%\end{figure}
-
 \section{Quadrature of non-negative linear models}\label{app:diffytw-quadrature}
 
 Given $q\in\mathcal F_{0,1}^M$, we introduce . $q\in{\mathbb R_{\geq 0}}^M \mapsto I(q, x, y)$ is linear in the coefficients.
