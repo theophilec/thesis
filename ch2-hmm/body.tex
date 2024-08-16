@@ -18,7 +18,7 @@ If the state-space is finite, the Baum-Welch algorithm can compute filtering and
 
 Many real-world systems do not have linear dynamics nor Gaussian uncertainty. On one hand, many algorithms have been devised to handle variations on the Kalman filter's assumptions, including the Extended Kalman Filter or the Unscented Filter \citep{ukf} (see also \cite{sarkka}). These models approximate the state variable as a Gaussian, which excludes many systems where, for instance, multi-modality is present. On the other, Sequential Monte Carlo algorithms such as the Particle filter and variants were developed. These algorithms approximate the marginalization step above using sampling, and can handle multi-modality. This family of methods has strong theoretical guarantees (though under arguably stringent conditions), but do not give a closed-form expression of the approximate distribution and are known to be difficult to turn and prohibitively costly for online applications.
 
-Gaussian PSD Models were introduced in \cite{ciliberto2021} as models for probability distributions. Gaussian PSD Models are a special case of the family of models proposed in \cite{ulysse-non-negative}. They generalize Gaussian Mixture Models by allowing for negative coefficients in the mixture, forming a richer family of functions. As originally highlighted in \cite{ciliberto2021}, Gaussian PSD Models have appealing properties for applications involving Bayesian inference, filtering in particular. First, they have optimal approximation guarantees with respect to a large family of probability densities. Second, products and marginals of Gaussian PSD models can be efficiently computed in closed-form. This makes them ideal for plugging into \cref{eq:bayes-0}.
+Gaussian PSD Models were introduced in \cite{rudi2021psd} as models for probability distributions. Gaussian PSD Models are a special case of the family of models proposed in \cite{ulysse-non-negative}. They generalize Gaussian Mixture Models by allowing for negative coefficients in the mixture, forming a richer family of functions. As originally highlighted in \cite{rudi2021psd}, Gaussian PSD Models have appealing properties for applications involving Bayesian inference, filtering in particular. First, they have optimal approximation guarantees with respect to a large family of probability densities. Second, products and marginals of Gaussian PSD models can be efficiently computed in closed-form. This makes them ideal for plugging into \cref{eq:bayes-0}.
 
 
 \subsection*{Approach \& Contributions}
@@ -38,9 +38,9 @@ This chapter is organized as follows: in \cref{sec:gaussian-psd-models}, we desc
 
 \section{Gaussian PSD Models}\label{sec:gaussian-psd-models}
 
-Gaussian PSD Models, introduced in \cite{ciliberto2021}, is a family of models for non-negative functions and, in particular, probability densities specializing the PSD Models from \cite{ulysse-non-negative}.
+Gaussian PSD Models, introduced in \cite{rudi2021psd}, is a family of models for non-negative functions and, in particular, probability densities specializing the PSD Models from \cite{ulysse-non-negative}.
 
-\begin{definition}[Gaussian PSD Model of \cite{ciliberto2021}]\label{def:psd-model}
+\begin{definition}[Gaussian PSD Model of \cite{rudi2021psd}]\label{def:psd-model}
    A Gaussian PSD Model of order $M$ is a function $f: \mathbb R^d \to \mathbb R$ which can be written:
    \begin{align}\label{eq:psd-model-def}
       f(x) = \sum_{i=1}^M\sum_{j=1}^M A_{ij}k_\eta(x, x_i)k_\eta(x, x_j)
@@ -67,7 +67,7 @@ Let $g(x) = w^\top \Phi_\eta(x)$ where $w\in\mathbb R^d$ and $\Phi_\eta(x)= (k_\
  PSD Model can be seen as a linear combination of Gaussians. Indeed, $k_\eta(x, u)k_\eta(x, v)\propto k_{2\eta}(x, \frac{u+v}{2})$, where the proportionality constant is independent of $x$. It is important to note that the coefficients of the components can be non-negative, which makes them much more expressive then Mixture models. Consider for instance $f(x) = (e^{-(x-2)^2} - e^{-(x-3)^2})^2$ which is clearly non-negative and can be written as a Gaussian PSD Model but not as a Mixture model.
 
 \subsection{Operations on Gaussian PSD Models}\label{sec:operations}
-Gaussian PSD Models are compatible with operations on probabilistic models such as integration, partial evaluation, product and marginalization. The operations are summarized in \cref{prop:ops-diagonal} and the algorithms, based on kernel evaluations and matrix-vector products are detailed in \cite{ciliberto2021}. These operations are implemented in a library to be released in open-source.
+Gaussian PSD Models are compatible with operations on probabilistic models such as integration, partial evaluation, product and marginalization. The operations are summarized in \cref{prop:ops-diagonal} and the algorithms, based on kernel evaluations and matrix-vector products are detailed in \cite{rudi2021psd}. These operations are implemented in a library to be released in open-source.
 
 In \cref{sec:generalized-psd-models}, we generalize these operations to a larger family of models, where each basis function has an independent precision matrix and this precision matrix is not necessarily diagonal.
 
@@ -80,14 +80,14 @@ In \cref{sec:generalized-psd-models}, we generalize these operations to a larger
         \item \textbf{Marginalization } $\int f(x, y; \theta_1)dy=h(x; \theta^\prime)$ is a Gaussian PSD Model of order at most $M_1$ and $\theta^\prime$ can be computed exactly and in closed form by the algorithm $\marginalpsd(y, \theta_1)$ with a computational cost of $O(M_1^2 d)$.
     \end{enumthm}
 \end{proposition}
-The proof of the proposition above can be found in \citep[Appendix F]{ciliberto2021}.
+The proof of the proposition above can be found in \citep[Appendix F]{rudi2021psd}.
 
 Note that a Markov transition $g(x) = \int Q(u, x)f(u)du$, when $Q$ and $f$ are Gaussian PSD models, can be decomposed in terms of product and marginalization and computed in closed form, with $g$ again a Gaussian PSD Model. More importantly,  $g$ is of order $M_1$ (instead of the naive $M_1\times M_2$ according to \cref{prop:ops-diagonal}). This is summarized in the following proposition
 
 \begin{proposition}[Constant order for Markov transition]\label{prop:markov-step}
    If $Q(u, x; \theta_Q$ and $f(u; \theta_f)$ are two Gaussian PSD Models of order $M_1$ and $M_2$ respectively, then $g(x) = \int Q(u, x;\theta_Q)f(u;\theta_f)du$, computed via $\productpsd$ and $\marginalpsd$ is a Gaussian PSD Model of order $M_1$.
 \end{proposition}
-The proof of \cref{prop:markov-step} can be found in \citep[Appendix F.5]{ciliberto2021}.
+The proof of \cref{prop:markov-step} can be found in \citep[Appendix F.5]{rudi2021psd}.
 
 \section{Learning transition and observation kernels with Gaussian PSD Models}\label{sec:learning-gaussian-psd}
 In this section, we show that General Gaussian Models can be used to efficiently approximate smooth, non-negative functions in $L^\infty$ using function evaluations. Let $\Omega = (-1, 1)^d$ and $f: \Omega \to \mathbb R$ be the target function. We assume we can evaluate $f(x)$ at any point $x\in\Omega$. We assume that $f$ is the sum of squared $\beta$-smooth functions. Formally, we introduce:
@@ -100,7 +100,7 @@ In this section, we show that General Gaussian Models can be used to efficiently
 
 We recall four sufficient conditions in \cref{prop:sufficient-conditions-target}:
 
-\begin{proposition}[Generality of \cref{assumption:target_function}, Prop. 5 in \cite{ciliberto2021}]\label{prop:sufficient-conditions-target}
+\begin{proposition}[Generality of \cref{assumption:target_function}, Prop. 5 in \cite{rudi2021psd}]\label{prop:sufficient-conditions-target}
 A function $f$ satisfies \cref{assumption:target_function} on $\Omega = (-1, 1)^d$ as soon as at least one of the following sufficient conditions is satisfied:
 \begin{enumthm}
     \item $f$ is a probability density and $f\in W_2^\beta(\Omega)\cap L^\infty(\Omega)$, and strictly positive on $[-1, 1]^d$ ;
@@ -144,7 +144,7 @@ $\hat f(x) \gets \textsc{GaussianPSDModel}(aa^\top , X, \eta)$\;\BlankLine
 \subsection{Learning rates}\label{sec:learning}
 The Gaussian PSD Model $\hat f$ obtained from \cref{alg:learn} using function evaluations at uniformly sampled training points $X$ on the domaine approximates $f$ in $L^\infty(\Omega)$ with optimal learning rates for $L^\infty$ norm \citep{wendland2004scattered}, if $f$ is a $\beta$-smooth and bounded density (see \cref{assumption:target_function}). This uniform result to key to controlling stability and robustness of \textsc{PSDFilter}.
 
-We build on the results in \cite{ciliberto2021} and \cite{sampling-ulysse}. The former studies the $L^2$ convergence of $\hat f$ to $f$ when the training set is sampled from the target density, using the full-rank counterpart to \cref{alg:learn}. The latter studies convergence in Hellinger distance using \cref{alg:learn}. Both works use the insights of \cite{less-is-more}.
+We build on the results in \cite{rudi2021psd} and \cite{sampling-ulysse}. The former studies the $L^2$ convergence of $\hat f$ to $f$ when the training set is sampled from the target density, using the full-rank counterpart to \cref{alg:learn}. The latter studies convergence in Hellinger distance using \cref{alg:learn}. Both works use the insights of \cite{rudi2015less}.
 
 \cref{alg:learn} finds a solution to \cref{eq:learning-problem} in the reproducing kernel Hilbert space $\mathcal H_\eta$ associated to $k_\eta$ where $\eta$ is chosen as a function of the desired precision $\epsilon$. \cref{theorem:learning} proves that $\hat f$ converges to $f$ in $L^\infty$, with optimal rates \citep{wendland2004scattered}. In particular, to learn $f$ uniformly to precision $\epsilon$, $N\approx\epsilon^{-\frac{2d}{2\beta -d}}$ function evaluations and a model with $M \approx N$ anchor points suffices.
 

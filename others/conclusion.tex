@@ -1,6 +1,9 @@
-\addchapnonumber{Conclusion et perspectives}
+\chapter{Conclusion \& Perspectives}\label{ch:conclusion}
 
-In this thesis, we developed and studied methods for leveraging structure in machine learning and statistical inference problems. First, we focused on invariance to smooth transformations on general spaces, developing a divergence between data points that is invariant to smooth diffeomorphisms. This made the case for casting data points as functions, unlocking a richer topology with better tools for analysis. Second, we developed a divergence to compare time-series that accounts for misalignment and time-warping. It should be seen as a principled alternative to Dynamic Time Warping, with strong theoretical properties such as invariance and differentiability. Finally, we combined Markovian structure with the non-negativity constraint of probability densities to develop a non-linear filter with stability and robustness guarantees that leverages the smoothness of the transition kernels.
+\section{Conclusion}
+In this thesis, we developed and studied methods for leveraging structure in machine learning and statistical inference problems. First, we focused on invariance to smooth transformations on general spaces, developing a divergence between data points that is invariant to smooth diffeomorphisms. This made the case for casting data points as functions, unlocking a richer topology with better tools for analysis.
+Second, we developed a divergence to compare time-series that accounts for misalignment and time-warping. It should be seen as a principled alternative to Dynamic Time Warping, with strong theoretical properties such as invariance and differentiability.
+Finally, we combined Markovian structure with the non-negativity constraint of probability densities to develop a non-linear filter with stability and robustness guarantees that leverages the smoothness of the transition kernels.
 
 \paragraph{}
 Taken as a whole, our work underscores the importance of embedding structure into algorithm design. By enforcing invariances and using all intrinsic model characteristics, we pave the way for more effective methods. Our three contributions are supported by theoretical guarantees and empirical evidence.
@@ -17,25 +20,25 @@ Expanding on the concept of invariance, we developed DiffyTW to address the chal
 \subparagraph{}
 Lastly, we leveraged efficient models for approximating probability densities to design an efficient non-linear filter for HMMs. The algorithm works in two steps: first, learning approximations of the transition kernels as PSD models ; then, using these models to compute the filtering iterations in closed-form. The first step can be solved as a convex problem, with optimal learning rates. We then control the error accumulated in the second step due to the approximate models. We show the filter is stable (assuming the system mixing) and robust to model approximation. In fact, we show the robustness bound can be made as small as needed with more training data is available. Because it leverages the smoothness of the transition densities, we show the proposed algorithm can beat the particle filter is terms of computational complexity in certain situations.
 
-\section*{Future research directions \& open problems}
+\section{Future research directions \& open problems}
 
 We close this thesis by proposing future research directions and open problems.
 
-\paragraph{Integrating Diffy into machine learning algorithms}
+\subsection{Integrating Diffy into machine learning algorithms}
 \cite{bietti} show that is situations where the target model is invariant, there is a gain in sample complexity to use invariant or stable kernels. This makes integrating Diffy into machine learning algorithms a promising direction of research.
 
 \cite{thiry} explain the performance of CNNs by showing that they can be approximated by much simpler dictionary-based models. In their method, the dictionary is composed of random patches sampled from the dataset. Their model is an embedding function with a linear classifier. The embedding function is an encoding of each patch in the image with respect to patches in the dictionary, according to the Euclidean distance. Computing the Euclidean distance between normalized patches is equivalent to computing a convolution, which makes this model comparable to a CNN with a fixed set of filters, corresponding to the dictionary. This simple model has translation invariance like a CNN. Another avenue for future investigation is to use Diffy to encode patches and leverage invariances in images. \emph{This direction was also presented in the conclusion of \cref{ch:diffy}.}
 
-\paragraph{Extending PSD models}
+\subsection{Extending PSD models }
 In \cref{sec:proof-ops} of \cref{ch:hmm}, we present a generalization of PSD models using different, non-diagonal precision matrices for each basis function.
 
-\subparagraph{Filtering with Generalized Gaussian PSD Models} Gaussian PSD models have fixed anchor points and precision matrices after the first filtering iteration (see \cref{theorem:algorithm}). We rightly focused on the computational interest of this since it implies that the computational complexity of the filtering iteration does not increase through time. However, this is no longer the case with Generalized Gaussian PSD Models.
+\subsubsection{Filtering with Generalized Gaussian PSD Models} Gaussian PSD models have fixed anchor points and precision matrices after the first filtering iteration (see \cref{theorem:algorithm}). We rightly focused on the computational interest of this since it implies that the computational complexity of the filtering iteration does not increase through time. However, this is no longer the case with Generalized Gaussian PSD Models.
 
 On one hand, this creates a computational burden, with complexity increasing exponentially through time, akin to what happens when combining Gaussian Mixture Models. We proposed to reduce this by compressing the filtering distribution after each iteration. If the compressed model is taken to be a Gaussian PSD Model, this can be achieved by solving a convex optimization problem for instance with \cref{alg:learn}, or using a non-convex solver to learn another Generalized Gaussian PSD Model with fewer anchor points.
 
 On the other, because the anchor points and precision matrices evolve over iterations, the analysis we do in \cref{ch:hmm} cannot be extended directly. Studying the evolution of the precision matrices resembles a hardened version of the Riccati equation problem, which is already very difficult. Attacking the problem from the point of view of the function spaces could prove useful to obtain similar theoretical guarantees as for the Gaussian PSD Model case.
 
-\subparagraph{Learning kernel parameters \& Squared-Neural Families} If $A$ is PSD matrix of size $M$ with rank $r \leq M$, we can write the PSD model induced by $A$ at anchor points $\tilde x_k$ as:
+\subsubsection{Learning kernel parameters \& Squared-Neural Families} If $A$ is PSD matrix of size $M$ with rank $r \leq M$, we can write the PSD model induced by $A$ at anchor points $\tilde x_k$ as:
 \begin{equation}
     f(x) = \left\Vert R\Phi(x)\right\Vert_2^2
 \end{equation}
