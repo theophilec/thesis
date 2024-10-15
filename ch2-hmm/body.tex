@@ -149,7 +149,7 @@ We build on the results in \cite{rudi2021psd} and \cite{sampling-ulysse}. The fo
 \cref{alg:learn} finds a solution to \cref{eq:learning-problem} in the reproducing kernel Hilbert space $\mathcal H_\eta$ associated to $k_\eta$ where $\eta$ is chosen as a function of the desired precision $\epsilon$. \cref{theorem:learning} proves that $\hat f$ converges to $f$ in $L^\infty$, with optimal rates \citep{wendland2004scattered}. In particular, to learn $f$ uniformly to precision $\epsilon$, $N\approx\epsilon^{-\frac{2d}{2\beta -d}}$ function evaluations and a model with $M \approx N$ anchor points suffices.
 
 \begin{theorem}\label{theorem:learning}
-Let $\beta > d/2$ and $\theta^{-1} < 1 + 2\beta/d$.  Let $f:\Omega \to \mathbb R$ such that $f$ verifies \cref{assumption:target_function}. Set $M \geq C^\prime (\log(\frac{1}{\epsilon}))^d\log(\frac{1}{\delta\epsilon})\epsilon^{-d/\beta}$ and $n \geq C^\prime \epsilon^{-2 d/\beta} \log \frac{1}{\delta}$. Consider the set of anchor points $\tilde X \in \mathbb R^{M \times d}$ and the set of training points $X \in \mathbb R^{n \times d}$ sampled independently and uniformly from $\Omega = (-1, 1)^d$. Let $\epsilon\leq \epsilon_0$. Let $\eta = \epsilon^{-2/\beta} \, 1_d$ and $\mathcal H_\eta$ the RKHS associated to $k_\eta$. Let $\hat a$ solution to the kernel ridge regression problem defined in \cref{eq:learning-problem}. We denote $\hat g(\cdot) = \hat g(\cdot ~; \hat a, \tilde X, \eta)$ the estimator of $g$ and $\hat f = \hat g^2$. With probability at least $1 - 3\delta$,
+Let $\beta > d/2$ and $\theta^{-1} < 1 + 2\beta/d$.  Let $f:\Omega \to \mathbb R$ such that $f > 0$ and $f \in W^\beta_2$. Set $M \geq C^\prime (\log(\frac{1}{\epsilon}))^d\log(\frac{1}{\delta\epsilon})\epsilon^{-d/\beta}$ and $n \geq C^\prime \epsilon^{-2 d/\beta} \log \frac{1}{\delta}$. Consider the set of anchor points $\tilde X \in \mathbb R^{M \times d}$ and the set of training points $X \in \mathbb R^{n \times d}$ sampled independently and uniformly from $\Omega = (-1, 1)^d$. Let $\epsilon\leq \epsilon_0$. Let $\eta = \epsilon^{-2/\beta} \, 1_d$ and $\mathcal H_\eta$ the RKHS associated to $k_\eta$. Let $\hat a$ solution to the kernel ridge regression problem defined in \cref{eq:learning-problem}. We denote $\hat g(\cdot) = \hat g(\cdot ~; \hat a, \tilde X, \eta)$ the estimator of $g$ and $\hat f = \hat g^2$. With probability at least $1 - 3\delta$,
 \begin{align}
     \Vert \hat f - f \Vert_{L^\infty(\Omega)}\leq C \Vert \sqrt{f}\Vert_{W^\beta_2(\Omega)}^2\epsilon^{1-\frac{d}{2\beta}}
 \end{align}
@@ -158,6 +158,9 @@ where $C, C^\prime$ are constants depending only on $\beta, d$ and independent o
 %%
 We prove \cref{theorem:learning} in \cref{sec:proof-learning}. A sketch is given in \cref{sec:sketches-learning}.
 
+\begin{remark}
+In the context of filtering, we are interested in the case where $f > 0$ and $f\in W^\beta_2$, thanks to the mixing hypothesis introduced in \cref{assumption:mixing}. These conditions imply \cref{assumption:target_function}. In the more general case where $f$ touches zero, an identical result can be obtained by changing ``constant'' terms in front of the rate as described in \cite{sampling-ulysse} (basically changing the norm since $\sqrt{f}$ is not in $W^\beta_2$).
+\end{remark}
 \subsection{Sketch of the proof of \cref{theorem:learning}}\label{sec:sketches-learning}
 
 We denote $f$ the target function and $g = \sqrt{f}$, and $\hat g$ the solution to \cref{eq:learning-problem} and $\hat f = \hat g^2$.
