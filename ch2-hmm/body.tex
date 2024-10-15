@@ -250,7 +250,7 @@ $$M \geq C^\prime(\log\left(1/\varepsilon\right))^D\log\left(1/\varepsilon\delta
 %
 then with probability at least $1-6\delta$, the following holds: for any $k \in \N$,
 \begin{align}
-    \Vert \pi_k - \hat\pi_k\Vert_{TV} ~~\leq~~ \frac{C}{\mixing^2}\left(\frac{1-\mixing^2}{1 + \mixing^2}\right)^{k-1}\|\pi_0 - \hat{\pi}_0\|_{TV} ~~+~~ \frac{\varepsilon}{\sigma},
+    \Vert \pi_k - \hat\pi_k\Vert_{TV} ~~\leq~~ \frac{C}{\mixing^2}\left(\frac{1-\mixing^2}{1 + \mixing^2}\right)^{k-1}\|\pi_0 - \hat{\pi}_0\|_{TV} ~~+~~ \left(1 + \frac{C}{\mixing^4}\right)\frac{\varepsilon}{\sigma},
 \end{align}
 where $\hat{\pi}_1,\dots, \hat{\pi}_k$ are computed using \cref{alg:fullfilter}. Moreover $C=\frac{2}{\log 3}$ and $C^\prime$ depends only on $\|\sqrt{Q}\|_{W^\beta_2}, \|\sqrt{G}\|_{W^\beta_2}, \beta, d$.
 \end{theorem}
@@ -262,7 +262,7 @@ The theorem above shows that the distance between the probability $\hat \pi_k$ r
 \item[(2)] the second terms accounts for robustness, it does not increase in $k$ and we can make it arbitrarily small by learning more precise $\hat{Q}, \hat{G}$, i.e. by increasing $M, n$.
 \end{enumerate}
 
-Assuming that $\hat{\pi}_0 = \pi_0$ the proposed algorithm \cref{alg:fullfilter} for any $k \in\N$ achieves an error $\|\pi_k - \hat{\pi}_k\|_{TV} \leq \varepsilon/\sigma$ producing a Gaussian PSD model $\hat{\pi}_k$ that satisfies
+Assuming that $\hat{\pi}_0 = \pi_0$ the proposed algorithm \cref{alg:fullfilter} for any $k \in\N$ achieves an error $\|\pi_k - \hat{\pi}_k\|_{TV} \leq \left(1 + \frac{C}{\mixing^4}\right)\frac{\varepsilon}{\sigma}$ producing a Gaussian PSD model $\hat{\pi}_k$ that satisfies
 $$ \hat{\pi}_k ~~\textrm{of order}~~  O(\varepsilon^{-\frac{2D}{\beta - D/2}}), ~~\textrm{and computational cost} ~~ O(\varepsilon^{-\frac{6D}{\beta - D/2}}),$$
 for \cref{alg:fullfilter}. The cost of learning $\hat{Q}, \hat{G}$ via \cref{alg:learn} is paid only once at the beginning and is of $O(\varepsilon^{-\frac{3/2D}{\beta - D/2}})$, if we use fast algorithms as the ones recalled in \cref{sec:learning}. Note that the proposed approach is adaptive to the regularity of the kernels $Q$ and $G$. In particular, if they are differentiable many times, i.e. $\beta \geq 4.5 D$, then the order of $\hat{\pi}_k$ becomes only  $O(\varepsilon^{-1/2})$, i.e.
 $$

@@ -190,12 +190,12 @@ We now obtain the statement of \cref{theorem:bound-diagonal}. Let $\varepsilon >
 By applying \cref{prop:optimal-forgetting} to $R_n$, we obtain that:
 
 \begin{equation}\label{eq:forgetting}
-\Vert \pi_n^\nu - \pi^{\hat\pi_0}_n \Vert_{TV} \leq \frac{C}{\mixing^2}\left(\frac{1 - \mixing^2}{1 + \mixing^2}\right)\Vert \nu - \hat \pi_0\Vert_{TV}.
+\Vert \pi_n^\nu - \pi^{\hat\pi_0}_n \Vert_{TV} \leq \frac{C}{\mixing^2}\left(\frac{1 - \mixing^2}{1 + \mixing^2}\right)^{n-1}\Vert \nu - \hat \pi_0\Vert_{TV}.
 \end{equation}
 
 \paragraph{}
 
-Let $\Delta= \left(\frac{\varepsilon}{C^\prime}\right)^{\frac{2\beta}{2\beta - D}}$. Applying the developments in \cref{sec:proof-bound-model-error}, (1) $M, n$ can be chosen according to \cref{theorem:bound-diagonal}, (2)  with probability at least $1-6\delta$,
+Let $\Delta= \left(\frac{\varepsilon}{C^\prime}\right)^{\frac{2\beta}{2\beta - D}}$. Applying the developments in \cref{sec:proof-bound-model-error}, (1) $M, n$ can be chosen according to the statement of \cref{theorem:bound-diagonal}, (2)  with probability at least $1-6\delta$,
 
 \begin{align}\label{eq:delta-epsilon}
     \delta_n \leq \frac{\varepsilon}{\mixing}
