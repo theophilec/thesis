@@ -16,13 +16,13 @@ Functional data analysis methods have also been proposed, especiallly around the
 \paragraph{Approach \& Contributions}
 DiffyTW is divergence between functions on $[0,1]$ representing time-series. It is provably invariant to subset of smooth reparametrizations. The set of transformations it is invariant to can be tuned. It can be robustly and efficiently used to compare time-series, by solving a quadratic program. DiffyTW produces a dissimilarity score and a reparametrization that aligns the time series. DiffyTW is differentiable with respect to its input and can be integrated in wider machine learning workflows. We illustrate and study DiffyTW's behavior on time series empirically.
 
-\paragraph{Notation} In this chapter, a time series is represented by a sample pattern $(t_i)_{1 \leq i \leq n}$ such that $0 = t_1 < \ldots < t_n = 1$ (not necessarily random) and values $(f_i)_{1\leq i\leq n}$ where $f_i \in\mathbb R^d$. $k$ is a positive definite kernel on $\mathbb R$ with reproducing kernel Hilbert space $\mathcal F$. $K$ is a positive definite kernel with reproducing kernel Hilbert space $\mathcal H$. Functions $f,g:[0,1] \to \mathcal X$, where $\mathcal X$ is a metric space, generally $\mathcal R^d$.
+\paragraph{Notation} In this chapter, a time series is represented by a sample pattern $(t_i)_{1 \leq i \leq n}$ such that $0 = t_1 < \ldots < t_n = 1$ (not necessarily random) and values $(f_i)_{1\leq i\leq n}$ where $f_i \in\mathbb R^d$. $k$ is a positive definite kernel on on$\mathbb R$ with reproducing kernel Hilbert space $\mathcal F$ and that verifies $k(x, y) > 0$ for any $x, y \in\mathbb R^2$. $K$ is a positive definite kernel on $\mathbb R^d$ with reproducing kernel Hilbert space $\mathcal H$ and feature map $\phi$. Functions $f,g:[0,1] \to \mathcal X$, where $\mathcal X$ is a metric space, generally $\mathcal R^d$.
 
 \section{DiffyTW}
 In this section, we introduce DiffyTW, a divergence between functions $[0,1] \to \mathcal X$ which is invariant to a chosen class of diffeomorphic reparametrizations of $[0,1]$.
 
 \subsection{Intuition}\label{sec:diffytw-intuition}
-We call \emph{reparametrization} any increasing, smooth bijective function $Q:[0,1] \to [0,1]$. Let $\mathcal Q$ be a set of such functions, which accurately described the set of reparametrizations one wishes to capture. Our goal is to concieve a divergence such that $d(f\circ Q, f) = 0$ for any $Q\in\mathcal Q$ and any $f:[0,1] \to \mathbb R^d$.
+We call \emph{reparametrization} any increasing, smooth bijective function $Q:[0,1] \to [0,1]$. Let $\mathcal Q$ be a set of such functions, which accurately described the set of reparametrizations one wishes to capture. Our goal is to conceive a divergence such that $d(f\circ Q, f) = 0$ for any $Q\in\mathcal Q$ and any $f:[0,1] \to \mathbb R^d$.
 
 A key idea is to compare the integrals of $f\circ Q$ and $f$. Indeed, this allows one to apply the change of variable theorem from \cite{aliprantis1998principles} recalled in \cref{thm:change-of-variable} in \cref{ch:diffy}:
 \begin{equation}
@@ -38,12 +38,12 @@ This was also proposed in \cref{ch:diffy} for handling invariances on general da
 \paragraph{}
 Such spurious minimizers can be avoided with two refinements.
 
-First, to ensure matchings work for all features of the time series, we embed their values with $\phi$, chosen as a high-dimensional embedding. This avoids the minimizer above, but also handles the case where $f(x)\in\mathbb R^d$. Indeed, if the match is not perfect, then $f$ and $g$ can be made close by favoring the coordinates with the highest magnitude. This is avoided when embedding with $\phi$.
+First, to ensure matchings work for all features of the time series, we embed their values with $\phi$, chosen as a high-dimensional embedding. This avoids the minimizer above, but also handles the case where $f(x)\in\mathbb R^d$. Indeed, if the match is not perfect, then $f$ and $g=f\circ Q$ can be made close by favoring the coordinates with the highest magnitude. This is avoided when embedding with $\phi$.
 
 Second, we enforce the search space to contain only derivatives of reparametrizations, i.e. we restrict functions $q$ to verify the two following constraints: $q(x) \geq 0, \forall x\in[0,1]$ and $\int_0^1 q(u)du=1$. As a byproduct, retieving $q$ allows us to reconstruct a reparametrization $Q$ and align the time series. This is in contrast to \cref{ch:diffy}, in which we cannot guarantee to reconstruct a warp from (an approximate) determinant Jacobian.
 
 \subsection{Definition of DiffyTW}
-In this work, we call reparametrization any function $Q: [0,1] \to [0,1]$ that is continuously differentiable on $[0,1]$, bijective and inscreasing. Note that we do not require $Q$ to be a diffeomorphism, since we make no assumption about the derivative of its inverse.
+In this work, we call reparametrization any function $Q: [0,1] \to [0,1]$ that is continuously differentiable on $[0,1]$, bijective and increasing. Note that we do not require $Q$ to be a diffeomorphism, since we make no assumption about the derivative of its inverse.
 
 Let $\mathcal F$ be a space of continuous functions $[0, 1] \to \mathbb R$ with a finite number of zeros. Let $\mathcal F_{0,1} \subset \mathcal F$ a subset of $\mathcal F$ such that if $q\in\mathcal F_{0,1}$, $q \geq 0$ and $\int_0^1q(t)dt =1$. We denote $\mathcal Q$ the set of reparametrizations obtained by integrating the elements of $\mathcal F_{0,1}$, i.e.
 \begin{equation}\label{eq:Q-from-F}
@@ -102,7 +102,7 @@ Intuitively, if $Q^\prime$ is an optimal solution to the optimization problem de
 
 \begin{proposition}\label{prop:diffytw-properties} Let $f, g:[0,1] \to\mathbb R^d$. Then, DiffyTW verifies the following properties:
 \begin{enumerate}
-\item[(a)]if $id \in Q$, $d$ is a semi pseudo-distance, i.e. for any $f, g: [0,1] \to\mathcal X$,  $d(f, g)\geq 0$ and $d(f, f)=0$.
+\item[(a)]if $id \in \cal Q$, $d$ is a semi pseudo-distance, i.e. for any $f, g: [0,1] \to\mathcal X$,  $d(f, g)\geq 0$ and $d(f, f)=0$.
 \item[(b)]if $id \in \mathcal Q$ and $\varepsilon >0$, for any $Q_0\in\mathcal Q$ such that $\Delta(f\circ Q_0^{-1}, g) \leq d(f, g) + \varepsilon$, then $d(f \circ Q_0^{-1}, g) \leq d(f, g) + \varepsilon$. In particular, if $\Delta(f\circ Q_0^{-1}, g) = d(f,g)$ then $d(f\circ Q_0^{-1}, g)=d(f, g)$.
 \item[(c)] if $Q_0$ is a reparametrization that leaves $\mathcal Q$ invariant (i.e. $\lbrace Q\circ Q_0 ~\vert~ Q\in \mathcal Q \rbrace = \mathcal Q$), then $d(f\circ Q_0^{-1}, g) = d(f, g)$.
 \end{enumerate}
@@ -199,14 +199,14 @@ DiffyTW is defined by \Cref{prob:qp} as the solution to a quadratic program with
 
 It can be solved using an interior point Newton method, for which several open-source, off-the-shelf solvers exist. We use \texttt{Prox-QP} a solver based on the primal-dual proximal augmented Lagrangian method \citep{fabian}. The time complexity of this kind of method for our situation is $O(M^3)$. As a point of comparison, DTW has time complexity $O(nm)$ where $n, m$ are the lengths of the time series. We also incur quadratic cost of this order to build $K_{ff}$. This cost can be reduced using low-rank approximations for the kernel matrices, and at this stage the computation cost of solving a QP is not a limiting factor for DiffyTW.
 
-Numerically, this sort of solver works best when $P$ is positive definite. To enforce this, we replace $P$ with $P + \lambda I$ in the defintion of Discrete DiffyTW. We analyse the effect of this regularization empricially in \cref{sec:diffytw-experiments}.
+Numerically, this sort of solver works best when $P$ is positive definite. To enforce this, we replace $P$ with $P + \lambda I$ in the definition of Discrete DiffyTW. We analyse the effect of this regularization empricially in \cref{sec:diffytw-experiments}.
 
 \subsection{Approximation error}
 \cref{corollary:discrete-invariance} illustrates that the definition of Discrete DiffyTW is ``tight'' with respect to that of DiffyTW if the underlying signals are piece-wise constant and diffeomorphic. In this section, we raise three questions : how good is this approximation for arbitrary signals $f$ and $g$? how dependent is $\hat d_M(\hat f, \hat g)$ on the sampling patterns? how should one go about choosing $k$, $\tilde x$ and $K$? These questions are answered in \cref{thm:rectangle-approx}:
 
 \begin{theorem}\label{thm:rectangle-approx}
 Let $f,g:[0,1] \to \mathbb R^d$ be two $L$-Lipchitz functions. Let $(x_i)_{1\leq i \leq n}$ and $(y_j)_{1\leq j\leq m}$ two sampling patterns. We denote $\hat f = (x_i, f(x_i))$ and $\hat g = (y_j, g(y_j))$.
-If $K$ is the RBF kernel with $\gamma > 0$ and all functions in $\mathcal F_{0,1}$ are bounded by a constant $C_\mathcal F$,
+If $K$ is the Gaussian kernel with parameter $\gamma > 0$ and all functions in $\mathcal F_{0,1}$ are bounded by a constant $C_\mathcal F$,
 \begin{align}
     \left\vert \sqrt{d(f, g)} - \sqrt{d(f \circ s, g\circ r)} \right\vert &\leq C_\gamma \sqrt{L}\left(C_\mathcal F \sum_{i=1}^{n-1} (x_{i+1} - x_i)^{3/2} + \sum_{j=1}^{m-1}(y_{j+1} - y_j)^{3/2}\right).
 \end{align}
@@ -270,7 +270,7 @@ Differentiating through convex problems is a subject of interest in the machine 
 The latter method is used in the deep learning and robotics communities to integrate QPs as layers in neural networks \citep{QP-Layer,optnet}. These works study differentiation the optimal solution of a Quadratic Program for which the constraints also depend on $\theta$. To handle this, the KKT conditions can be expressed as an implicit function problem, and the implicit function theorem applied to differentiate with repect to all parameters implicitly. Handling constraints can make differentiation impossible since when using QPs in a iterative optimization method while training a neural network the constraints may become infeasible. In this case, Extended Conservative Jacobians of the closest feasible QP can be computed instead \citep{QP-Layer}. \citet{optnet} take another approach to handling infeasibility by adding slack variables. As a sanity check, we verify that we recover our result using their method for our setting in \cref{sec:lagrangian}.
 
 \section{Experiments}\label{sec:diffytw-experiments}
-DiffyTW is implemented in the \texttt{difftw} library, open-sourced at \url{github.com/theophilec/diffytw}. This library implements the computation of DiffyTW, the gradient computation using the \texttt{jax} library. It can be used with different QP solvers. When computing DiffyTW, the \texttt{Prox-QP} solver is used \cite{fabian}. When computing the gradient, the \texttt{qpax} solver, introduced by \citet{qpax}.
+DiffyTW is implemented in the \texttt{difftw} library, open-sourced at \url{github.com/theophilec/diffytw}. This library implements the computation of DiffyTW, the gradient computation using the \texttt{jax} library. It can be used with different QP solvers. When computing DiffyTW, the \texttt{Prox-QP} solver is used \cite{fabian}. When computing the gradient, the \texttt{qpax} solver, introduced by \citet{qpax}, is used.
 
 %In this section, we demonstrate and study DiffyTW's behavior on the UCR dataset. Some takeaways of these experiments are:
 
@@ -303,7 +303,7 @@ The regularization parameter is set to $10^{-5}$.
 
 
 \subsection{Aligning time-series with synthetic reparametrizations}
-To evaluate DiffyTW, we can use sythetic reparametrizations in the same space of functions as that DiffyTW searches over and compare the solution to the original reparametrization. In particular, we can compute the reconstruction errors, comparing $g\circ Q$ and $g \circ \hat Q$ and the Hilbert norm between reparametrization derivates $\Vert q - \hat q\Vert_\mathcal F$. Formally, we have not proved that we should reconstruct a reparametrization but this is the expected behavior, especially since Discrete DiffyTW has a unique solution, is close to DiffyTW applied to the functions, and the reparametrization minimizes DiffyTW with value $0$.
+To evaluate DiffyTW, we can use synthetic reparametrizations in the same space of functions as that DiffyTW searches over and compare the solution to the original reparametrization. In particular, we can compute the reconstruction errors, comparing $g\circ Q$ and $g \circ \hat Q$ and the Hilbert norm between reparametrization derivates $\Vert q - \hat q\Vert_\mathcal F$. Formally, we have not proved that we should reconstruct a reparametrization but this is the expected behavior, especially since Discrete DiffyTW has a unique solution, is close to DiffyTW applied to the functions, and the reparametrization minimizes DiffyTW with value $0$.
 
 In \cref{fig:gamma-sensitivity-50words}, we compute the reconstruction and Hilbert errors for random reparametrizations and different values of the feature kernel. See the caption for details of the setup.
 

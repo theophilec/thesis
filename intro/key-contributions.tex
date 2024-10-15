@@ -36,7 +36,7 @@ Distance-based methods -- such as k-nearest neighbors and k-means -- are widely 
 
 The model in \cite{thiry} enforces translation invariance, like CNNs do, but does not incorporate any of the other invariances that can be useful in computer vision. In practice, there are two main ways of incorporating invariances into a machine learning algorithm: group averaging and data augmentation.
 
-Group averaging implies agreagating features over the set of invariances (which can have a group structure)
+Group averaging implies aggregating features over the set of invariances (which can have a group structure)
 \begin{equation}
     \Phi(x) = \sum_{\tau \in \mathcal T} \phi(\tau \cdot x)
 \end{equation}
@@ -55,7 +55,7 @@ In order to capture a rich set of transformations, representative of naturally o
 In the end, our goal becomes to design $D$ such that if $Q$ is a diffeomorphism and $f$ a datapoint (function), $D(f\circ Q, f) = 0$ (or is very small).
 
 \subparagraph{Change of variable theorem}
-In addition to being a rich class of transformations, smooth diffeomorphisms have the added benifit of working well with integration.
+In addition to being a rich class of transformations, smooth diffeomorphisms have the added benefit of working well with integration.
 $f$ and $f \circ Q$ have the same integral up to reweighting by $\vert \nabla Q(x)\vert$. We can make this stronger (especially for low-dimensional data like images, since $f(x)$ only has 3 dimensions) by embedding image features in an RKHS. Then, weighting the integral of $\phi(f \circ Q)$ such as it matches that of $\phi(f)$ is akin to making all the statistics of the images $f\circ Q$ and $f$ match, while reweighting certain parts of $f\circ Q$. The reweighting $q$ that minimizes the distance between $\int \phi(f\circ Q(x))q(x)dx$ and $\int \phi(g(x))dx$ is $q(x) = \vert \nabla Q(x)\vert$. We then add two ingredients to this intuition to make it work. First, because we cannot ensure that a given reweighting is indeed the jacobian determinant term of a (global) diffeomorphism, we enforce that the reweightings match over the image. The intuition behind this is seeing reweightings as selecting a region of an image and enforcing the statistics to match. Second, we intuitively wish to consider only ``simple'' regions, i.e. smooth reweightings, and for this we regularize over the choice of reweightings. This interpretation has the added value of giving the dissimilarity a explainibility aspect: we can visualize which regions of an image are matching.
 
 \paragraph{Main contributions}
@@ -129,7 +129,7 @@ We posit that to be robust to these discrepancies, divergences between time-seri
 \paragraph{Intuition}
 The key insight to our approach is that a smooth reparametrization over $[0,1]$ is an increasing, smooth bijective function over $[0,1]$. Since these are 1D functions, they can be very efficiently estimated using function approximation. We combine this with the idea from \cref{sec:contributions-ch2} to compare reweighted integrals. In this case, the derivative of a repametrization $Q$ makes the statistics of a time-series and its warped counterpart match.
 
-DiffyTW is designed to produce a proper smooth reparametrization that aligns the two time-series, in contrast to \cref{ch:diffy}. Indeed, in higher-dimension, one cannot infer $Q$ from $\vert \nabla Q\vert$ and more generally, given a smooth, non-negative real function $q$, therethere is no guarantee that there exists a diffeomorphism $Q$ such that $q(x) = \vert \nabla Q(x) \vert$.
+DiffyTW is designed to produce a proper smooth reparametrization that aligns the two time-series, in contrast to \cref{ch:diffy}. Indeed, in higher-dimension, one cannot infer $Q$ from $\vert \nabla Q\vert$ and more generally, given a smooth, non-negative real function $q$, there is no guarantee that there exists a diffeomorphism $Q$ such that $q(x) = \vert \nabla Q(x) \vert$.
 
 As we explain below and prove in \cref{ch:diffytw}, we can define a discrete counterpart for DiffyTW for time-series that is consistent with DiffyTW. Intuitively, this consistency -- which indirectly guarantees that certain invariance properties are ``transferred'' to Discrete DiffyTW -- relies on considering functions to interpolate the time-series and defining Discrete DiffTW to coincide with their DiffyTW value.
 

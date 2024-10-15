@@ -117,12 +117,12 @@ In fact, each p.d. kernel has a unique RKHS, and vice versa any RKHS has a uniqu
 The kernel embedding explicitly links $\mathcal X$ and $\mathcal H$.
 \begin{mdframed}
 \begin{definition}
-We call kernel embedding the map $\phi: \mathcal X \to \mathbb \mathcal H$ defined by for any $x\in\mathcal X$,
+We call kernel embedding the map $\phi: \mathcal X \to \mathcal H$ defined by for any $x\in\mathcal X$,
 $$ \phi(x) = k_x.$$
 \end{definition}
 \end{mdframed}
 
-The map $\phi$ lifts $x\in\mathcal X$ into $\mathcal H$. Intuitively, it does so in a way that is useful for the task at hand. If we are doing classification, then we should choose $\phi$ (i.e. $k$ and $\mathcal H$) such that it is easier to differentiate between different classes among vectors $\phi(x_1)$ and $\phi(x_2)$ then among $x_1$ and $x_2$. %Generally, we never compute $\phi(x)$ nor express it explicitly. Indeed, $\mathcal H$ is often infinite dimensional. Data points are never \emph{really} embedded in $\mathcal H$. This is done implicitly through kernel evaluations, as we explain in the next paragraph.
+The map $\phi$ lifts $x\in\mathcal X$ into $\mathcal H$. Intuitively, it does so in a way that is useful for the task at hand. If we are doing classification, then we should choose $\phi$ (i.e. $k$ and $\mathcal H$) such that it is easier to differentiate between different classes among vectors $\phi(x_1)$ and $\phi(x_2)$ than among $x_1$ and $x_2$. %Generally, we never compute $\phi(x)$ nor express it explicitly. Indeed, $\mathcal H$ is often infinite dimensional. Data points are never \emph{really} embedded in $\mathcal H$. This is done implicitly through kernel evaluations, as we explain in the next paragraph.
 
 \paragraph{Evaluating a function in $\mathcal H$}
 To understand the importance of kernel methods, let us consider a finite combination of functions $\phi(x_k)$ for some $x_k\in\mathcal X$, \emph{e.g.\ } $f= \sum_{k=1}^k w_k \phi(x_k)$. Note that $f\in\mathcal H$ since $\phi(x)\in\mathcal H$ for any $x\in\mathcal X$ by hypothesis. For now, $f$ is expressed as an element in a functional space. In order to evaluate $f$ at $x\in\mathcal X$, using the reproducing property and linearity, we see that:

@@ -56,11 +56,11 @@ Gaussian PSD Models, introduced in \cite{rudi2021psd}, is a family of models for
 
 When defined on the product of Euclidean spaces $\mathbb R^d \times \mathbb R ^{d^\prime}$ with anchor points $[X, Y]$ (the row-wise concatenation of $X$ and $Y$) and precision vector $\eta = (\eta, \eta^\prime)$ (column-wise concatenation of $\eta_1$ and $\eta_2$), we denote denote the model $f(x, y ; A, [X, Y], (\eta_1, \eta_2))$. This split notation is justified by the fact that $k_\eta((x, y), (u, v)) = k_{\eta_1}(x, u)k_{\eta_2}(y, v)$.
 
-\begin{example}[Gaussian Mixture Model]\label{ex:mixtures} Let $p(x) = \sum_{k=1}^M\alpha_kp(x|\mu_k, \eta)$ where $\mu_k\in\mathbb R^d$, $\eta_k\in\mathbb R^d_+$, and $\alpha \in\mathbb R^d_+$ with $\sum_{k=1}^M\alpha_k = 1$ and $p(x|\mu_k, \eta)$ is the Gaussian density with mean $\mu$ and precision vector $\eta$. $p$ is known as a Gaussian Mixture Model. $p$ can be written as a Gaussian PSD Model of order $M$ $f(x ; A, X, \eta / 2)$ with $A=\textrm{diag}(a)$ and $X = (\mu_1 \ldots \mu_M)^\top $.
+\begin{example}[Gaussian Mixture Model]\label{ex:mixtures} Let $p(x) = \sum_{k=1}^M\alpha_kp(x|\mu_k, \eta)$ where $\mu_k\in\mathbb R^d$, $\eta_k\in\mathbb R^d_+$, and $\alpha \in\mathbb R^d_+$ with $\sum_{k=1}^M\alpha_k = 1$ and $p(x|\mu_k, \eta)$ is the Gaussian density with mean $\mu$ and precision vector $\eta$. $p$ is known as a Gaussian Mixture Model. $p$ can be written as a Gaussian PSD Model of order $M$ $f(x ; A, X, \eta / 2)$ with $A=\textrm{diag}(\alpha)$ and $X = (\mu_1 \ldots \mu_M)^\top $.
 \end{example}
 
 \begin{example}[Squared linear Gaussian model]\label{ex:sq-linear-model}
-Let $g(x) = w^\top \Phi_\eta(x)$ where $w\in\mathbb R^d$ and $\Phi_\eta(x)= (k_\eta(x, x_1), \ldots, k_\eta(x, x_M)^\top $. Then, $f=g^2$ can be written as a Gaussian PSD Model of order $M$ with $A=ww^\top $ and $X = (x_1, \ldots, x_M)^\top $. Indeed, $f(x) = (w^\top \Phi_\eta(x))^2 = \Phi_\eta(x)^\top ww^\top \Phi_\eta(x)$.
+Let $g(x) = w^\top \Phi_\eta(x)$ where $w\in\mathbb R^d$ and $\Phi_\eta(x)= (k_\eta(x, x_1), \ldots, k_\eta(x, x_M))^\top $. Then, $f=g^2$ can be written as a Gaussian PSD Model of order $M$ with $A=ww^\top $ and $X = (x_1, \ldots, x_M)^\top $. Indeed, $f(x) = (w^\top \Phi_\eta(x))^2 = \Phi_\eta(x)^\top ww^\top \Phi_\eta(x)$.
 \end{example}
 
 
@@ -85,7 +85,7 @@ The proof of the proposition above can be found in \citep[Appendix F]{rudi2021ps
 Note that a Markov transition $g(x) = \int Q(u, x)f(u)du$, when $Q$ and $f$ are Gaussian PSD models, can be decomposed in terms of product and marginalization and computed in closed form, with $g$ again a Gaussian PSD Model. More importantly,  $g$ is of order $M_1$ (instead of the naive $M_1\times M_2$ according to \cref{prop:ops-diagonal}). This is summarized in the following proposition
 
 \begin{proposition}[Constant order for Markov transition]\label{prop:markov-step}
-   If $Q(u, x; \theta_Q$ and $f(u; \theta_f)$ are two Gaussian PSD Models of order $M_1$ and $M_2$ respectively, then $g(x) = \int Q(u, x;\theta_Q)f(u;\theta_f)du$, computed via $\productpsd$ and $\marginalpsd$ is a Gaussian PSD Model of order $M_1$.
+   If $Q(u, x; \theta_Q)$ and $f(u; \theta_f)$ are two Gaussian PSD Models of order $M_1$ and $M_2$ respectively, then $g(x) = \int Q(u, x;\theta_Q)f(u;\theta_f)du$, computed via $\productpsd$ and $\marginalpsd$ is a Gaussian PSD Model of order $M_1$.
 \end{proposition}
 The proof of \cref{prop:markov-step} can be found in \citep[Appendix F.5]{rudi2021psd}.
 
@@ -117,7 +117,7 @@ The intuition behind our algorithm is to approximate $g=\sqrt{f}$ using $\hat g$
 
 \paragraph{What about $A$?} In \cref{def:psd-model}, we defined as Gaussian PSD Model as parametrized by a positive semi-definite matrix $A$, not necessarily of rank $1$. $A$ A full-rank estimator $\hat f$ can be also learned, by solving a Semi-Definite Programming problem using \emph{e.g.\ } Newton's method. This does not improve the learning rate, indeed it is minimax optimal. Algorithmically, solving as SDP problem is harder and costs $O(M^4)$.
 
-We use this insight to efficiently approximate a smooth sum-of-squares function $f$ with a Gaussian PSD Model $\hat f$. This approach was first published by \cite{sampling-ulysse} for desity estimation from samples. In \cref{theorem:learning}, we show that this approach attains minimax optimal learning rates for learning smooth non-negative functions from samples.
+We use this insight to efficiently approximate a smooth sum-of-squares function $f$ with a Gaussian PSD Model $\hat f$. This approach was first published by \cite{sampling-ulysse} for density estimation from samples. In \cref{theorem:learning}, we show that this approach attains minimax optimal learning rates for learning smooth non-negative functions from samples.
 
 We approximate $f$ using $\hat f= \hat g^2$ where $\hat g$ is a Gaussian Linear Model learned on $g$. Denoting the Linear Gaussian Model $\hat g(x ; a, \eta, \tilde X) = \sum_{i=1}^M a_ik_\eta(x, \tilde x_i)$ where $a\in\mathbb R^M$, $\eta \in \mathbb R_+^d$, $\tilde X \in \mathbb R^{M\times d}$ and $\lambda > 0$, we introduce the optimization problem used to learn $\hat a$ from data points $X\in\mathbb R^{n\times d}$:
 \begin{align}\label{eq:learning-problem}
@@ -136,7 +136,7 @@ $X \gets \textsc{UniformSample}(\Omega, N)$ \tcp*{sample $N$ points uniformly fr
 $Y \gets (\sqrt{f(x_i)} \vert x_i \in X)$\;\BlankLine
 $\tilde X\gets \textsc{UniformSample}(\Omega, M)$\; \tcp*{sample $M$ points uniformly from $\Omega$} \BlankLine
 $\hat a \gets \textsc{KernelRidgeRegression}(k_\eta, \tilde X, X, Y, \lambda)$ \; \tcp*{solve \cref{eq:learning-problem}} \BlankLine
-$\hat f(x) \gets \textsc{GaussianPSDModel}(aa^\top , X, \eta)$\;\BlankLine
+$\hat f(x) \gets \textsc{GaussianPSDModel}(aa^\top, \tilde X, \eta)$\;\BlankLine
 \KwResult{$\hat f(x)$}
 % \jmlralgorule
 \end{algorithm}
@@ -160,7 +160,7 @@ We prove \cref{theorem:learning} in \cref{sec:proof-learning}. A sketch is given
 
 \subsection{Sketch of the proof of \cref{theorem:learning}}\label{sec:sketches-learning}
 
-We denote $f$ the target function and $g = \sqrt{g}$, and $\hat g$ the solution to \cref{eq:learning-problem} and $\hat f = \hat g^2$.
+We denote $f$ the target function and $g = \sqrt{f}$, and $\hat g$ the solution to \cref{eq:learning-problem} and $\hat f = \hat g^2$.
 
 Since $\Vert f - \hat f\Vert_{L^\infty(\Omega)}\leq \left(2\Vert g\Vert_{L^\infty(\Omega)}+ \Vert g - \hat g\Vert_{L^\infty(\Omega)} \right)\Vert g- \hat g\Vert_{L^\infty(\Omega)}$, we focus on controlling $\Vert g - \hat g \Vert_{L^\infty(\Omega)}$.
 
@@ -174,7 +174,7 @@ Combining all the terms yields the result in \cref{theorem:learning}. See \cref{
 In \cref{sec:operations}, we presented how to efficiently carry out closed-form filtering operations using Gaussian PSD Models. In \cref{sec:learning}, we designed an algorithm for learning optimal approximations of non-negative functions using this family of models. Combining both contributions, in this section, we introduce \textsc{PSDFilter} and study its stability and robustness properties.
 
 \subsection{Setting \& notation}
-\emph{In this section, we more formally present HMM filtering and our notations. The notations are generally those of \cite{cappehmm}. For convenience, we recall all necessary definitions and results in \cref{sec:markov}.}
+\emph{In this section, we more formally present HMM filtering and our notations. The notations are generally those of \cite{cappehmm}. For convenience, we recall all necessary definitions and results in \cref{sec:markov}. Recall that we use the same notation for a Markov kernel and its densities (in this chapter, all Markov kernels admit densities).}
 
 
 Consider two discrete Markov Chains $(X_n)\in E^\mathbb N$ - the hidden state chain -  and $(Y_n)\in F^\mathbb N$ - the observations. We assume that $(X_t, Y_t)$ has a Hidden Markov Model structure described by $(\nu, Q, G)$ where $\nu\in\mathcal P(E)$ is an initial distribution, $Q:E\times E \to \mathbb R$ is a Markov kernel, and $G: E\times F \to \mathbb R$ is a transition kernel. Regardless of more technical considerations, a Hidden Markov Model is characterized by:
@@ -190,7 +190,7 @@ The goal of filtering is to compute the distribution of $X_n$ conditionally on p
 
 Importantly, $\pi_n(dx)$ is computed recursively using $Q$ and $G$ and beginning from $\nu$:
 \begin{align}\label{eq:iteration}
-\pi_n = \bar{R}_n(\pi_{n-1}), ~~\textrm{where}~~ \bar{R}_n(\mu)(\cdot) := \frac{R_n \mu \, (\cdot)}{R_n\mu\,(E)} ~~\textrm{and}~~  R_n \mu \, (\cdot) := \int Q(u, \cdot)G(x, y_n) d\mu(u)
+\pi_n = \bar{R}_n(\pi_{n-1}), ~~\textrm{where}~~ \bar{R}_n(\mu)(dx) := \frac{R_n \mu \, (dx)}{R_n\mu\,(E)} ~~\textrm{and}~~  R_n \mu \, (dx) := \int Q(u, dx)G(x, y_n) d\mu(u)
 \end{align}
 which recovers \cref{eq:bayes-0}.
 
@@ -289,7 +289,7 @@ Seen as a mixture (with potentially negatively weighted components), Gaussian Mi
 \begin{figure}[ht!]
 \includegraphics[width=\textwidth]{ch2-hmm/figures/hmm-diagonal-vs-full.pdf}
 \end{figure}
-In cases where $f(u, x) = Q(u, x)$ a transition kernel, we know that $u$ and $x$ are strongly ``correlated''. Indeed, $Q(u, x)$ is a conditional density. Thus, having non-diagonal precision matrices can be more effetctive. In particular, when $Q(u, x)$ is a Gaussian Linear Conditional Distribution, one Gaussian component with non-diagonal precision matrix is enough to approximate $Q$ uniformly. We prove this in \cref{theorem:kalman}.
+In cases where $f(u, x) = Q(u, x)$ a transition kernel, we know that $u$ and $x$ are strongly ``correlated''. Indeed, $Q(u, x)$ is a conditional density. Thus, having non-diagonal precision matrices can be more effective. In particular, when $Q(u, x)$ is a Gaussian Linear Conditional Distribution, one Gaussian component with non-diagonal precision matrix is enough to approximate $Q$ uniformly. We prove this in \cref{theorem:kalman}.
 
 We introduce Generalized Gaussian PSD Models as a family of non-negative combinations of such components. In this section, we show that Generalized Gaussian PSD Models share many of the properties of Gaussian PSD Models. In addition, we show in \cref{theorem:kalman} that they generalize Kalman filters to more general initial distributions such as multi-modal models.
 

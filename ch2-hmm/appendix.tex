@@ -34,16 +34,16 @@ By abuse of notation, when $Q$ admits a density with respect to the Lebesgue mea
 Note that $R_n(u, x)= Q(u, x)G(x, z_n)$ is indeed an unnormalized transition kernel.
 
 \begin{definition}[Effects of kernels]
-    Let $K$ be an unnformalized kernel on $(E, \mathcal E)\times (F, \mathcal F)$, $\mu\in\mathcal M_+(E)$ and $f$ a bounded function $f:E\to\mathbb R$.
+    Let $K$ be an unnormalized kernel on $(E, \mathcal E)\times (F, \mathcal F)$, $\mu\in\mathcal M_+(E)$ and $f$ a bounded function $f:E\to\mathbb R$.
 
     Then, $K\mu\in\mathcal M_+(F)$ with for any $A\in\mathcal F$,
     \begin{align}
         K\mu(A) = \int K(u, A)\mu(du),
     \end{align}
 
-    and $Kf: E \to \mathbb R$ is a bounded function with for any $u\in E$,
+    and $Kf: E \to \mathbb R$ is a bounded function with for any $x\in E$,
     \begin{align}
-        Kf(u) = \int K(u, A)\mu(du).
+        Kf(x) = \int f(u)K(x, du)\mu(du).
     \end{align}
 \end{definition}
 \subsection{Hidden Markov Models}
@@ -95,7 +95,7 @@ If $K$ is mixing for a measure $\xi$ and a constant $\mixing$ we write that $K$ 
 \end{proposition}
 
 \begin{proposition}
-    If $K$ is mixing with $\mixing$ and $\xi$, then for any $\mu$,
+    If $K$ is mixing with $\mixing$ and $\xi$, then for any $\mu$ such that $\mu(E)=1$,
     \begin{equation}
         \mixing\xi(A)\leq K\mu(A)\leq \frac{1}{\mixing}\xi(A).
     \end{equation}
@@ -171,16 +171,16 @@ Let $K$ be an unnormalized transition kernel.
 
 These properties are proven in \cite{cohen}, which studies the Hilbert metric is detail.
 
-\begin{proof} We have $\tau(K) = \tanh\left[\frac{1}{4}\Delta(K)\right]$ where $\Delta(K) = \sup_{\mu, \mu^\prime}h(K\mu, K\mu^\prime)$ ($\Delta$ for diameter). Since $K$ is $\mixing$-$\xi$-mixing, if $\mu$ and $\nu$ are two finite measures on $(E, \mathcal E)$,
+\begin{proof} We have $\tau(K) = \tanh\left[\frac{1}{4}\Delta(K)\right]$ where $\Delta(K) = \sup_{\mu, \mu^\prime}h(K\mu, K\mu^\prime)$ ($\Delta$ for diameter). Since $K$ is $\mixing$-$\xi$-mixing, if $\mu$ and $\mu^\prime$ are two finite measures on $(E, \mathcal E)$,
 \begin{equation}
     \mixing^2K\mu(A)\leq\mixing\xi(A)\leq K\mu(A)\leq \frac{1}{\mixing}\xi(A) \leq \frac{1}{\mixing^2}K\mu^\prime(A)
 \end{equation}
-   So, $h(K) \leq \log\left(\frac{1}{\mixing^4}\right)\leq \frac{1 - \mixing^2}{1 + \mixing^2}$.
+   So, $h(K) \leq \log\left(\frac{1}{\mixing^4}\right)$, which implies that $h(K) \leq \frac{1 - \mixing^2}{1 + \mixing^2}$.
 \end{proof}
 
 
 \begin{proposition}[Total variation - Hilbert comparaisons]\label{prop:comparaison}
-Without any hypotheses on $\mu, \nu$ finite measures, if $\bar \mu = \mu / \mu(E)$ and $\bar \nu = \nu / \nu(E)$ are normalized counterparts to $\mu$ and $\nu$, then
+Without any hypotheses on $\mu, \nu$ non-negative finite measures, if $\bar \mu = \mu / \mu(E)$ and $\bar \nu = \nu / \nu(E)$ are normalized counterparts to $\mu$ and $\nu$, then
     \begin{equation}\label{eq:tv-to-hilbert}
         \Vert \bar\mu - \bar\nu \Vert \leq \frac{2}{\log(3)}h(\mu, \nu)
     \end{equation}
