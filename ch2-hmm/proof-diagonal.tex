@@ -1,5 +1,26 @@
 \section{Proof of \cref{theorem:bound-diagonal}}\label{sec:proof-bound}
-In this section $E = (-1, 1)^d$ and $\Omega = E \times F$. Without loss of generality, we assume that $F=E$. Of course, any compact can be considered.
+In this section $E = (-1, 1)^d$ and $\Omega = E \times F$. Without loss of generality, to simplify the dimensional considerations, we assume that $F=E$.
+
+\subsection{Proof summary}
+
+The proof proceeds as follows:
+
+First, we separate the error incurred by the initialization and the error incurred by the model error.
+\begin{align}
+\Vert \hat \pi_n - \pi_n^\nu \Vert_{TV} \leq  \Vert \pi_n^{\hat \pi_0} - \pi_n^\nu\Vert_{TV} + \Vert \hat \pi_n - \pi_n^{\hat \pi_0}\Vert_{TV}
+\end{align}
+
+We bound the first term using the stability of the optimal filter, thanks to the mixing hypothesis on $R_n$. Following \cref{prop:optimal-forgetting},
+\begin{align}
+\Vert \pi_n^{\hat \pi_0} - \pi_n^\nu\Vert_{TV} \leq \frac{C}{\mixing^2}\tau_\mixing^{n-1}\Vert \hat \pi_0 - \nu \Vert_{TV}
+\end{align} where $C = \frac{2}{\log 3}$.
+
+We bound the second term in three steps. First, we control is as a function of the one-step errors $\delta_n$. Then, we bound $\delta_n$ by the $L^\infty$ error between $Q$ and $\hat Q$ (and $G$ and $\hat G$). Finally, we control this $L^\infty$ term by applying \cref{theorem:learning}.
+
+We then combine both terms in \cref{sec:bound-proof-conclusion}.
+
+
+
 
 \subsection{Propagation of one-step errors}
 
@@ -43,6 +64,9 @@ And finally, applying \cref{eq:hilbert-to-tv},
     \Vert \pi^\mu_n - \pi^\nu_n \Vert_{TV} & \leq \frac{2}{\mixing^2\log(3)}\tau_\mixing^{n-1}\Vert \mu - \nu\Vert_{TV}
 \end{align}
 \end{proof}
+
+
+\subsection{Controlling the effect of model error}\label{sec:proof-bound-model-error}
 \begin{proposition}\label{prop:lemma_bound}
     Let $E = (-1, 1)^d$. Let $\mixing>0$ and $\xi\in\mathcal P(E)$ such that the optimal kernel $R_n:E\times E\to \mathbb R^+$ is $\mixing$-$\xi$ mixing for all $n$. Let $\mu_n$ a sequence of positive, finite measures on $E$ such that $\mu_0=\pi_0$. Then,
 \begin{align}
@@ -67,21 +91,12 @@ Since $R_{k+1}$ and $R_k$ are mixing, $R_{k+1}\mu_k$ and $R_{k+1}R_{k}\mu_{k-1}$
 \end{align}
 Since $R_{k+1}$ is mixing, we apply \cref{eq:hilbert-to-tv} from \cref{prop:comparaison}:
 \begin{align}
-\Vert \mu_n - \pi_n \Vert_{TV}& \leq \Vert \mu_n - \bar R_n(\mu_{n-1})\Vert + \frac{2}{\mixing^2\log 3}\sum_{k=1}^{n-1}\tau_\mixing^{n-k-1}\frac{1}{\mixing^2}\Vert \mu_k - \bar R_{k}(\mu_{k-1})\Vert_{TV}
+\Vert \mu_n - \pi_n \Vert_{TV}& \leq \Vert \mu_n - \bar R_n(\mu_{n-1})\Vert + \frac{2}{\mixing^2\log 3}\sum_{k=1}^{n-1}\tau_\mixing^{n-k-1}\Vert \mu_k - \bar R_{k}(\mu_{k-1})\Vert_{TV}
 \end{align}
 where we use that the Hilbert contraction coefficient is sub-multiplicative and can be bounded away from $1$ as a function of $\mixing$ (we denote it $\tau_\mixing$ this upper-bound given in \cref{prop:hilbert}). By denoting $\delta_n = \Vert \bar\mu_n - \bar{R}_n(\bar\mu_{n-1})\Vert_{TV}$ we obtain the result.
 \end{proof}
 
-We now state and prove \cref{lemma:bound}:
-\begin{lemma}\label{lemma:bound} Let $T > 1$.
-    \begin{align}
-        \left\Vert \pi_n^\nu - \hat\pi_n\right\Vert_{TV} \leq \underbrace{C_\mixing\tau_\mixing^n\Vert \hat\pi_0 - \nu\Vert_{TV}}_{A_n}+ \underbrace{\delta_n + C_\mixing\sum_{k=1}^n \tau_\mixing^{n-k-1}\delta_k}_{B_n}
-    \end{align}
-where $\delta_k = \Vert \barhat{R}_k(\hat \pi_{k-1}) - \bar R_n(\hat \pi_{k-1})\Vert_{TV}$.
-\end{lemma}
-\subsection{Bound with smooth, bounded approximations}
-
-Let $\hat Q : E \times E\to\mathbb R^+$ and $\hat G: E \times F \to \mathbb R^+$ two bounded approximations of $Q$ and $G$. Given a sequence $(z_k)\in F^\mathbb N$, define the approximate non-negative kernel $\hat R_n(u, x) = \hat Q(u, x)\hat G(x, z_n)$ defined on $E\times E$. We introduce $(\hat\pi_n)$ the sequence of probability distributions computed using the recursion $\hat \pi_{n} = \hat R_n\hat\pi_{n-1}/R_n\hat\pi_{n-1}(E)=\barhat{R}_n(\hat\pi_{n-1})$.
+Let $\hat Q : E \times E\to\mathbb R^+$ and $\hat G: E \times F \to \mathbb R^+$ two bounded approximations of $Q$ and $G$. Given a sequence $(z_k)\in F^\mathbb N$, define the approximate non-negative kernel $\hat R_n(u, x) = \hat Q(u, x)\hat G(x, z_n)$ defined on $E\times E$. We introduce $(\hat\pi_n)$ the sequence of probability distributions computed using the recursion $\hat \pi_{n} = \hat R_n\hat\pi_{n-1}/\hat R_n\hat\pi_{n-1}(E)=\barhat{R}_n(\hat\pi_{n-1})$.
 
 \begin{proposition}\label{prop:bound-delta-n}
 Let $\delta_n = \Vert \barhat{R}_n(\hat\pi_{n-1}) - \bar R_n(\hat\pi_{n-1})\Vert_{TV}$. Then,
@@ -92,17 +107,17 @@ where $C_d$ is a constant independent of $Q, G,\hat G, \hat Q$.
 \end{proposition}
 
 \begin{proof}
-$\delta_n$ is the total variation distance between two probability distributions. Recall that
+$\delta_n$ is the total variation distance between two probability distributions. Recall that from \cref{prop:tv},
 \begin{align}
     \Vert \bar \mu - \bar \nu\Vert_{TV} \leq \frac{2}{\mu(E)}\Vert \mu - \nu\Vert_{TV}
 \end{align}
 for any $\mu, \nu$ positive, finite measures on $E$ and $\bar \mu, \bar \nu$ their normalized counterparts.
 Thus,
 \begin{align}
-    \delta_n & \leq \frac{2}{R_n\hat\pi(E)}\Vert\hat R_n(\hat\pi_{n-1}) - R_n(\hat\pi_{n-1})\Vert_{TV}.
+    \delta_n & \leq \frac{2}{R_n\hat\pi_{n-1}(E)}\Vert\hat R_n(\hat\pi_{n-1}) - R_n(\hat\pi_{n-1})\Vert_{TV}.
 \end{align}
 
-Recall that for any $\mu\in\mathcal P(E)$, $\mixing\xi(E) \leq R_n\mu(E)\leq \frac{1}{\mixing}\xi(E)$, which allows us to control the denominator:
+From \cref{prop:mixing-effect}, $\mu\in\mathcal P(E)$, $\mixing\xi(E) \leq R_n\mu(E)\leq \frac{1}{\mixing}\xi(E)$, which allows us to control the denominator:
 \begin{align}
     \delta_n & \leq \frac{2}{\mixing\xi(E)}\Vert\hat R_n(\hat\pi_{n-1}) - R_n(\hat\pi_{n-1})\Vert_{TV}.
 \end{align}
@@ -131,31 +146,62 @@ B_n &= \iint \hat G(x, z_n) \hat \pi_{n-1}(u)\vert Q(u, x) - \hat Q(u, x)\vert d
 where we again used that $\hat \pi_{n-1}$ is a probability distribution.
 \end{proof}
 
-\subsection{Putting everything together}
+By \cref{prop:bound-delta-n}, $\delta_n$ is bounded independently of $n$. By combining this with \cref{prop:lemma_bound} applied to $\mu_n = \hat \pi_n$, we obtain:
+    \begin{align}
+\Vert \hat \pi_n - \pi_n^{\hat \pi_0}\Vert_{TV} &\leq \delta_n + C_\mixing\sum_{k=1}^n \tau_\mixing^{n-k-1}\delta_k\\
+&\leq \delta_n\left(1 + C_\mixing\sum_{k=1}^n \tau_\mixing^{n-k-1}\right)\\
+&\leq \delta_n\left(1 + \frac{C}{\mixing^4}\right)
+\end{align}
+with $C= \frac{2}{\log 3}$ and where we used that $\sum_{k=1}^{n-1}\tau_\mixing^{n-l-1} \leq \frac{1}{\mixing^2}$ \citep{oudjane}.
 
-We assume that $E=F$ without loss of generality (simply replace $D = 2d$ for $Q$ and $D=d+d^\prime$ for $G$). We choose $\beta > D/2$. Thus, here $\Omega = E\times E\subset \mathbb R^{D}$ where $D=2d$.
+\begin{align}\label{eq:model-error}
+\Vert \hat \pi_n - \pi_n^{\hat \pi_0}\Vert_{TV} \leq \delta_n \left(1 + \frac{C}{\mixing^4}\right)
+\end{align}
 
-Let $\gamma > 0$ and apply \cref{theorem:learning} with its parameter $\epsilon = \gamma$, Then we have that there exist $\hat G$ and $\hat Q$ and two constants $C_1, C_2$ such that
-$$\Vert \hat G-G\Vert_{L^\infty(\Omega)}\leq C_1 \Vert \sqrt{G}\Vert^2_{W^\beta_2(\Omega)}\gamma^{1-\frac{D}{2\beta}}, \quad \Vert \hat Q - Q \Vert_{L^\infty(\Omega)}\leq C_2\Vert\sqrt{Q}\Vert^2_{W^\beta_2(\Omega)}\gamma^{1-\frac{D}{2\beta}}$$
+where $C = \frac{2}{\log 3}$.
+
+We now bound $\delta_n$ using \cref{theorem:learning}.
+\subsubsection{Bounding $\delta_n$ with \cref{theorem:learning}}
+
+Let $\Delta > 0$. We apply \cref{theorem:learning} with its parameter $\epsilon = \Delta$. In the conclusion of the proof of \cref{theorem:bound-diagonal}, we will then choose $\Delta$ as a function of $\varepsilon$.
+
+Applying \cref{theorem:learning}, there exist $\hat G$ and $\hat Q$ and two constants $C_1, C_2$ such that
+$$\Vert \hat G-G\Vert_{L^\infty(\Omega)}\leq C_1 \Vert \sqrt{G}\Vert^2_{W^\beta_2(\Omega)}\Delta^{1-\frac{D}{2\beta}}, \quad \Vert \hat Q - Q \Vert_{L^\infty(\Omega)}\leq C_2\Vert\sqrt{Q}\Vert^2_{W^\beta_2(\Omega)}\Delta^{1-\frac{D}{2\beta}}$$
 where $C_1$ and $C_2$ are independent of $Q,\hat Q, \hat G, G$.
 
 By combining these inequalities with \cref{prop:bound-delta-n}, since $\xi(E) = 1$:
 \begin{align}
-    \delta_n \leq & \frac{2}{\mixing}\left(C\Vert \sqrt{G}\Vert^2_{W^\beta_2(\Omega)}\gamma^{1- \frac{D}{2\beta}} + C_d \Vert\hat G\Vert_{L^\infty(\Omega)}^2\Vert \sqrt{Q}\Vert^2_{W^\beta_2(\Omega)}\gamma^{1 - \frac{D}{2\beta}}\right).
+    \delta_n \leq & \frac{2}{\mixing}\left(C\Vert \sqrt{G}\Vert^2_{W^\beta_2(\Omega)}\Delta^{1- \frac{D}{2\beta}} + C_d \Vert\hat G\Vert_{L^\infty(\Omega)}^2\Vert \sqrt{Q}\Vert^2_{W^\beta_2(\Omega)}\Delta^{1 - \frac{D}{2\beta}}\right).
 \end{align}
 Since $\Vert \hat G\Vert_{L^\infty(\Omega)} \leq \Vert G - \hat G \Vert_{L^\infty(\Omega)} + 2 \Vert \sqrt{G}\Vert_{L^\infty(\Omega)}^2 \leq \Vert G - \hat G \Vert_{L^\infty(\Omega)} + 2 \Vert \sqrt{G}\Vert^2_{W^\beta_2(\Omega)}$,
 \begin{align*}
-    \delta_n \leq & \frac{2}{\mixing}\left(C\Vert \sqrt{G}\Vert^2_{W^\beta_2(\Omega)}\gamma^{1- \frac{D}{2\beta}} + \left(C + C\epsilon^{1- \frac{D}{2\beta}}\right)\Vert\sqrt{G}\Vert^2_{W^\beta_2(\Omega)}\Vert\sqrt{Q}\Vert^2_{W^\beta_2(\Omega)}\gamma^{1 - \frac{D}{2\beta}}\right)
+    \delta_n \leq & \frac{2}{\mixing}\left(C\Vert \sqrt{G}\Vert^2_{W^\beta_2(\Omega)}\Delta^{1- \frac{D}{2\beta}} + \left(C + C\Delta^{1- \frac{D}{2\beta}}\right)\Vert\sqrt{G}\Vert^2_{W^\beta_2(\Omega)}\Vert\sqrt{Q}\Vert^2_{W^\beta_2(\Omega)}\Delta^{1 - \frac{D}{2\beta}}\right)
 \end{align*}
 Then, by upper-bounding the negligible terms, there exist two constants $C_1, C_2>0$ independent of $Q, \hat Q, G, \hat G$, such that :
 \begin{align}
-    \delta_n \leq & \underbrace{C_1\left(C_2 \Vert\sqrt{G}\Vert^2_{W^\beta_2(\Omega)} + C_2\Vert \sqrt{G}\Vert^2_{W^\beta_2(\Omega)}\Vert \sqrt{Q}\Vert^2_{W^\beta_2(\Omega)} \right)}_{C^\prime(Q, G)} \frac{\gamma^{1-\frac{D}{2\beta}}}{\sigma}
+    \delta_n \leq & \underbrace{C_1\left(C_2 \Vert\sqrt{G}\Vert^2_{W^\beta_2(\Omega)} + C_2\Vert \sqrt{G}\Vert^2_{W^\beta_2(\Omega)}\Vert \sqrt{Q}\Vert^2_{W^\beta_2(\Omega)} \right)}_{C^\prime(Q, G)} \frac{\Delta^{1-\frac{D}{2\beta}}}{\mixing}
 \end{align}
-Note that $C^\prime$ only depends on parameters on $\Vert \sqrt{G}\Vert_{W^\beta_2(\Omega)}, \Vert \sqrt{Q}\Vert_{W^\beta_2(\Omega)}, d, \beta, \Omega$ and does not depend on $\hat{Q}, \hat{G}, \sigma, \gamma$.
+Note that $C^\prime$ only depends on parameters on $\Vert \sqrt{G}\Vert_{W^\beta_2(\Omega)}, \Vert \sqrt{Q}\Vert_{W^\beta_2(\Omega)}, d, \beta, \Omega$ and does not depend on $\hat{Q}, \hat{G}, \mixing, \Delta$.
 
-We now apply \cref{theorem:learning}.
-Let $\varepsilon > 0$ and $\delta > 0$. As a consequence of the development above, if $\gamma$ is chosen such that $\gamma = \left(\frac{\varepsilon}{C^\prime}\right)^{\frac{2\beta}{2\beta - D}}/\sigma$ then (1) $M, n$ correspond to the ones stated in the statement of the theorem (2)  with probability at least $1-6\delta$,
-\begin{align}
-    \delta_n \leq \frac{\varepsilon}{\sigma}
+\subsection{Conclusion}\label{sec:bound-proof-conclusion}
+We now obtain the statement of \cref{theorem:bound-diagonal}. Let $\varepsilon > 0$ and $\delta>0$.
+
+\paragraph{}
+By applying \cref{prop:optimal-forgetting} to $R_n$, we obtain that:
+
+\begin{equation}\label{eq:forgetting}
+\Vert \pi_n^\nu - \pi^{\hat\pi_0}_n \Vert_{TV} \leq \frac{C}{\mixing^2}\left(\frac{1 - \mixing^2}{1 + \mixing^2}\right)\Vert \nu - \hat \pi_0\Vert_{TV}.
+\end{equation}
+
+\paragraph{}
+
+Let $\Delta= \left(\frac{\varepsilon}{C^\prime}\right)^{\frac{2\beta}{2\beta - D}}$. Applying the developments in \cref{sec:proof-bound-model-error}, (1) $M, n$ can be chosen according to \cref{theorem:bound-diagonal}, (2)  with probability at least $1-6\delta$,
+
+\begin{align}\label{eq:delta-epsilon}
+    \delta_n \leq \frac{\varepsilon}{\mixing}
 \end{align}
-and then (3),
+and finally (3), by combining \cref{eq:forgetting,eq:delta-epsilon,eq:model-error}, with probability at least $1 - 6\delta$,
+
+\begin{align}
+\Vert \hat\pi_n - \pi_n^\nu \Vert_{TV} \leq \frac{C}{\mixing^2}\left(\frac{1 - \mixing^2}{1+\mixing^2}\right)^{n-1}\Vert \nu - \hat \pi_0\Vert_{TV} + \left(1 + \frac{C}{\mixing^4}\right)\frac{\varepsilon}{\mixing}.
+\end{align}

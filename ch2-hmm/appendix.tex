@@ -9,7 +9,7 @@ Let $(E, \mathcal E)$ be a measurable space. We denote $\mathcal M(E)$ the set o
 \begin{definition}[Total variation norm]
 Let $\xi$ be a finite signed measure on $(E, \mathcal E)$. The total variation of $\xi$ is $\Vert \xi \Vert_{TV}= \xi^+(E) + \xi^-(X)$ where $\xi^+, \xi^-$ is the Jordan-Hahn decomposition of $\xi$. If $\xi$ admits a density with respect to the Lebesgue measure, then $\Vert \xi \Vert_{TV} = \int \vert \xi(x)\vert dx$.
 \end{definition}
-\begin{proposition} Let $\mu$ and $\nu$ be two finite measures on $(E, \mathcal E)$. Then,
+\begin{proposition}\label{prop:tv} Let $\mu$ and $\nu$ be two finite measures on $(E, \mathcal E)$. Then,
 \begin{align}
     \Vert \bar \mu - \bar \nu \Vert = \frac{\Vert \mu - \nu \Vert}{\mu(E)} + \frac{\vert \mu(E) - \nu(E)\vert}{\mu(E)}
 \end{align}
@@ -94,7 +94,7 @@ If $K$ is mixing for a measure $\xi$ and a constant $\mixing$ we write that $K$ 
     then $K$ is mixing with constant $\mixing$ and $\xi(A)=\int 1_A(y)\xi(y)dy$.
 \end{proposition}
 
-\begin{proposition}
+\begin{proposition}\label{prop:mixing-effect}
     If $K$ is mixing with $\mixing$ and $\xi$, then for any $\mu$ such that $\mu(E)=1$,
     \begin{equation}
         \mixing\xi(A)\leq K\mu(A)\leq \frac{1}{\mixing}\xi(A).
