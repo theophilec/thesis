@@ -14,6 +14,15 @@ Then, run `latexmk -pdf -pvc -interaction=nonstopmode main.tex` in a Terminal.
 
 I wasn't able to get `synctex` working with Zed though.
 
+## Building from cloning the repo
+
+This repo using git LFS :
+```bash
+brew install git-lfs
+git lfs install
+git lfs pull
+```
+
 ## Tips and tricks for future PhD students
 
 - Use a single growing `.bib` file, for example from a bibliography management tool like Zotero. Concatenating `.bib` files is a pain (duplicate entries, ...).
