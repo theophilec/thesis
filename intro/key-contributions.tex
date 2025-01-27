@@ -64,7 +64,7 @@ It is defined as an optimization problem (see \cref{sec:informal} for an intuiti
 \begin{mdframed}
 \begin{informaltheorem}[based on \cref{def:D} and \cref{theorem:closed-form}]
 Given $f, g$ to functions and $\mathcal H$ and $\mathcal F$ two reproducing kernel Hilbert spaces, $D_\lambda(f, g)$ is defined and can be computed in closed-form as follows:
-\eqals{\label{eq:def-D}
+\eqals{
     D_\lambda(f, g) := & \max_{\norh{h}\leq 1}\min_{q \in \mathcal H}\max_{\|v\|_{{\cal F}} \leq 1} \Big|  \int_X v(g(x))q(x)\dd x-  \int_X v(f(x))\mu(x)h(x)\dd x\Big|^2 + \lambda \norh{q}^2\\
    =& \lambda\norop{(GG^* + \lambda I)^{-1/2}F_\mu}^2.
 }
