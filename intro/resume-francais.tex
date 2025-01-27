@@ -1,0 +1,225 @@
+\newpage\section{Résumé en français}
+
+Dans cette thèse, nous étudions comment la présence de structure dans les données considérées par des algorithmes d'apprentissage statistique peut nous permettre d'entraîner plus facilement des modèles. Nous considérons trois types de structures : l'invariance aux difféomorphismes dans les espaces généraux de données, les déformations ``time-warping'' dans les séries temporelles, et la structure de dépendance probabiliste markovienne pour des modèles dynamiques.
+
+Dans cette section, nous résumons chacune de nos contributions, qui peuvent se retrouver dans les chapitres de ce manuscrit.
+
+
+\subsection{Contributions du Chapitre 2 : Enforcing diffeormorphism invariance in distance-based methods}
+\begin{mdframed}
+La contribution décrite dans cette section est présentée dans \cref{ch:diffy}.
+
+\noindent Elle a été publiée dans les publications de la \emph{International Conference on Machine Learning} en 2022 dans la publication suivante :
+\begin{mdframed}
+\Myprod{\textbf{Théophile Cantelobre}, Benjamin Guedj, Carlo Ciliberto, Alessandro Rudi}
+{Measuring dissimilarity with diffeormorphism invariance}{International Conference on Machine Learning (ICML), Baltimore, Maryland (USA), 2022}
+\end{mdframed}
+La bibliothèque développée accompagnant \cref{ch:diffy} est disponible sur \url{github.com/theophilec/diffy}.
+\end{mdframed}
+
+\paragraph{Motivation}
+Les méthodes basées sur la distance -- telles que les k plus proches voisins et les k-means -- sont largement utilisées dans les applications pratiques d'apprentissage automatique. Au-delà de leur étude et application, elles ont été étudiées comme approximations pour comprendre la performance de méthodes plus complexes comme les réseaux de neurones convolutionnels. \cite{thiry} introduit un modèle basé sur un dictionnaire atteignant des performances comparables aux Réseaux de Neurones Convolutifs (CNN) peu profonds. Leur modèle calcule le plongement une image selon la distance de ses patchs à un dictionnaire fixe échantillonné à partir d'images du jeu de données. Le modèle impose une invariance par translation, comme le font les CNN, mais n'incorpore aucune autre invariance utile en vision par ordinateur.
+
+Plus généralement, il existe deux principales façons d'incorporer des invariances dans un algorithme d'apprentissage automatique : la moyenne de groupe et l'augmentation de données.
+
+La moyenne de groupe agrège les caractéristiques sur l'ensemble des invariances (qui peut avoir une structure de groupe)
+\begin{equation}
+    \Phi(x) = \sum_{\tau \in \mathcal T} \phi(\tau \cdot x)
+\end{equation}
+où $\mathcal T$ est un groupe de transformations. Un exemple pour $\mathcal T$ est l'ensemble des rotations de $90$ degrés, qui est un groupe fini. Si $\tau_0\in\mathcal T$, alors $\Phi(\tau_0 \cdot x) = \Phi(x)$. Calculer $\Phi$ nécessite de calculer $\phi(\tau \cdot x)$ pour chaque $\tau\in\mathcal T$. La gestion d'un ensemble riche d'invariances rend $\mathcal T$ soit très grand soit infini. Cela rend $\Phi$ difficile à exprimer et coûteux en calcul \cite{bietti}.
+
+L'augmentation de données repose quant à elle sur l'application artificielle de l'invariance pendant l'entraînement en ajoutant des versions transformées des points d'entraînement $\tau \cdot x$ pour $\tau \in \mathcal T$ au jeu d'entraînement d'où est tiré $x$. En substance, cela augmente le jeu d'entraînement pour tenir compte des invariances, qui ne sont pas nécessairement présentes suffisamment. Cela rend l'entraînement plus coûteux en calcul, est limité dans la richesse des transformations applicables (les exemples augmentés doivent être générés) et ne garantit pas l'invariance lors de l'inférence.
+
+La divergence que nous concevons et étudions dans \cref{ch:diffy} impose l'invariance et est destinée à remplacer directement d'autres distances dans les méthodes d'apprentissage automatique basées sur la distance.
+
+\paragraph{Intuition}
+
+Le problème que nous abordons est la conception d'une dissimilarité $D$ qui compare les points de données de telle sorte que $D(x, y) = 0$ si $y = \tau \cdot x$ si $\tau$ est une transformation lisse. Voici les principales intuitions qui mènent à la solution proposée:
+
+\subparagraph{Voir les points de données comme des fonctions sur des domaines continus} Une idée clé pour attaquer ce problème est de considérer les points de données comme des fonctions et les transformations comme des difféomorphismes qui agissent sur l'ensemble d'origine des fonctions considérées. Par exemple, une image est vue comme une fonction de $\mathbb R^2$ (position sur l'image) vers $\mathbb R^3$ (valeur RGB à ce point). Les transformations sur les images sont alors des difféomorphismes sur $\mathbb R^2$, qui incluent les transformations de corps rigide (translation, rotations) mais aussi les dilatations et les déformations.
+Afin de capturer un ensemble riche de transformations, représentatif des variations naturelles dans les données, nous considérons des domaines continus plutôt que des domaines discrets, à la différence de \cite{bietti} qui considère des domaines discrets pour les transformations considérées.
+Au final, notre objectif revient à concevoir $D$ tel que si $Q$ est un difféomorphisme et $f$ un point de données (représenté par une fonction), $D(f\circ Q, f) = 0$ (ou est très petit).
+
+\subparagraph{Théorème de changement de variable}
+En plus d'être une classe riche de transformations, les difféomorphismes lisses ont l'avantage supplémentaire de bien se comporter vis-à-vis de l'intégration.
+En effet, $f$ et $f \circ Q$ ont la même intégrale à une pondération près par $\vert \nabla Q(x)\vert$. Nous pouvons aller plus loin, en particulier pour les données de faible dimension comme les images, en plongeant les caractéristiques de l'image dans un RKHS. Alors, pondérer l'intégrale de $\phi(f \circ Q)$ de telle sorte qu'elle corresponde à celle de $\phi(f)$ revient à faire correspondre toutes les statistiques des images $f\circ Q$ et $f$, en pondérant certaines parties de $f\circ Q$. Une pondération $q$ qui minimise la distance entre $\int \phi(f\circ Q(x))q(x)dx$ et $\int \phi(g(x))dx$ est $q(x) = \vert \nabla Q(x)\vert$. Nous ajoutons ensuite deux ingrédients à cette intuition pour la rendre opérante. Premièrement, parce que nous ne pouvons pas garantir qu'une pondération donnée est effectivement un jacobien de difféomorphisme (global), nous imposons que les pondérations conviennent sur toute sous-partie de l'image. L'intuition est de voir les pondérations comme sélectionnant une région de chaque image et imposant que les statistiques des deux parties sélectionnées soient proches. Deuxièmement, nous souhaitons intuitivement ne considérer que des régions "simples", c'est-à-dire des pondérations lisses, et pour cela nous régularisons sur le choix des pondérations.
+
+L'interprétation de la pondération comme sélectionnant une région a la valeur ajoutée d'apporter un aspect d'explicabilité : nous pouvons visualiser quelles régions d'une image sont associées par la distance.
+
+\paragraph{Contributions principales}
+Diffy est une divergence entre fonctions qui est approximativement invariante aux difféomorphismes lisses.
+Elle est définie comme un problème d'optimisation (voir \cref{sec:informal} pour un développement intuitif) et peut être calculée sous forme close :
+\begin{mdframed}
+\begin{informaltheorem}[basé sur \cref{def:D} et \cref{theorem:closed-form}]
+Étant donné $f, g$ deux fonctions et $\mathcal H$ et $\mathcal F$ deux espaces de Hilbert à noyau reproduisant, $D_\lambda(f, g)$ est définie et peut être calculée sous forme close comme suit :
+\eqals{
+    D_\lambda(f, g) := & \max_{\norh{h}\leq 1}\min_{q \in \mathcal H}\max_{\|v\|_{{\cal F}} \leq 1} \Big|  \int_X v(g(x))q(x)\dd x-  \int_X v(f(x))\mu(x)h(x)\dd x\Big|^2 + \lambda \norh{q}^2\\
+   =& \lambda\norop{(GG^* + \lambda I)^{-1/2}F_\mu}^2.
+}
+où $G$, $F_\mu$ sont des opérateurs linéaires définis avec $\phi$, $f$, $\psi$ et $\mu$.
+\end{informaltheorem}
+\end{mdframed}
+
+Diffy est approximativement invariante aux transformations lisses des données. Le terme résiduel est lié au terme de régularisation, qui garantit que nous ne considérons que des solutions lisses $q$ et, dans l'esprit, des difféomorphismes lisses.
+\begin{mdframed}
+\begin{informaltheorem}[basé sur \cref{theorem:main-theorem}]
+Avec des noyaux de Sobolev lisses et un difféomorphisme lisse $Q$, nous avons :
+\eqals{
+ D_\la(f, f \circ Q) ~~\leq~~ \lambda ~ C^2_{\mu} C^2_{Q} \qquad \forall f\, \textrm{mesurable},
+}
+où $C_\mu$ et $C_Q$ sont indépendants de $f$.
+\end{informaltheorem}
+\end{mdframed}
+\noindent Avec une régularisation qui tend vers $0$, Diffy est invariante aux difféomorphismes lisses. En effet, quand $\la \to 0$, l'ensemble des solutions admissibles devient plus grand et contient toutes les fonctions jacobiennes déterminantes des difféomorphismes et $D_\la(f, f\circ Q)\to 0$.
+
+En pratique, Diffy peut être calculée sur des objets discrets en utilisant des échantillons de domaine et des valeurs. Pour les images, cela signifie les positions et valeurs des pixels. Les estimateurs naturels incorporant des techniques de Nyström atteignent la convergence de l'approximation $\hat D_\lambda(f, g)$ vers $D_\lambda(f, g)$ lorsque le nombre d'échantillons (\emph{p. ex.} de pixels) augmente. Ceci est prouvé dans le résultat informel ci-dessous :
+\begin{mdframed}
+\begin{informaltheorem}[basé sur \cref{thm:appr-error-widehatD}]
+Avec des approximations de Nyström suffisamment riches, avec une forte probabilité sur le tirage de $N$ positions d'échantillons pour chacune des fonctions $f$ et $g$,
+\eqals{
+ \vert D_\la(f, g) - \widehat D_\la(f, g) \vert = O(N^{-1/4}).
+}
+Cela induit une complexité de calcul de $O(N^{3/2})$.
+\end{informaltheorem}
+\end{mdframed}
+\noindent \cref{thm:appr-error-widehatD} et \cref{theorem:main-theorem} impliquent que $\hat D_\lambda(f\circ Q, f)\to 0$ quand $N\to \infty$.
+
+Nous appliquons Diffy à la comparaison d'images avec des transformations naturelles et synthétiques et étudions son comportement.
+
+\paragraph{Points clés}
+
+\begin{itemize}
+    \item Diffy est une divergence définie sur des fonctions entre espaces généraux, définie comme un problème d'optimisation faisant correspondre les intégrales des plongements de fonctions dans des espaces de Hilbert à noyau reproduisant.
+    \item Diffy est efficace à calculer et est utile pour comparer une large gamme de types de données, y compris les images, les vidéos et les nuages de points. Plus précisément, nous démontrons que Diffy est calculable en temps $O(N^{3/2})$ avec une garantie de borne sur l'erreur de l'ordre de $O(N^{-1/4})$ (voir \cref{sec:approximation}) où $N$ est le nombre de points d'échantillonnage (\emph{p. ex.} pixels pour les images) dans chaque image, en s'appuyant sur les méthodes d'approximation de Nyström.
+    \item Diffy est approximativement invariante aux difféomorphismes lisses, avec un niveau d'invariance précisément contrôlé par un paramètre de régularisation et les paramètres des noyaux (voir \cref{theorem:main-theorem}).
+    \item Nous présentons des expériences complètes pour analyser rigoureusement le comportement de Diffy dans des applications pratiques, ce qui en fait un bon candidat pour l'intégration dans les méthodes d'apprentissage automatique. Tout le code est rendu publiquement disponible dans la bibliothèque \texttt{diffy}\footnote{Disponible sur \url{github.com/theophilec/diffy}.}.
+\end{itemize}
+
+
+\subsection{Contributions du Chapitre 3: Handling time-warping and misalignment when comparing time-series}
+\begin{mdframed}
+La contribution décrite est présentée dans \cref{ch:diffytw}.
+\noindent Elle a été précédemment partagée en ligne et est en cours d'évaluation dans la pré-publication suivante :
+\begin{mdframed}
+\Myprod{\noindent\textbf{Théophile Cantelobre}, Benjamin Guedj, Carlo Ciliberto, Alessandro Rudi}
+{Comparing time-series with smooth, time-warping invariance}{Under review (2024)}
+\end{mdframed}
+La bibliothèque développée accompagnant \cref{ch:diffytw} est disponible sur \url{github.com/theophilec/diffytw}.
+\end{mdframed}
+
+\paragraph{Motivation}
+Les séries temporelles présentent des variations naturelles qui rendent l'analyse et l'inférence difficiles.
+
+Un problème courant dans l'analyse de séries temporelles est le désalignement. En effet, comparer deux séries temporelles du même signal mais avec des points d'échantillonnage différents n'est pas simple. Considérons $(x_i, f(x_i))_{1\leq i\leq n}$ et $(y_j, f(y_j))_{1 \leq j \leq m}$ deux séries temporelles représentant le même signal sous-jacent mais avec des schémas d'échantillonnage différents. Traiter les séries temporelles comme des vecteurs dans l'espace euclidien n'est pas satisfaisant car les points ne s'alignent pas dans le temps. En fait, si $n\neq m$, il n'est même pas évident de savoir comment procéder.
+
+La déformation temporelle est un problème connexe. Il est intéressant d'avoir une façon de comparer des trajectoires qui soit invariante aux transformations lisses telles que la reparamétrisation du temps causée par exemple par des différences de vitesse, tout en éliminant la déformation et en alignant les séries temporelles.
+
+Pour être robustes à ces différences, les divergences entre séries temporelles devraient viser à être invariantes à la déformation temporelle. Malgré leur utilité pratique, DTW \citep{dtw} et ses variantes comme Soft-DTW \citep{soft-dtw} n'ont pas de telles garanties. D'autres méthodes se concentrent exclusivement sur l'alignement des séries temporelles, comme décrit dans \cref{background:diffytw}.
+
+\paragraph{Intuition}
+L'idée clé de notre approche est qu'une reparamétrisation lisse sur $[0,1]$ est une fonction bijective croissante et lisse sur $[0,1]$. Comme ce sont des fonctions 1D, elles peuvent être estimées très efficacement en utilisant l'approximation de fonctions. Nous combinons cela avec l'idée de \cref{sec:contributions-ch2} pour comparer des intégrales repondérées. Dans ce cas, la dérivée d'une reparamétrisation $Q$ fait correspondre les statistiques d'une série temporelle et de sa contrepartie déformée.
+
+DiffyTW est conçu pour produire une reparamétrisation lisse appropriée qui aligne les deux séries temporelles, contrairement à \cref{ch:diffy}. En effet, en dimension supérieure, on ne peut pas déduire $Q$ de $\vert \nabla Q\vert$ et plus généralement, étant donné une fonction réelle lisse et positive $q$, il n'y a aucune garantie qu'il existe un difféomorphisme $Q$ tel que $q(x) = \vert \nabla Q(x) \vert$.
+
+Comme nous l'expliquons ci-dessous et le prouvons dans \cref{ch:diffytw}, nous pouvons définir une contrepartie discrète pour DiffyTW pour les séries temporelles qui est cohérente avec DiffyTW. Intuitivement, cette cohérence -- qui garantit indirectement que certaines propriétés d'invariance sont "transférées" à Discrete DiffyTW -- repose sur l'interpolation des séries temporelles et une définition astucieuse de Discrete DiffyTW.
+
+\paragraph{Principales contributions}
+Nous définissons DiffyTW comme suit :
+\begin{equation*}
+d(f, g) = \min_{q \in \mathcal F_{0,1}}\left\Vert \int_0^1 \phi(f(x))q(x)dx - \int_0^1\phi(g(x))dx\right\Vert^2_\mathcal H,
+\end{equation*}
+où $\mathcal F_{0,1}$ est un ensemble de fonctions lisses, positives qui somment à 1 et $\phi$ est une fonction de plongement (par exemple, un plongement défini en enlevant la dernière couche d'un réseau de neurones ou un plongement de noyau semi-défini positif).
+
+DiffyTW est invariant aux reparamétrisations lisses. En effet, grâce au théorème de changement de variable :
+\begin{mdframed}
+\begin{informaltheorem}[basé sur \cref{thm:diffytw-invariance}]
+Pour tout $f:[0,1] \to\mathbb R^d$ et $Q:[0,1]\to[0,1]$ tel que $Q^\prime \in\mathcal F_{0,1}$,
+\begin{equation*}
+d(f\circ Q, f) = 0
+\end{equation*}
+\end{informaltheorem}
+\end{mdframed}
+
+En définissant Discrete DiffyTW $\hat d_M$, nous surmontons deux problèmes pratiques : premièrement, gérer les séries temporelles discrètes $\hat f, \hat g$ au lieu des fonctions $f, g$ ; deuxièmement, choisir $\mathcal F_{0,1}$ comme ensemble de fonctions sur lequel nous pouvons optimiser et calculer $\hat d_M$ en pratique. Pour le premier, nous interpolons $\hat f$ et $\hat g$ avec des fonctions constantes par morceaux $f$ et $g$ et utilisons l'expression obtenue de $d(f, g)$ comme définition de $\hat d_M$. Pour le second, nous considérons des modèles linéaires positifs avec $M$ fonctions de base fixes, dans l'esprit des modèles de mélange gaussien. Cela conduit à la définition suivante pour Discrete DiffyTW comme valeur optimale d'un programme quadratique avec $M$ variables et des contraintes linéaires d'inégalité et d'égalité :
+\begin{equation*}
+    \hat d_M(\hat f, \hat g) :=\min_{\substack{q\in\mathbb R^{M}\\h^\top q=1\\0 \leq q}}\frac{1}{2}q^\top Pq - v^\top q + C
+\end{equation*}
+où $P$, $v$ et $C$ dépendent de $\hat f$, $\hat g$ et $h$ dépend uniquement des fonctions de base. En utilisant des méthodes de point intérieur, la résolution du QP a une complexité temporelle de $O(M^3)$.
+
+Nous montrons que cette définition est cohérente avec celle de DiffyTW pour les fonctions constantes par morceaux. Cela nous permet de transférer les propriétés d'invariance de DiffyTW à Discrete DiffyTW dans la limite d'un grand nombre d'échantillons (voir \cref{thm:prob-qp}). De plus, bien qu'appliqué aux séries temporelles discrètes, Discrete DiffyTW estime toujours une reparamétrisation lisse adaptée.
+
+Discrete DiffyTW est différentiable par rapport à son second argument, ce qui permet de l'utiliser dans des tâches de moyennage comme le clustering. Pour souligner où se situe la difficulté, reformulons cela comme la différentiation de $V(\theta) = \min_{q\in\mathcal C}\ell(q, \theta)$ où $\ell$ est l'objectif QP pour le paramètre $\theta$ à $q$ et $\mathcal C$ est l'ensemble des contraintes. Dans notre cadre, nous prouvons que nous pouvons différencier "à travers" l'opérateur $\min$, c'est-à-dire :
+\begin{mdframed}
+\begin{informaltheorem}[basé sur \cref{thm:diffytw-grad}]
+Si le problème est lisse par rapport à $\theta$ (par exemple si un noyau gaussien est utilisé) et s'il a une solution unique (par exemple si $P$ est définie positive), alors $V$ est différentiable en $\theta$ et son gradient est donné par :
+    \begin{equation}
+        \nabla V(\theta) = J_\theta \ell(q^*(\theta), \theta) + \nabla C(\theta),
+    \end{equation} où $q^*(\theta)$ est l'unique solution de $\min_{q\in\mathcal C}\ell(q, \theta)$.
+\end{informaltheorem}
+\end{mdframed}
+Pour l'intuition, ce résultat peut être lu comme "$\hat d_M(\hat f, \cdot)$ est différentiable à $\hat g$ avec gradient...".
+
+Nous appliquons DiffyTW aux séries temporelles avec des reparamétrisations synthétiques ainsi que des variations naturelles, et étudions sa sensibilité aux paramètres du noyau.
+
+\paragraph{Points clés}
+\begin{itemize}
+    \item DiffyTW est une divergence spécialement conçue pour comparer des fonctions sur $[0,1]$, adaptée pour représenter des données de séries temporelles.
+    \item DiffyTW est prouvé invariante à une classe de reparamétrisations lisses, qui peut être configurée selon le problème. Comme sous-produit, elle fournit la reparamétrisation pour que les fonctions puissent être alignées.
+    \item DiffyTW permet une comparaison robuste et efficace des séries temporelles grâce à sa contrepartie discrète, tout en préservant approximativement les propriétés clés d'invariance de DiffyTW.
+    \item DiffyTW est différentiable par rapport à ses entrées, permettant une intégration transparente dans des flux de travail d'apprentissage automatique plus larges.
+    \item Nous démontrons et analysons empiriquement le comportement de DiffyTW sur divers jeux de données de séries temporelles. Tout le code est rendu publiquement disponible dans la bibliothèque \texttt{diffytw}\footnote{Disponible sur \url{github.com/theophilec/diffytw}.}.
+\end{itemize}
+
+\subsection{Contributions du Chapitre 4: Leveraging PSD models for stable and robust non-linear filtering}
+\begin{mdframed}
+La contribution décrite est présentée dans \cref{ch:hmm}.
+\noindent Elle a été précédemment partagée en ligne et est en cours d'évaluation dans la pré-publication suivante :
+\begin{mdframed}
+\Myprod{\textbf{Théophile Cantelobre}, Benjamin Guedj, Carlo Ciliberto, Alessandro Rudi}
+{Closed-form filtering for non-linear systems}{Under review (2024)}
+\end{mdframed}
+\end{mdframed}
+\paragraph{Motivation}
+Nous considérons le problème du filtrage pour les Modèles de Markov Cachés à temps discret sur des espaces d'états généraux. L'objectif du filtrage est de calculer (ou d'approximer) la distribution de filtrage $\pi_t(dx) = \mathbb P(X_t\vert Y_1, \ldots, Y_{t})$. Les hypothèses markoviennes sur le modèle réduisent le calcul du filtre optimal à un calcul itératif via l'équation suivante :
+\begin{equation}
+\pi_k(dx) = \frac{\int \pi_{k-1}(du)Q(u, dx)G(x, y_k)}{\int \int \pi_{k-1}(du)Q(u, dx)G(x, y_k)},
+\end{equation}
+où $G$ et $Q$ décrivent le Modèle de Markov Caché.
+Dans les espaces d'états généraux, le calcul de \cref{eq:intro-hmm-iteration} implique soit de faire des hypothèses fortes sur le modèle (\emph{par ex.} filtre de Kalman), soit d'approximer l'itération en supposant une forme fonctionnelle pour $\pi_T$ (\emph{par ex.} variantes du filtre de Kalman), soit d'approximer \cref{eq:intro-hmm-iteration} en utilisant un échantillonnage de Monte Carlo (\emph{par ex.} le filtre particulaire). Le filtre particulaire peut être rendu stable et robuste, mais ne produit pas une distribution sous forme close.
+Au-delà de la structure markovienne, nous cherchons à exploiter une seconde source de structure dans le filtrage, à savoir que les distributions de probabilité (conditionnelles) sont des fonctions positives. Cela peut sembler trivial à première vue, mais l'idée a récemment suscité de l'intérêt avec le développement des Modèles Semi-Définis Positifs (modèles PSD) par \citet{ulysse-non-negative}. Les modèles PSD sont une classe de fonctions positives inspirées des sommes de carrés de fonctions de noyaux qui approximent de manière optimale les fonctions lisses et positives telles que les densités (conditionnelles). Ces approximations sont des solutions à des problèmes convexes. Lorsque le noyau gaussien est utilisé, cette famille est utile pour approximer les densités de probabilité. En effet, les produits et les marginales des modèles PSD sont des modèles PSD, qui peuvent être calculés efficacement. Pour une introduction, voir \citet{rudi2021psd,sampling-ulysse}.
+\paragraph{Intuition}
+L'approche que nous proposons fonctionne en deux étapes. Premièrement, en utilisant des évaluations de fonctions de $Q$ et $G$ (nous supposons que les noyaux ont des densités), nous apprenons $\hat Q$, $\hat G$ comme modèles PSD gaussiens. Cette étape est effectuée "hors ligne" \emph{via} un problème convexe. Deuxièmement, lorsque nous recevons une séquence $y_1, \ldots, y_N$, nous calculons la séquence des distributions de filtrage approximatives $\hat\pi_k$ en appliquant \cref{eq:intro-hmm-iteration} en forme close avec $\hat Q$, $\hat G$ et $\hat \pi_k$ au lieu de $Q$, $G$ et $\pi_k$.
+Nous démontrons des bornes pour l'étape d'apprentissage et généralisons les résultats de \cite{oudjane} pour quantifier la stabilité et la robustesse du filtre obtenu.
+Dans ce développement, les Modèles PSD Gaussiens sont centraux pour deux raisons. Premièrement, ils peuvent traverser les itérations de filtrage en forme close puisque cette classe de modèles est stable par les opérations sur les densités de probabilité. Deuxièmement, leurs propriétés d'approximation sont adaptatives à la fonction cible, ce qui nous permet d'avoir un contrôle fin sur l'erreur du modèle et \emph{in fine} sur la robustesse du filtre.
+\paragraph{Contributions principales}
+\textsc{PSDFilter} est un algorithme de filtrage non-linéaire qui approxime la distribution de filtrage en utilisant des modèles semi-définis positifs. \textsc{PSDFilter} retrouve les estimateurs précédemment proposés tels que le filtre de Kalman comme des cas particulers, et peut être appliqué à tout problème de filtrage où les noyaux de transition admettent une densité lisse.
+Dans \cref{theorem:main-theorem}, nous montrons que \textsc{PSDFilter} est stable et robuste, et que sa performance est adaptative aux propriétés de régularité du Modèle de Markov Caché. Ceci est résumé informellement ci-dessous :
+\begin{mdframed}
+\begin{informaltheorem}[basé sur \cref{theorem:bound-diagonal}]
+Pour tout $\varepsilon > 0$, si le noyau optimal est $\sigma$-mélangeant et borné, et que nous utilisons suffisamment de points pour apprendre $\hat G$ et $\hat Q$ à partir d'évaluations de fonctions, pour toute séquence d'observations $y_1, \ldots, y_N$ (pas nécessairement échantillonnée à partir de la vraie distribution), avec une forte probabilité (sur le tirage de l'ensemble d'apprentissage pour $\hat G$ et $\hat Q$), si $\pi_k$ est le vrai filtre initialisé à $\pi_0$ et $\hat \pi_k$ est le résultat de \textsc{PSDFilter} initialisé à $\hat \pi_0$,
+\begin{align*}
+\Vert \pi_k - \hat\pi_k\Vert_{TV} \leq \frac{C}{\mixing^2}\left(\frac{1-\mixing^2}{1 + \mixing^2}\right)^{k-1}|\pi_0 - \hat{\pi}0|{TV} + \frac{\varepsilon}{\sigma},
+\end{align*}
+\end{informaltheorem}
+\end{mdframed}
+Le premier terme de droite montre que l'erreur d'initialisation entre le vrai filtre $\pi_k$ et \textsc{PSDFilter} $\hat \pi_k$ est oubliée exponentiellement, ce qui reflète l'hypothèse $\sigma$-mélangeante. Le second terme montre que l'erreur est bornée, uniformément sur la séquence d'observations (qui n'a pas besoin d'être échantillonnée à partir du HMM). En particulier, nous pouvons rendre cette borne aussi petite que nous le voulons en réduisant $\varepsilon$, au prix d'une classe de modèles plus riche et de plus de données.
+En effet, nous prouvons que nous pouvons apprendre des approximations des noyaux de transition avec des taux d'apprentissage optimaux en résolvant un problème convexe. L'approche consiste à approximer le noyau de transition $Q$ par $\hat Q = \hat q^2$ où $\hat q$ est un estimateur de régression à noyau de $\sqrt{Q}$ basé sur des évaluations de $\sqrt{Q}$ (et de même pour le noyau d'observation $G$). Cette approche est justifiée par \cref{theorem:learning} résumé par ce résultat informel :
+\begin{mdframed}
+\begin{informaltheorem}[basé sur \cref{theorem:learning}]
+Si $f$ est une fonction $\beta$-lisse en dimension $d$ et $\hat g$ est un estimateur de régression à noyau de $g = \sqrt{f}$ avec des évaluations de $g$, alors $\hat f = \hat g^2$ approxime $f$ avec des taux optimaux. Avec les notations usuelles :
+\begin{align}
+\Vert \hat f - f \Vert_{L^\infty(\Omega)}\leq C \Vert \sqrt{f}\Vert_{W^\beta_2(\Omega)}^2\epsilon^{1-\frac{d}{2\beta}}
+\end{align}
+où $C, C^\prime$ sont des constantes ne dépendant que de $\beta, d$ et indépendantes de $f$ et $\epsilon$.
+\end{informaltheorem}
+\end{mdframed}
+\noindent \cref{theorem:learning} est intéressant au-delà du contexte du filtrage puisqu'il donne des taux d'apprentissage $L_\infty$ pour les modèles PSD de rang un appris à partir d'évaluations de fonctions.
+Nous montrons que \textsc{PSDFilter} surpasse le filtre particulaire en complexité computationnelle pour un niveau d'erreur donné pour les densités lisses. En effet, le filtre particulaire repose uniquement sur l'échantillonnage de Monte Carlo et n'est pas adaptatif à la régularité des densités.
+\paragraph{Points clés du \cref{ch:hmm}}
+\begin{itemize}
+\item \textsc{PSDFilter} est un algorithme de filtrage qui exploite les modèles semi-définis positifs pour approximer la distribution de filtrage pour un Modèle de Markov Caché non-linéaire, retrouvant les estimateurs classiques comme le filtre de Kalman comme cas particulier.
+\item \textsc{PSDFilter} est applicable à tout problème de filtrage où les noyaux de transition ont une densité lisse, offrant une grande polyvalence.
+\item Nous démontrons que \textsc{PSDFilter} est à la fois stable et robuste, avec une performance qui s'adapte aux propriétés de régularité du Modèle de Markov Caché. La borne d'erreur pour \textsc{PSDFilter} est uniformément contrôlée sur les séquences d'observations, avec la possibilité de minimiser cette borne en affinant le modèle et en utilisant plus de données.
+\item L'apprentissage des modèles composants de \textsc{PSDFilter} est un problème convexe (KRR) et atteint des taux d'apprentissage optimaux.
+\item \textsc{PSDFilter} surpasse le filtre particulaire en efficacité computationnelle pour les densités lisses, car il s'adapte à la régularité des densités, contrairement au filtre particulaire qui repose sur l'échantillonnage de Monte Carlo.
+\end{itemize}
